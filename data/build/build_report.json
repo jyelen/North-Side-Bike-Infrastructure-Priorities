@@ -1,0 +1,14 @@
+{
+ "manual_applied": {
+  "override:BRYN MAWR AVE": 1,
+  "pratt-trim": 1
+ },
+ "manual_expected": [
+  "pratt-trim",
+  "override:BRYN MAWR AVE"
+ ],
+ "manual_features": [
+  "PRATT BLVD",
+  "BERWYN AVE"
+ ]
+}
