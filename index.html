@@ -932,6 +932,8 @@ details.more>summary{cursor:pointer;font-weight:600}
 .more-body{display:flex;flex-direction:column;gap:18px;margin-top:14px}
 /* budget callout */
 .callout{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:14px;border:2px solid var(--plan);border-radius:8px;background:color-mix(in srgb,var(--plan) 12%,var(--panel));cursor:pointer}
+.swrow{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin:8px 0;cursor:pointer}
+.swrow .callout-txt b{font-size:16px}
 .callout-txt{display:grid;gap:2px}
 .callout-txt b{font-family:var(--font-display);font-size:19px}
 .callout-txt span{font-size:12.5px;color:var(--muted)}
@@ -1016,6 +1018,11 @@ details.more>summary{cursor:pointer;font-weight:600}
           <input type="checkbox" id="budgetOn" class="sr-switch">
           <span class="switch" aria-hidden="true"></span>
           <span class="callout-txt"><b>Budget mode</b><span>Enter a yearly budget and see which top-ranked segments it can pay for, highlighted in gold on the map.</span></span>
+        </label>
+        <label class="swrow" for="incN">
+          <input type="checkbox" id="incN" class="sr-switch">
+          <span class="switch" aria-hidden="true"></span>
+          <span class="callout-txt"><b>Include streets with no bike facility</b><span id="incNnote">These are scored with everything else, but they are usually harder to change: no lane to upgrade, and often state-controlled with higher speeds. Turn off to rank only existing routes.</span></span>
         </label>
         <label class="chk"><input type="checkbox" id="top5"> Number the top 5 on the map</label>
         <div id="budgetPanel" class="budget" hidden>
@@ -1510,8 +1517,10 @@ let weights={}; FACTORS.forEach(f=>weights[f.k]=f.def);
 let types={N:true,L:true,BF:true,S:true,G:false,CF:false};
 try{const s=JSON.parse(localStorage.getItem('bn-pri2')||'null'); if(s){Object.assign(weights,s.w||{});Object.assign(types,s.t||{})}}catch(e){}
 const saveP=()=>{try{localStorage.setItem('bn-pri2',JSON.stringify({w:weights,t:types}))}catch(e){}};
-document.getElementById('typeFilter').innerHTML=['N','L','BF','S','G','CF'].map(k=>`<label><input type="checkbox" id="ty-${k}" ${types[k]?'checked':''}><span class="sw" style="background:${k==='N'?`repeating-linear-gradient(90deg,${cv('--f-N')} 0 3px,transparent 3px 7px)`:cv('--f-'+k)}"></span>${k==='N'?'No bike facility (major streets)':FAC[k]}</label>`).join('');
-['N','L','BF','S','G','CF'].forEach(k=>document.getElementById('ty-'+k).addEventListener('change',e=>{types[k]=e.target.checked;saveP();renderTable()}));
+document.getElementById('typeFilter').innerHTML=['L','BF','S','G','CF'].map(k=>`<label><input type="checkbox" id="ty-${k}" ${types[k]?'checked':''}><span class="sw" style="background:${k==='N'?`repeating-linear-gradient(90deg,${cv('--f-N')} 0 3px,transparent 3px 7px)`:cv('--f-'+k)}"></span>${k==='N'?'No bike facility (major streets)':FAC[k]}</label>`).join('');
+['L','BF','S','G','CF'].forEach(k=>document.getElementById('ty-'+k).addEventListener('change',e=>{types[k]=e.target.checked;saveP();renderTable()}));
+const incN=document.getElementById('incN'); incN.checked=!!types.N;
+incN.addEventListener('change',e=>{types.N=e.target.checked;saveP();renderTable()});
 const wEl=document.getElementById('weights');
 let lastG=null;
 wEl.innerHTML=FACTORS.map(f=>{const head=f.g!==lastG?`<div class="wgroup">${f.g}</div>`:'';lastG=f.g;return head+`<label for="w-${f.k}" title="${esc(f.how)}">${f.label}</label><input type="range" min="0" max="40" step="1" id="w-${f.k}" value="${weights[f.k]}"><output id="o-${f.k}">${weights[f.k]}</output>`}).join('')+`<div class="wtotal" id="wTotal"></div>`;
