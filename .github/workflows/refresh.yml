@@ -87,6 +87,9 @@ jobs:
             echo "Updated pull request #$PR"
           elif gh pr create --head "$BRANCH" --base "$BASE" --title "Data refresh $DAY" --body-file pr_body.md; then
             echo "Opened a pull request"
+            for N in $(gh issue list --state open --search "in:title \"Data refresh ready to review ($BASE)\"" --json number --jq '.[].number'); do
+              gh issue close "$N" --comment "Replaced by a pull request."
+            done
           else
             # Repository setting may block Actions from opening pull requests;
             # leave a ready-made link instead.
@@ -96,7 +99,10 @@ jobs:
               echo "(To let it open pull requests itself: Settings → Actions → General → Workflow permissions →"
               echo "tick \"Allow GitHub Actions to create and approve pull requests\".)"
               echo; cat data/build/refresh_report.md; } > issue_body.md
-            gh issue create --title "Data refresh $DAY ready to review" --body-file issue_body.md
+            TITLE="Data refresh ready to review ($BASE)"
+            N=$(gh issue list --state open --search "in:title \"$TITLE\"" --json number --jq '.[0].number')
+            if [ -n "$N" ]; then gh issue edit "$N" --body-file issue_body.md; gh issue comment "$N" --body "Updated with the $DAY refresh."
+            else gh issue create --title "$TITLE" --body-file issue_body.md; fi
           fi
 
       - name: Close an earlier problem report

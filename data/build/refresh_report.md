@@ -6,15 +6,11 @@ Built 2026-10-14. Sources fetched: acs 2026-10-14, bike_routes 2026-10-14, busin
 
 **Passed** automatic checks.
 
-### Worth a look (do not block)
-
-- East Lake Ter (W Birchwood Ave to W Juneway Ter): the city file now shows the same kind of facility along 100% of this hand-entered stretch. Remove it from data/manual/manual_segments.json.
-
 ## Headline numbers
 
 | | Before | After |
 |---|---|---|
-| Segments | 280 | 280 |
+| Segments | 280 | 279 |
 | Protected lane miles (segments) | 8.2 | 8.2 |
 | Painted/buffered/shared miles | 35.6 | 35.6 |
 | Major-street miles with no facility | 34.4 | 34.4 |
@@ -32,7 +28,8 @@ Built 2026-10-14. Sources fetched: acs 2026-10-14, bike_routes 2026-10-14, busin
 ## Segment changes
 
 ```
-0 segments added, 0 removed, 0 changed type.
+0 segments added, 1 removed, 0 changed type.
+  gone: East Lake Ter (W Birchwood Ave to W Juneway Ter)
 ```
 
 Not refreshed automatically: hand-entered news changes (data/manual), fatality stories, cost assumptions, research sources and archived bike-route snapshots.
