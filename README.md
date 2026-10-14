@@ -21,7 +21,15 @@ The steps:
 | Check | `pipeline/checks.py` | Compares with the committed version, writes `data/build/refresh_report.md`, and stops if something looks broken |
 | Page | `pipeline/build_page.py` | Puts the data into `src/template.html` and writes `index.html` |
 
-The **Refresh data** GitHub Action runs the same steps on GitHub's servers. Right now you start it by hand (Actions tab, then Run workflow). Pushing to the `pipeline-test` branch also runs it and saves the results to that branch.
+The **Refresh data** GitHub Action runs the same steps on GitHub's servers every Monday morning. You can also start it by hand (Actions tab → Refresh data → Run workflow).
+
+- **Checks pass and the data changed:** it opens a pull request named "Data refresh" with the check report. Merging it updates the live page. If you leave it open, the next run updates the same pull request.
+- **Nothing changed:** it stops.
+- **A download fails or a check blocks the update:** it opens an issue named "Data refresh needs attention", and the live page stays as it is. The issue closes itself after the next good run.
+
+Pushing to the `pipeline-test` branch runs the same steps against that branch, for trying out changes. Its pull requests go into `pipeline-test`, never `main`.
+
+GitHub turns off scheduled runs after 60 days with no activity in the repository. If that happens, the Actions tab shows a button to turn it back on.
 
 ## Sources
 

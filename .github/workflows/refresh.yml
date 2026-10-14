@@ -1,17 +1,39 @@
 name: Refresh data
 
+# Every Monday morning (and on demand from the Actions tab):
+#   download every source, rebuild the data and page, run the checks.
+#   - Checks pass and the data changed -> open (or update) a pull request
+#     "Data refresh" with the check report. Merging it updates the live page.
+#   - Nothing changed -> stop quietly.
+#   - Download fails or checks block -> open (or update) an issue
+#     "Data refresh needs attention" with the details.
+# Pushing to the pipeline-test branch runs the same thing against that branch
+# (pull requests go into pipeline-test, never main).
+
 on:
+  schedule:
+    - cron: '17 11 * * 1'   # Mondays 11:17 UTC (6:17 am Chicago in summer, 5:17 am in winter)
   workflow_dispatch:
   push:
-    branches: [pipeline-test]   # test runs: results are committed back to this branch
+    branches: [pipeline-test]
 
 permissions:
   contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: refresh-${{ github.ref_name }}
+  cancel-in-progress: false
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BASE: ${{ github.ref_name }}
+      BRANCH: ${{ github.ref_name == 'main' && 'data-refresh' || format('data-refresh-{0}', github.ref_name) }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -19,26 +41,100 @@ jobs:
           python-version: '3.13'
           cache: pip
       - run: pip install -r requirements.txt
+
       - name: Download sources
+        id: fetch
         run: |
           set -o pipefail
           python -W ignore pipeline/fetch.py 2>&1 | tee data/build/fetch_log.txt
+
       - name: Build data
+        id: build
         run: |
           set -o pipefail
           cd pipeline && python -W ignore build_data.py 2>&1 | tee ../data/build/build_log.txt
+
       - name: Check
+        id: check
         run: cd pipeline && python checks.py
+
       - name: Build page
         run: cd pipeline && python build_page.py
-      - name: Save test results to the branch
-        if: always() && github.ref_name == 'pipeline-test'
+
+      - name: Open or update the pull request
         run: |
-          cp data/raw/_meta.json data/build/raw_meta.json 2>/dev/null || true
+          cp data/raw/_meta.json data/build/raw_meta.json
+          if git diff --quiet -- data/build/bikenet_data.json; then
+            echo "No data changes since the last version. Nothing to do."
+            exit 0
+          fi
+          DAY=$(date -u +%Y-%m-%d)
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git rm -r -q --cached data/build/debug 2>/dev/null || true
-          rm -rf data/build/debug
-          git add -A data/build index.html
-          git commit -m "Test refresh run ${{ github.run_number }} [skip ci]" || echo "nothing to commit"
-          git push
+          git checkout -B "$BRANCH"
+          git add index.html data/build/bikenet_data.json data/build/refresh_report.md data/build/build_report.json \
+                  data/build/unserved_segments.geojson data/build/ward_layer_summary.csv data/build/raw_meta.json
+          git commit -q -m "Data refresh $DAY"
+          git push -f origin "$BRANCH"
+          {
+            echo "Automatic data refresh, $DAY. **Merging this updates the live page.** If you leave it open, next week's run replaces it with newer data."
+            echo
+            cat data/build/refresh_report.md
+          } > pr_body.md
+          PR=$(gh pr list --head "$BRANCH" --base "$BASE" --state open --json number --jq '.[0].number')
+          if [ -n "$PR" ]; then
+            gh pr edit "$PR" --title "Data refresh $DAY" --body-file pr_body.md
+            echo "Updated pull request #$PR"
+          elif gh pr create --head "$BRANCH" --base "$BASE" --title "Data refresh $DAY" --body-file pr_body.md; then
+            echo "Opened a pull request"
+          else
+            # Repository setting may block Actions from opening pull requests;
+            # leave a ready-made link instead.
+            URL="https://github.com/${{ github.repository }}/compare/$BASE...$BRANCH?expand=1"
+            { echo "The refresh passed its checks, but GitHub did not let the workflow open a pull request."
+              echo "Open one here: $URL"
+              echo "(To let it open pull requests itself: Settings → Actions → General → Workflow permissions →"
+              echo "tick \"Allow GitHub Actions to create and approve pull requests\".)"
+              echo; cat data/build/refresh_report.md; } > issue_body.md
+            gh issue create --title "Data refresh $DAY ready to review" --body-file issue_body.md
+          fi
+
+      - name: Close an earlier problem report
+        if: success()
+        run: |
+          TITLE="Data refresh needs attention ($BASE)"
+          for N in $(gh issue list --state open --search "in:title \"$TITLE\"" --json number --jq '.[].number'); do
+            gh issue close "$N" --comment "Fixed: the refresh on $(date -u +%Y-%m-%d) finished normally."
+          done
+
+      - name: Report a problem
+        if: failure()
+        run: |
+          DAY=$(date -u +%Y-%m-%d)
+          RUN="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          {
+            echo "The data refresh on $DAY (branch \`$BASE\`) did not finish, so the live page was not changed."
+            echo
+            echo "Run log: $RUN"
+            echo
+            if [ "${{ steps.fetch.outcome }}" = "failure" ]; then
+              echo "### A download failed"
+              echo '```'
+              grep -E "^-- |FAILED|ok \{" data/build/fetch_log.txt | tail -40
+              echo '```'
+            elif [ "${{ steps.check.outcome }}" = "failure" ]; then
+              cat data/build/refresh_report.md
+            else
+              echo "The build step failed. Last lines of the log:"
+              echo '```'
+              tail -30 data/build/build_log.txt 2>/dev/null
+              echo '```'
+            fi
+          } > issue_body.md
+          TITLE="Data refresh needs attention ($BASE)"
+          N=$(gh issue list --state open --search "in:title \"$TITLE\"" --json number --jq '.[0].number')
+          if [ -n "$N" ]; then
+            gh issue comment "$N" --body-file issue_body.md
+          else
+            gh issue create --title "$TITLE" --body-file issue_body.md
+          fi
