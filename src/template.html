@@ -1,0 +1,1237 @@
+<title>North Side Bike Network</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+/*__LEAFLETCSS__*/
+/* Layout: full-height app — header with ward chips, map on the left, tabbed analysis panel on the right; stacks map-over-panel on phones. */
+:root{
+  --bg:#f4f6f4; --panel:#ffffff; --ink:#18221d; --muted:#5a6862; --line:#dde3df; --soft:#eef2ef;
+  --accent:#0b7a55; --accent-ink:#ffffff; --focus:#1f5fbf;
+  --map-bg:#e9ede9; --st1:#9aa59f; --st2:#b4bdb8; --st3:#c9d0cc; --st4:#dbe0dc; --river:#9cc2dd; --ward:#2b3a33;
+  --f-P:#0b7a55; --f-CF:#7b3fc4; --f-G:#69b585; --f-BF:#df9a2e; --f-L:#d4443b; --f-S:#9a958e; --f-N:#3d4652;
+  --k:#7a0d0d; --a:#e8590c; --inj-b:#c2410c; --inj-p:#7c3aed; --rail:#1f5fbf; --biz:#6b5b45;
+  --good:#0b7a55; --warn:#b45309; --crit:#b42318; --plan:#f2b705;
+  --font-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --font-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101513; --panel:#171e1b; --ink:#e6ece8; --muted:#9aa7a0; --line:#2b3531; --soft:#1e2622;
+  --accent:#3cc994; --accent-ink:#0d1411; --focus:#7fb0ff;
+  --map-bg:#141a17; --st1:#56625c; --st2:#46514b; --st3:#36403b; --st4:#29312d; --river:#2f5670; --ward:#d5ddd8;
+  --f-P:#3cc994; --f-CF:#b28cf5; --f-G:#4f8f66; --f-BF:#f0b45a; --f-L:#f2675d; --f-S:#7d7973; --f-N:#c3cad1;
+  --k:#ff8a8a; --a:#ffa94d; --inj-b:#fb923c; --inj-p:#b794f4; --rail:#7fb0ff; --biz:#c8b393;
+  --good:#3cc994; --warn:#f0b45a; --crit:#ff7a70; --plan:#ffd23f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101513; --panel:#171e1b; --ink:#e6ece8; --muted:#9aa7a0; --line:#2b3531; --soft:#1e2622;
+  --accent:#3cc994; --accent-ink:#0d1411; --focus:#7fb0ff;
+  --map-bg:#141a17; --st1:#56625c; --st2:#46514b; --st3:#36403b; --st4:#29312d; --river:#2f5670; --ward:#d5ddd8;
+  --f-P:#3cc994; --f-CF:#b28cf5; --f-G:#4f8f66; --f-BF:#f0b45a; --f-L:#f2675d; --f-S:#7d7973; --f-N:#c3cad1;
+  --k:#ff8a8a; --a:#ffa94d; --inj-b:#fb923c; --inj-p:#b794f4; --rail:#7fb0ff; --biz:#c8b393;
+  --good:#3cc994; --warn:#f0b45a; --crit:#ff7a70; --plan:#ffd23f; color-scheme:dark}
+
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:14px;line-height:1.45}
+*{box-sizing:border-box}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.app{display:grid;grid-template-rows:auto 1fr;height:100%;min-height:0}
+header.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.brand h1{font-family:var(--font-display);font-weight:700;font-size:26px;letter-spacing:.01em;margin:0;line-height:1;text-wrap:balance}
+.brand .sub{color:var(--muted);font-size:12.5px}
+.wards{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+.chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:4px 12px;cursor:pointer;font-family:var(--font-display);font-weight:600;font-size:15px;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.chip:hover{border-color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 470px;min-height:0}
+#map{background:var(--map-bg);min-height:0;height:100%}
+aside{border-left:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;min-height:0;min-width:0}
+.tabs{display:flex;border-bottom:1px solid var(--line);padding:0 8px}
+.tab{flex:1;border:0;background:none;padding:11px 6px 9px;cursor:pointer;font-family:var(--font-display);font-weight:600;font-size:16px;letter-spacing:.03em;color:var(--muted);border-bottom:3px solid transparent}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.pane{overflow:auto;padding:16px;min-height:0;flex:1;display:flex;flex-direction:column;gap:18px}
+.pane[hidden]{display:none!important}
+h2{font-family:var(--font-display);font-weight:700;font-size:19px;letter-spacing:.02em;margin:0;text-wrap:balance}
+h3{font-family:var(--font-display);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 8px}
+.note{color:var(--muted);font-size:12.5px}
+.scope{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.tile{background:var(--panel);padding:10px 10px 9px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.tile .v{font-family:var(--font-display);font-weight:600;font-size:24px;line-height:1.05;font-variant-numeric:tabular-nums}
+.tile .l{font-size:11.5px;color:var(--muted);line-height:1.25}
+.tile .c{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tile .c b{font-weight:600;color:var(--ink)}
+.bars svg{width:100%;height:auto;display:block}
+.bars text{fill:var(--ink);font-family:var(--font-body);font-size:11px}
+.bars .lab{font-family:var(--font-display);font-weight:600;font-size:13px}
+.bars .dim{fill:var(--muted)}
+.legend-row{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;color:var(--muted)}
+.sw{display:inline-block;width:18px;height:4px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.conn{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.conn td,.conn th{padding:5px 4px;border-bottom:1px solid var(--line);text-align:right}
+.conn td:first-child,.conn th:first-child{text-align:left}
+.conn th{font-weight:600;color:var(--muted);font-size:11.5px}
+/* layers */
+.layer{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:start;padding:9px 0;border-bottom:1px solid var(--line)}
+.layer input[type=checkbox]{margin:3px 0 0;width:16px;height:16px;accent-color:var(--accent)}
+.layer .ttl{font-weight:600}
+.layer .desc{grid-column:2;color:var(--muted);font-size:12.5px}
+.layer .key{grid-column:2;display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted);margin-top:3px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:-1px;margin-right:4px}
+select{border:1px solid var(--line);background:var(--panel);border-radius:4px;padding:3px 6px}
+.ramp{height:8px;border-radius:2px;width:140px;display:inline-block;vertical-align:middle}
+/* priorities */
+.weights{display:grid;grid-template-columns:minmax(0,1fr) 110px 22px;gap:6px 10px;align-items:center;font-size:13px}
+.weights input[type=range]{width:100%;accent-color:var(--accent)}
+.weights output{font-variant-numeric:tabular-nums;text-align:right;color:var(--muted)}
+.types{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px}
+.types label{display:flex;align-items:center;gap:5px;cursor:pointer}
+.types input{accent-color:var(--accent)}
+.tbl-wrap{overflow:auto;border:1px solid var(--line);border-radius:6px;max-height:64vh;min-height:340px;flex-shrink:0}
+table.seg{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+table.seg th{position:sticky;top:0;background:var(--soft);text-align:right;font-weight:600;font-size:11.5px;color:var(--muted);padding:6px 6px;cursor:pointer;white-space:nowrap;border-bottom:1px solid var(--line);user-select:none}
+table.seg th:nth-child(2){text-align:left}
+table.seg th[aria-sort="descending"]::after{content:" ↓"}
+table.seg th[aria-sort="ascending"]::after{content:" ↑"}
+table.seg td{padding:6px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+table.seg td:nth-child(2){text-align:left;min-width:150px}
+table.seg tr{cursor:pointer}
+table.seg tbody tr:hover{background:var(--soft)}
+table.seg tr.sel{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.st-name{font-weight:600}
+.st-ext{color:var(--muted);font-size:11.5px}
+.pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:1px 6px;border-radius:999px;color:#fff;white-space:nowrap}
+.score{display:inline-flex;align-items:center;gap:6px;justify-content:flex-end}
+.score i{display:inline-block;height:6px;border-radius:3px;background:var(--accent)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:5px;padding:5px 10px;cursor:pointer;font-weight:600;font-size:12.5px}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+details{border-top:1px solid var(--line);padding-top:10px}
+details summary{cursor:pointer;font-weight:600}
+details ul{padding-left:18px;margin:8px 0 0;color:var(--muted);font-size:12.5px;display:grid;gap:5px}
+/* leaflet theming */
+.leaflet-container{font-family:var(--font-body);background:var(--map-bg)}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--panel);color:var(--ink);box-shadow:0 4px 18px rgb(0 0 0/.18)}
+.leaflet-popup-content{margin:12px 14px;font-size:12.5px;line-height:1.4;min-width:230px}
+.leaflet-container a.leaflet-popup-close-button{color:var(--muted)}
+.leaflet-tooltip{background:var(--panel);color:var(--ink);border:1px solid var(--line);box-shadow:none;font-size:12px}
+.leaflet-tooltip-top:before{border-top-color:var(--line)}
+.leaflet-bar a{background:var(--panel);color:var(--ink);border-bottom-color:var(--line)}
+.leaflet-bar a:hover{background:var(--soft)}
+.leaflet-bar{border-color:var(--line)!important}
+.ward-label{font-family:var(--font-display);font-weight:700;font-size:15px;letter-spacing:.06em;color:var(--ward);opacity:.55;white-space:nowrap;text-transform:uppercase;pointer-events:none}
+.pop h4{margin:0 0 2px;font-family:var(--font-display);font-size:18px;font-weight:700;line-height:1.1}
+.pop .ext{color:var(--muted);margin-bottom:8px}
+.pop dl{display:grid;grid-template-columns:auto auto;gap:3px 12px;margin:0}
+.pop dt{color:var(--muted)}
+.pop dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.map-note{position:absolute;left:10px;bottom:10px;z-index:500;background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);border-radius:5px;padding:4px 8px;font-size:11px;color:var(--muted);max-width:calc(100% - 20px)}
+.mapwrap{position:relative;min-height:0;min-width:0}
+.cta{background:none;border:0}
+.cta-badge{display:flex;align-items:center;justify-content:center;width:23px;height:23px;border-radius:6px;border:2px solid #fff;box-shadow:0 1px 4px rgb(0 0 0/.35);cursor:pointer}
+.cta-badge.big{width:28px;height:28px;border-radius:7px}
+.cta-badge svg{width:72%;height:72%}
+.legend-row .cta-badge,.key .cta-badge{width:18px;height:18px;border-radius:4px;border-width:1.5px;box-shadow:none}
+.pop-sec{margin:10px 0 5px;font-family:var(--font-display);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.hist{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;height:10px}
+.hist span{border-radius:2px}
+.hist span.none{border:1px dashed var(--line)}
+.hist-lab{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:2px}
+.leaflet-interactive{cursor:pointer}
+.wgroup{grid-column:1/-1;font-family:var(--font-display);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:6px}
+.wtotal{grid-column:1/-1;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:4px;border-top:1px solid var(--line)}
+.srcgroups{display:flex;flex-direction:column;gap:12px}
+.src{border:1px solid var(--line);border-radius:6px;padding:12px;display:grid;gap:6px}
+.src .hd{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.src .hd b{font-family:var(--font-display);font-size:17px;font-weight:700}
+.src .pts{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12px;white-space:nowrap}
+.src p{margin:0;font-size:13px}
+.src .meas{font-size:12px;color:var(--muted)}
+.src .str{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:1px 6px;border-radius:999px;border:1px solid currentColor}
+.str.strong{color:var(--good)} .str.moderate{color:var(--warn)} .str.weak{color:var(--crit)}
+.srclist{margin:0;padding-left:18px;display:grid;gap:7px;font-size:13px}
+.src a,.srclist a,.prec a{color:var(--accent)}
+table.prec td,table.prec th{text-align:left!important;vertical-align:top;cursor:default}
+table.prec tr{cursor:default}
+.rep{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--warn);border:1px solid currentColor;border-radius:999px;padding:0 6px}
+.repnote{margin:8px 0 0;font-size:12px;color:var(--muted)}
+.repnote a{color:var(--accent)}
+.hlbox{display:grid;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--soft)}
+.chk{display:flex;gap:8px;align-items:center;font-weight:600;font-size:13px;cursor:pointer}
+.chk input{width:16px;height:16px;accent-color:var(--accent)}
+.budget{display:grid;gap:12px}
+.budget h3{margin:0}
+.bgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:8px 12px;align-items:center;font-size:13px}
+.bgrid select{width:100%}
+.money{display:flex;align-items:center;border:1px solid var(--line);border-radius:4px;background:var(--panel);padding:0 6px}
+.money span{color:var(--muted)}
+.money input{border:0;background:transparent;padding:4px 4px;width:100%;min-width:0;font-variant-numeric:tabular-nums;outline-offset:3px}
+.costs{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:8px 12px;align-items:center;margin-top:8px;font-size:13px}
+.costs label{display:flex;flex-direction:column}
+.plan{display:grid;gap:6px}
+.plan-head{display:flex;justify-content:space-between;gap:8px;font-variant-numeric:tabular-nums}
+.meter{height:8px;border-radius:4px;background:var(--soft);border:1px solid var(--line);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--plan)}
+.plan-list{margin:0;padding-left:20px;display:grid;gap:6px;font-size:12.5px;max-height:280px;overflow:auto}
+.plan-list li{cursor:pointer}
+.pl-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.pl-main{min-width:0}
+.plan-list .c{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+table.seg tr.inplan td:first-child{box-shadow:inset 4px 0 0 var(--plan)}
+.rank-badge{background:none;border:0}
+.rank-badge span{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--panel);font-family:var(--font-display);font-weight:700;font-size:13px;border:2px solid var(--panel);box-shadow:0 1px 4px rgb(0 0 0/.35)}
+.rank-badge.inline{display:inline-block;margin-right:6px;vertical-align:middle}
+.rank-badge.inline span{width:18px;height:18px;font-size:11px;border-width:1.5px;box-shadow:none}
+.map-legend{background:color-mix(in srgb,var(--panel) 94%,transparent);color:var(--ink);border:1px solid var(--line);border-radius:6px;font-size:12px;max-width:230px;box-shadow:0 2px 10px rgb(0 0 0/.12)}
+.lg-toggle{display:block;width:100%;text-align:left;border:0;background:none;padding:6px 10px;font-family:var(--font-display);font-weight:600;font-size:14px;letter-spacing:.03em;cursor:pointer;color:var(--ink)}
+.lg-body{padding:0 10px 8px;max-height:52vh;overflow:auto}
+.lg-h{font-family:var(--font-display);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:8px 0 3px}
+.lg-row{display:flex;align-items:center;gap:6px;line-height:1.6}
+.lg-ramp{display:grid;grid-template-columns:repeat(6,1fr);height:9px;border-radius:2px;overflow:hidden;border:1px solid var(--line)}
+.lg-ramp-lab{display:flex;justify-content:space-between;color:var(--muted);font-size:10.5px}
+/* intro tour */
+body.touring{overflow:hidden}
+.howbtn{margin-left:auto}
+.wards{margin-left:0}
+.tour{position:fixed;inset:0;z-index:3000}
+.tour-scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,color-mix(in srgb,var(--bg) 78%,transparent) 0,color-mix(in srgb,var(--bg) 40%,transparent) 470px,transparent 640px);transition:background .5s ease}
+.tour.dim .tour-scrim{background:color-mix(in srgb,var(--bg) 80%,transparent)}
+.tour-top{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);right:16px;z-index:3}
+.tour-skip{box-shadow:0 2px 8px rgb(0 0 0/.12)}
+.tour-dots{position:fixed;right:22px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:3}
+.tour-dots button{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--ink);background:var(--panel);padding:0;cursor:pointer;opacity:.6}
+.tour-dots button[aria-current="step"]{background:var(--ink);opacity:1}
+.tour-scroll{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;scroll-snap-type:y proximity;z-index:2}
+.tour-scroll:focus{outline:none}
+.step{min-height:100vh;display:flex;align-items:center;padding-block:24px;padding-inline:40px 16px;scroll-snap-align:center}
+.card{width:min(430px,100%);background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:22px 24px;box-shadow:0 10px 32px rgb(0 0 0/.16);display:grid;gap:10px;opacity:.4;transform:translateY(10px);transition:opacity .45s ease,transform .45s ease}
+.step.on .card{opacity:1;transform:none}
+.card p{margin:0;font-size:14.5px;line-height:1.55}
+.card .small{font-size:13px;color:var(--muted)}
+.card h2{font-size:28px;line-height:1.05;margin:0}
+.card.big{width:min(560px,100%)}
+.card.big h2{font-size:42px}
+.card .lede{font-size:18px;line-height:1.55}
+.eyebrow{font-family:var(--font-display);font-weight:600;font-size:12.5px!important;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+.scrollhint{color:var(--muted);font-size:13px!important}
+.scrollhint span{display:inline-block;animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(4px)}}
+.tl{list-style:none;margin:0;padding:0;display:grid;gap:7px;font-size:14px}
+.tl li{display:grid;grid-template-columns:22px 1fr;gap:8px;align-items:center}
+.tl i{height:5px;border-radius:3px;display:block}
+.tl i.dash{background:repeating-linear-gradient(90deg,var(--c) 0 5px,transparent 5px 9px)}
+.legend-inline{display:flex;gap:16px;font-size:13px!important;color:var(--muted)}
+.legend-inline .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.card .src a{color:var(--accent);font-weight:600}
+.wbar{display:flex;height:26px;border-radius:5px;overflow:hidden;font-size:11.5px;font-weight:700;color:#fff}
+.wbar span{display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden}
+.top5{margin:0;padding-left:20px;display:grid;gap:4px;font-size:13px}
+.pulse{background:none;border:0}
+.pulse span{display:block;width:34px;height:34px;border-radius:50%;border:3px solid var(--k);box-shadow:0 0 0 4px color-mix(in srgb,var(--k) 25%,transparent);animation:pulse 1.6s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.5);opacity:.15}}
+@media (prefers-reduced-motion: reduce){.pulse span,.scrollhint span{animation:none}.card{transition:none}}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.card-tag{flex:none;font-family:var(--font-display);font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink);border:1.5px solid currentColor;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.hist span{position:relative;cursor:help}
+.hist span:hover::after,.hist span:focus::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--ink);color:var(--panel);font-size:11px;font-weight:600;line-height:1.3;padding:4px 7px;border-radius:4px;white-space:nowrap;z-index:5;pointer-events:none}
+.hist span.first:hover::after,.hist span.first:focus::after{left:0;transform:none}
+.hist span.last:hover::after,.hist span.last:focus::after{left:auto;right:0;transform:none}
+.hist span:focus{outline:2px solid var(--focus);outline-offset:1px}
+.hist-lab{display:grid!important;grid-template-columns:repeat(8,1fr);gap:2px;font-size:9.5px!important;text-align:center;white-space:nowrap}
+.card .lede-sm{font-size:16px;font-weight:600;line-height:1.5}
+.ease{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.03em;padding:1px 6px;border-radius:999px;border:1.5px solid currentColor;white-space:nowrap}
+.ease.good{color:var(--good)}.ease.warn{color:var(--warn)}.ease.crit{color:var(--crit)}
+.nve{display:grid;gap:4px}
+.nve-chart svg{width:100%;height:auto;display:block}
+.nve-chart .grid{stroke:var(--line);stroke-width:1}
+.nve-chart .split{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
+.nve-chart .q-win{fill:color-mix(in srgb,var(--good) 10%,transparent)}
+.nve-chart .ax{fill:var(--muted);font-size:10.5px;font-family:var(--font-body)}
+.nve-chart .ql{fill:var(--ink);font-size:11.5px;font-weight:700;font-family:var(--font-display);letter-spacing:.04em;text-transform:uppercase}
+.nve-chart .ql.dim{fill:var(--muted)}
+.nve-chart circle{cursor:pointer}
+.nve-chart circle:focus{outline:none;stroke:var(--focus);stroke-width:3}
+.dimsel{display:flex;gap:10px;align-items:center;font-size:13px;flex-wrap:wrap}
+.budget[hidden],.tour[hidden],[hidden]{display:none!important}
+@media (max-width: 900px){
+  .tour-scrim{background:linear-gradient(0deg,color-mix(in srgb,var(--bg) 70%,transparent) 0,transparent 60%)}
+  .tour-dots{display:none}
+  .step{align-items:flex-end;padding-inline:16px;padding-block:16px calc(16px + env(safe-area-inset-bottom,0px));scroll-snap-align:end}
+  .card{max-height:52vh;overflow:auto;padding:16px 18px}
+  .card h2{font-size:23px}.card.big h2{font-size:30px}.card .lede{font-size:15.5px}
+}
+/* summary glance */
+.glance{list-style:none;margin:0;padding:0;display:grid;gap:12px;font-size:15px;line-height:1.45}
+.glance li{padding-left:14px;border-left:3px solid var(--line)}
+.glance li:nth-child(1){border-color:var(--f-P)}.glance li:nth-child(2){border-color:var(--f-G)}.glance li:nth-child(3){border-color:var(--f-L)}.glance li:nth-child(4){border-color:var(--f-N)}.glance li:nth-child(5){border-color:var(--k)}
+.glance b{font-family:var(--font-display);font-size:19px;font-weight:700;letter-spacing:.01em}
+details.more>summary{cursor:pointer;font-weight:600}
+.more-body{display:flex;flex-direction:column;gap:18px;margin-top:14px}
+/* budget callout */
+.callout{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:14px;border:2px solid var(--plan);border-radius:8px;background:color-mix(in srgb,var(--plan) 12%,var(--panel));cursor:pointer}
+.swrow{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin:8px 0;cursor:pointer}
+.swrow .callout-txt b{font-size:16px}
+.callout-txt{display:grid;gap:2px}
+.callout-txt b{font-family:var(--font-display);font-size:19px}
+.callout-txt span{font-size:12.5px;color:var(--muted)}
+.sr-switch{position:absolute;opacity:0;width:1px;height:1px}
+.switch{width:42px;height:24px;border-radius:12px;background:var(--line);position:relative;transition:background .2s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--panel);box-shadow:0 1px 3px rgb(0 0 0/.3);transition:transform .2s}
+.sr-switch:checked+.switch{background:var(--plan)}
+.sr-switch:checked+.switch::after{transform:translateX(18px)}
+.sr-switch:focus-visible+.switch{outline:2px solid var(--focus);outline-offset:2px}
+@media (max-width: 900px){
+  .app{height:auto;display:block}
+  .main{display:block}
+  .mapwrap{height:62vh}
+  aside{border-left:0;border-top:1px solid var(--line)}
+  .pane{overflow:visible}
+  .wards{margin-left:0}
+  .tbl-wrap{max-height:70vh}
+}
+@media (max-width: 480px){ .tiles{grid-template-columns:repeat(2,minmax(0,1fr))} .brand .sub{display:none} }
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand"><h1>North Side Bike Network</h1><span class="sub">Wards 33 · 40 · 46 · 47 · 48 · 49</span></div>
+    <button class="btn howbtn" id="howBtn">How it works</button>
+    <div class="wards" role="group" aria-label="Choose ward" id="wardChips"></div>
+  </header>
+  <div class="main">
+    <div class="mapwrap"><div id="map" aria-label="Map of bike facilities, crashes, and transit"></div><div class="map-note" id="mapNote" hidden></div></div>
+    <aside>
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" id="t-sum" aria-selected="true" aria-controls="p-sum">Summary</button>
+        <button class="tab" role="tab" id="t-pri" aria-selected="false" aria-controls="p-pri">Priorities</button>
+        <button class="tab" role="tab" id="t-lay" aria-selected="false" aria-controls="p-lay">Layers</button>
+        <button class="tab" role="tab" id="t-src" aria-selected="false" aria-controls="p-src">Sources</button>
+      </div>
+
+      <section class="pane" id="p-sum" role="tabpanel" aria-labelledby="t-sum">
+        <div class="scope"><h2 id="sumTitle">All six wards</h2><span class="note" id="sumArea"></span></div>
+        <ul class="glance" id="glance"></ul>
+        <div class="btnrow"><button class="btn primary" id="goPri">See the priorities</button><button class="btn" id="goTour">How it works</button></div>
+        <details class="more" id="moreNums">
+          <summary>Show all the numbers</summary>
+          <div class="more-body">
+        <div>
+          <h3>Bike facilities (miles)</h3>
+          <div class="tiles" id="tilesFac"></div>
+        </div>
+        <div>
+          <h3>Safety · 2021 to <span class="crashThrough"></span></h3>
+          <div class="tiles" id="tilesSafe"></div>
+        </div>
+        <div>
+          <h3>People, transit, business</h3>
+          <div class="tiles" id="tilesCtx"></div>
+        </div>
+        <div class="bars">
+          <h3>Facility miles by ward</h3>
+          <div id="facBars"></div>
+          <div class="legend-row" id="facLegend"></div>
+        </div>
+        <div>
+          <h3>How connected is the network? (all six wards)</h3>
+          <table class="conn"><thead><tr><th>Counting</th><th>Miles</th><th>Separate pieces</th><th>Longest piece</th></tr></thead><tbody id="connBody"></tbody></table>
+          <p class="note" style="margin:6px 0 0">A piece is a run of connected segments. Pieces touching within 40 ft count as connected.</p>
+        </div>
+          </div>
+        </details>
+        <details>
+          <summary>About the data</summary>
+          <ul id="aboutList"></ul>
+        </details>
+      </section>
+
+      <section class="pane" id="p-pri" role="tabpanel" aria-labelledby="t-pri" hidden>
+        <div>
+          <h2>Upgrade priorities</h2>
+          <p class="note" style="margin:4px 0 0">Draft scoring. Each segment gets a 0–100 score: its percentile rank on each factor, weighted by the points below. Default points follow how transportation agencies weight bike projects; see the Sources tab for the evidence behind each factor.</p>
+        </div>
+        <label class="callout" for="budgetOn">
+          <input type="checkbox" id="budgetOn" class="sr-switch">
+          <span class="switch" aria-hidden="true"></span>
+          <span class="callout-txt"><b>Budget mode</b><span>Enter a yearly budget and see which top-ranked segments it can pay for, highlighted in gold on the map.</span></span>
+        </label>
+        <label class="swrow" for="incN">
+          <input type="checkbox" id="incN" class="sr-switch">
+          <span class="switch" aria-hidden="true"></span>
+          <span class="callout-txt"><b>Include streets with no bike facility</b><span id="incNnote">These are scored with everything else, but they are usually harder to change: no lane to upgrade, and often state-controlled with higher speeds. Turn off to rank only existing routes.</span></span>
+        </label>
+        <label class="chk"><input type="checkbox" id="top5"> Number the top 5 on the map</label>
+        <div id="budgetPanel" class="budget" hidden>
+          <h3>Budget plan</h3>
+          <div class="bgrid">
+            <label for="bAmt">Annual budget</label><div class="money"><span>$</span><input id="bAmt" type="number" min="0" step="50000" inputmode="numeric"></div>
+            <label for="bArt">Upgrade arterials to</label><select id="bArt"><option value="PC">Protected lane, concrete curb</option><option value="PP">Protected lane, flexible posts</option><option value="BF">Buffered lane</option></select>
+            <label for="bSide">Upgrade side streets to</label><select id="bSide"><option value="G">Neighborhood greenway</option><option value="CF">Contraflow lane</option></select>
+            <span></span><label class="chk" style="font-weight:500"><input type="checkbox" id="bSkip"> Skip segments rated Harder</label>
+            <label for="bPick">Choose segments by</label><select id="bPick"><option value="score">Highest score first</option><option value="value">Most score per dollar</option></select>
+          </div>
+          <details id="costDetails"><summary>Cost per mile (editable)</summary>
+            <div class="costs" id="costGrid"></div>
+            <div class="btnrow" style="margin-top:8px"><button class="btn" id="resetC">Reset costs and budget</button></div>
+            <p class="note" style="margin:6px 0 0">Per mile of street, both directions, in 2026 dollars. Planning-level only; real costs vary with drainage, signals, parking changes and bus stops. Sources are in the Sources tab.</p>
+          </details>
+          <div class="plan" id="planSummary" aria-live="polite"></div>
+        </div>
+        <div>
+          <h3>Segments to consider</h3>
+          <div class="types" id="typeFilter"></div>
+        </div>
+
+        <div>
+          <h3>Weights</h3>
+          <div class="weights" id="weights"></div>
+        </div>
+        <div class="nve">
+          <h3>Need vs. ease</h3>
+          <p class="note" style="margin:0 0 6px">Each dot is a segment. Higher means a stronger case; further right means fewer obstacles: less parking or lane loss, lighter traffic, lower speed, city rather than state control. The shaded corner holds the quick wins.</p>
+          <div id="nveChart" class="nve-chart"></div>
+          <div class="dimsel"><label for="dims">Street widths for parking impact</label><select id="dims"><option value="std">Standard (10 / 8 / 7 ft)</option><option value="min">Minimum (10 / 7 / 6 ft)</option></select></div>
+          <p class="note" id="dimNote" style="margin:4px 0 0"></p>
+        </div>
+        <div class="btnrow">
+          <button class="btn" id="resetW">Reset weights</button>
+          <button class="btn" id="copyT">Copy table</button>
+          <span class="note" id="copyMsg" aria-live="polite"></span>
+        </div>
+        <div class="tbl-wrap"><table class="seg" id="segTable"><thead><tr></tr></thead><tbody></tbody></table></div>
+        <p class="note" id="tblNote"></p>
+      </section>
+
+      <section class="pane" id="p-lay" role="tabpanel" aria-labelledby="t-lay" hidden>
+        <h2>Map layers</h2>
+        <div id="layerList"></div>
+      </section>
+      <section class="pane" id="p-src" role="tabpanel" aria-labelledby="t-src" hidden>
+        <div>
+          <h2>Why these factors</h2>
+          <p class="note" style="margin:4px 0 0">Each scoring factor is tied to research or to how other cities rank bike projects. The research supports <em>including</em> each factor. It does not give exact weights: the default points copy what transportation agencies use (Safety ≈35, Equity ≈20, Connectivity ≈20–25, Demand the rest). Treat the weights as a starting position to discuss, not a finding.</p>
+        </div>
+        <div class="srcgroups" id="srcFactors"></div>
+        <div>
+          <h3>How agencies weight bike projects</h3>
+          <div class="tbl-wrap" style="min-height:0;max-height:none"><table class="seg prec"><thead><tr><th>Plan</th><th>Safety</th><th>Equity</th><th>Connectivity</th><th>Demand</th><th>Other</th></tr></thead><tbody>
+            <tr><td><a href="https://berkeleyca.gov/sites/default/files/2026-07/Berkeley%20Bicycle%20Plan%202026%20Appendix%20E%20Prioritization%20Methodology.pdf" target="_blank" rel="noopener">Berkeley Bike Plan, Appendix E (Dec 2025)</a></td><td>35 (crashes 20, traffic stress 15)</td><td>20</td><td>–</td><td>–</td><td>Community input 30, schools 10, feasibility 5</td></tr>
+            <tr><td><a href="https://www.alamedactc.org/wp-content/uploads/2020/09/5.1D_BPAC_Prioritization_Framework_20200917.pdf" target="_blank" rel="noopener">Dublin, CA bike/ped plan, draft framework (2020)</a></td><td>20%</td><td>20%</td><td>20% (incl. traffic stress, latent demand)</td><td>–</td><td>Barriers 20%, prior plans 20%</td></tr>
+            <tr><td><a href="https://www.hennepin.us/-/media/hennepinus/residents/transportation/biking/appendix-h-project-prioritization.pdf" target="_blank" rel="noopener">Hennepin County 2040 Bicycle Plan, App. H (c. 2014)</a></td><td>3 of 12 factors (crashes, serious injuries, deaths per mile)</td><td>1 of 12 (zero-car households)</td><td>Ranked #1 theme; 4 factors incl. gaps</td><td>4 of 12 (density, jobs, destinations, route requests)</td><td>Reported barriers</td></tr>
+            <tr><td><a href="https://www.chicago.gov/content/dam/city/sites/complete-streets/pdfs/2023_Chicago%20Cycling%20Strategy_Executive%20Summary.pdf" target="_blank" rel="noopener">Chicago Cycling Strategy (CDOT, 2023)</a></td><td colspan="5">No scoring formula published. Goals: a connected citywide network built from long crosstown corridors, local networks where bikeways are sparse, and 70% of residents within ½ mile of a low-stress bikeway (trails, greenways, protected lanes).</td></tr>
+          </tbody></table></div>
+        </div>
+        <div>
+          <h3>Street design, parking impact and ease</h3>
+          <ul class="srclist">
+            <li><b>Street measurements</b> come from IDOT's road inventory (2026 edition): curb-to-curb width, through travel lanes, parking on each side, daily traffic (mostly 2022–23 counts), speed limit and road owner. It covers essentially every arterial in the six wards (<a href="https://gis1.dot.illinois.gov/arcgis/rest/services/TrafficSafety/cis_LocationTool2025/MapServer/12" target="_blank" rel="noopener">IDOT road network service</a>; field definitions in the <a href="https://public.powerdms.com/IDOT/documents/2013644" target="_blank" rel="noopener">IDOT roadway information manual</a>, including <a href="https://idot.illinois.gov/content/dam/soi/en/web/idot/documents/doing-business/manuals-split/opp/iris/item-020.pdf" target="_blank" rel="noopener">surface width</a> and <a href="https://idot.illinois.gov/content/dam/soi/en/web/idot/documents/doing-business/manuals-split/opp/iris/item-067a.pdf" target="_blank" rel="noopener">parking</a>).</li>
+            <li><b>Likely parking impact</b> asks whether protected lanes on both sides fit within the measured width with today's lanes and parking. If not, it tries a road diet (four lanes to three, only where traffic is under 20,000 vehicles a day, roughly the range where the federal Road Diet guide reports most projects), then removing parking on one side, then both. Results depend on assumed widths; switch between standard and minimum in the Priorities tab to see the range (<a href="https://highways.dot.gov/safety/other/road-diets/road-diet-informational-guide/1-introduction" target="_blank" rel="noopener">FHWA Road Diet Informational Guide</a>).</li>
+            <li><b>Ease</b> is a 0–100 difficulty score: parking impact 40%, traffic volume 25% (over 20,000 vehicles a day is hardest), road owner 25% (state roads need IDOT approval; county roads, county approval), and speed limit 10% (35 mph or more). Up to 33 is "Easier", up to 60 "Moderate", above that "Harder". These weights are a judgment call, not from a published method.</li>
+            <li><b>Limits.</b> IDOT's records can lag recent changes: it still lists parking on both sides of several streets that already have protected lanes. The check ignores bus stops, loading zones, turn lanes and drainage, and it cannot tell how full the parking is. Treat the label as a screen; confirm with CDOT designs or a site visit before using it with businesses or neighbors. Parking occupancy counts are the standard way to show whether a block has spare parking.</li>
+            <li><b>Major streets with no bike facility</b> are city arterials (city street centerline classes 2 and 3) with no bike route along them, split at crossing arterials at least a quarter mile apart. They are scored on the same factors as existing routes.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Cost and budget assumptions (Budget plan)</h3>
+          <ul class="srclist">
+            <li><b>Concrete-curb protected lane, $400K per mile.</b> Chicago's 2022 program to add concrete curbs cost about $7 million for 25 miles of new and upgraded protected lanes, roughly $280K a mile in 2022 dollars (<a href="https://chicago.suntimes.com/city-hall/2022/6/29/23188638/bike-lanes-protected-concrete-curbs-plastic-bollards-expanded-program-lily-grace-traffic-fatalities" target="_blank" rel="noopener">Chicago Sun-Times, 2022</a>; <a href="https://www.chicago.gov/city/en/depts/cdot/provdrs/bike/news/2022/june/chicago-to-upgrade-all-protected-bike-lanes-to-concrete-by-end-o.html" target="_blank" rel="noopener">CDOT</a>). A cast-in-place curb lane on 31st St cost about $400K for half a mile in 2016, near $1M a mile today (<a href="https://chicagoreader.com/columns-opinion/on-transportation/heres-how-we-can-build-a-citywide-protected-bike-lane-network/" target="_blank" rel="noopener">Chicago Reader</a>). $400K sits between the two, closer to the precast curbs CDOT now uses.</li>
+            <li><b>Flexible-post protected lane $300K, buffered lane $150K, neighborhood greenway $200K per mile.</b> Based on 2025 planning estimates of $290K (posts), $110–140K (buffered) and $200–285K (greenways with traffic circles) per mile, both directions (<a href="https://longmontcolorado.gov/wp-content/uploads/2025/07/Appendix-E_Cost-Assumptions.pdf" target="_blank" rel="noopener">Longmont, CO bike plan, App. E</a>). Chicago greenways use fewer traffic circles, so the default is at the low end.</li>
+            <li><b>Painted lane, $125K per mile.</b> National median $89K per mile in 2012 dollars, adjusted for inflation (<a href="https://www.pedbikeinfo.org/downloads/Countermeasure_Costs_Summary_Oct2013.pdf" target="_blank" rel="noopener">Bushell et al., UNC Highway Safety Research Center for FHWA, 2013</a>).</li>
+            <li><b>Contraflow lane, $150K per mile.</b> No published figure found; estimated as paint plus signs.</li>
+            <li><b>Annual budget, $2.5M default.</b> About $1M as the six wards' population share (about 12%) of CDOT's $17M, two-year citywide bike program (<a href="https://www.roadsbridges.com/chicago-dot-announces-largest-bike-lane-expansion-citys-history" target="_blank" rel="noopener">2021–22</a>), plus $250K from each ward's $1.5M yearly ward infrastructure fund ("menu money"; <a href="https://40thward.org/2023/12/peoples-budget-2024-qa" target="_blank" rel="noopener">40th Ward</a>, <a href="https://www.46thward.com/participatory-budgeting" target="_blank" rel="noopener">46th Ward</a>). Menu money also pays for street, alley and sidewalk repair, so the real bike share depends on each alderperson.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>What agencies also weigh that this tool can't</h3>
+          <ul class="srclist">
+            <li><b>Community support.</b> Berkeley gives it 30 of 100 points. Ward offices are the right source for this.</li>
+            <li><b>Feasibility and cost.</b> Parking removal, street width, bus routes and drainage decide what can be built. Not in this data.</li>
+            <li><b>Measured traffic volume and speed.</b> NACTO's protected-lane triggers are 25+ mph, ~6,000+ vehicles per day, or more than one lane each way. This tool uses street type as a stand-in. IDOT's 2025 traffic counts exist but could not be loaded here.</li>
+            <li><b>Schools and intersections.</b> Berkeley scores proximity to schools; the traffic-stress research stresses that dangerous crossings break networks. Neither is scored here.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Context: evidence not used as a factor</h3>
+          <ul class="srclist">
+            <li><b>Effects on businesses.</b> A review of 23 U.S. and Canadian studies found bike and pedestrian projects have "generally positive or non-significant" effects on nearby retail and food businesses; car-dependent businesses can be hurt. <a href="https://doi.org/10.1080/01441647.2021.1912849" target="_blank" rel="noopener">Volker &amp; Handy, Transport Reviews, 2021</a>. Business density is scored as a destination measure, not as an economic-benefit claim.</li>
+            <li><b>Citywide safety.</b> In 12 large U.S. cities over 13 years, more separated and protected lanes were associated with fewer road deaths for all users. Association, not proof of cause. <a href="https://www.sciencedaily.com/releases/2019/05/190529113036.htm" target="_blank" rel="noopener">Marshall &amp; Ferenchak, Journal of Transport &amp; Health, 2019 (summary)</a>.</li>
+            <li><b>Who the network is for.</b> Most adults in U.S. cities are "interested but concerned" riders who would bike more on slower, quieter streets or separated paths. <a href="https://doi.org/10.3141/2587-11" target="_blank" rel="noopener">Dill &amp; McNeil, Transportation Research Record 2587, 2016</a>.</li>
+          </ul>
+        </div>
+      </section>
+
+    </aside>
+  </div>
+</div>
+
+<div id="tour" class="tour" role="dialog" aria-modal="true" aria-labelledby="tourH0" hidden>
+  <div class="tour-scrim" id="tourScrim"></div>
+  <div class="tour-top">
+    <div class="tour-dots" id="tourDots" aria-hidden="true"></div>
+    <button class="btn tour-skip" id="tourSkip">Skip intro</button>
+  </div>
+  <div class="tour-scroll" id="tourScroll" tabindex="0">
+    <section class="step" data-step="intro"><div class="card big">
+      <p class="eyebrow">North Side Bike Network · Wards 33, 40, 46, 47, 48 and 49</p>
+      <h2 id="tourH0">The Case for Connectivity</h2>
+      <p class="lede">Our lives and daily activities - from work commutes and daycare drop-offs to visits with loved ones - don’t stop at the edges of ward boundaries, so why should our infrastructure? A complete bike grid would make all road users, including pedestrians and drivers, safer. This mapping tool shows how starting with minor improvements to connect our existing bike infrastructure across a cluster of wards could create a safer, continuous set of protected roads for everyone.</p>
+      <p class="scrollhint" aria-hidden="true">Scroll to begin <span>↓</span></p>
+    </div></section>
+    <section class="step" data-step="good"><div class="card">
+      <p class="eyebrow">What's already here</p>
+      <h2>A strong start</h2>
+      <p>Three kinds of bikeway already give riders real separation from fast traffic:</p>
+      <ul class="tl">
+        <li><i style="background:var(--f-P)"></i><span><b data-v="P"></b> of <b>protected lanes</b>, with a curb or posts between bikes and cars</span></li>
+        <li><i style="background:var(--f-CF)"></i><span><b data-v="CF"></b> of <b>contraflow lanes</b>, letting bikes ride both ways on quiet one-way streets</span></li>
+        <li><i style="background:var(--f-G)"></i><span><b data-v="G"></b> of <b>neighborhood greenways</b>, side streets signed and calmed for biking</span></li>
+      </ul>
+      <p>Joined together, they already form one low-stress route network <b data-v="lsbig"></b> long.</p>
+    </div></section>
+    <section class="step" data-step="gaps"><div class="card">
+      <p class="eyebrow">Where it breaks down</p>
+      <h2>Paint is not protection</h2>
+      <ul class="tl">
+        <li><i style="background:var(--f-L)"></i><span><b data-v="L"></b> of <b>painted lanes</b></span></li>
+        <li><i style="background:var(--f-BF)"></i><span><b data-v="BF"></b> of <b>buffered lanes</b> (paint with a striped gap)</span></li>
+        <li><i class="dash" style="--c:var(--f-S)"></i><span><b data-v="S"></b> of <b>shared-lane markings</b>, arrows painted in traffic</span></li>
+      </ul>
+      <p>None of these put anything between a rider and a car. In a Vancouver and Toronto study, painted lanes on major streets showed no clear safety benefit, while the few protected cycle tracks studied had about one-ninth the injury risk of busy streets with no bike facility.</p>
+      <p>The protected lanes that do exist come in <b data-v="ppieces"></b> separate pieces; the longest runs just <b data-v="plong"></b>. And <b data-v="unserved"></b> of major streets, including <b>Western Avenue</b>, <b>Irving Park Road</b> and <b>Peterson Avenue</b>, have no bike facility at all (dotted on the map).</p>
+    </div></section>
+    <section class="step" data-step="clark"><div class="card">
+      <p class="eyebrow">A gap, up close</p>
+      <h2>Clark Street</h2>
+      <p>Clark has protected lanes from Irving Park to Winnemac, and again from Edgewater to Devon. In between, for <b data-v="clarkmi"></b>, riders get paint only.</p>
+      <p>Since 2021, <b data-v="clarkinj"></b> people walking or biking have been hurt within 100 feet of that painted stretch.</p>
+    </div></section>
+    <section class="step" data-step="toll"><div class="card">
+      <p class="eyebrow">The human toll · 2021 to <span class="crashThrough"></span></p>
+      <h2><span data-v="ksi"></span> people seriously injured or killed</h2>
+      <p>Since January 2021, <b data-v="ksi2"></b> people walking or biking in these six wards were seriously injured or killed in traffic crashes. <b data-v="killed"></b> of them died. That is one person roughly every <b data-v="every"></b>.</p>
+      <p><b data-v="pct30"></b> of the injuries happened on streets posted at 30 mph or more. A pedestrian hit at 31 mph has about a 50% chance of severe injury, double the risk at 23 mph.</p>
+      <p class="legend-inline"><span><i class="dot" style="background:var(--k)"></i>Killed</span><span><i class="dot" style="background:var(--a)"></i>Seriously injured</span></p>
+    </div></section>
+    <section class="step" data-step="irving"><div class="card">
+      <div class="card-head"><p class="eyebrow">Lake View · Ward 47 · Aug. 8, 2026</p><span class="card-tag">The human toll</span></div>
+      <h2>Irving Park Road near Greenview</h2>
+      <p>On a Saturday night, a driver hit and killed a 25-year-old woman as she walked into the street on the 1400 block of West Irving Park Road. Police say he fled, set off a chain crash with two other cars, hit a tree and ran before officers arrested him. Charges were pending when Fox 32 reported the crash.</p>
+      <p><b>Irving Park Road</b> is one of the busiest streets in the area. It has no bike facility anywhere in these six wards, and this was one of three pedestrian deaths on it since 2021.</p>
+      <p class="src"><a href="https://www.fox32chicago.com/news/deadly-crash-flee-arrest-8-8" target="_blank" rel="noopener">Fox 32 Chicago: Driver hits, kills woman on Chicago's North Side, flees and crashes twice more</a></p>
+    </div></section>
+    <section class="step" data-step="estes"><div class="card">
+      <div class="card-head"><p class="eyebrow">Rogers Park · Ward 49 · Aug. 6, 2025</p><span class="card-tag">The human toll</span></div>
+      <h2>Estes Avenue at Greenview</h2>
+      <p>On a Wednesday evening, a driver in an SUV struck and killed a man in the street on the 1400 block of West Estes Avenue, then drove away. The Greenview Avenue greenway crosses Estes here, but Estes itself has no bike facility and no protection for people crossing it.</p>
+      <p class="src"><a href="https://abc7chicago.com/post/chicago-hit-run-crash-kills-pedestrian-west-estes-avenue-rogers-park-cpd/17473560/" target="_blank" rel="noopener">ABC7 Chicago: Man hit, killed in Rogers Park; police searching for SUV</a></p>
+    </div></section>
+    <section class="step" data-step="damen"><div class="card">
+      <div class="card-head"><p class="eyebrow">Lincoln Square · Ward 40 · Oct. 23, 2023</p><span class="card-tag">The human toll</span></div>
+      <h2>Damen Avenue near Foster</h2>
+      <p><b>Donald Heggemann</b>, 59, a ceramicist who worked at Northeastern Illinois University, was riding north on Damen when a driver struck him and kept going. She was later charged with aggravated DUI causing death.</p>
+      <p>He was riding in a <b>paint-only bike lane</b>; Damen's bike lanes north of Diversey are almost entirely paint. Streetsblog Chicago counted him as at least the third cyclist killed on that stretch in 14 years.</p>
+      <p class="src"><a href="https://chi.streetsblog.org/2023/10/24/man-59-killed-by-allegedly-drunk-driver-was-3rd-cyclist-killed-on-damen-north-of-diversey-in-14-years" target="_blank" rel="noopener">Streetsblog Chicago: 3rd cyclist killed on Damen north of Diversey in 14 years</a></p>
+    </div></section>
+    <section class="step" data-step="pri"><div class="card">
+      <p class="eyebrow">Priorities</p>
+      <h2>Where to start</h2>
+      <p class="lede-sm">These deaths are not inevitable. Stronger policy and safer street design make a real difference, and this tool is built to help decide where to invest next.</p>
+      <p>The tool ranks every stretch where riders have <b>no physical protection</b>: painted lanes, buffered lanes, shared-lane markings, and major streets with no bike facility at all. Painted routes are already designated for biking, so adding a curb or posts is often the fastest way to stitch protected pieces together. Streets with nothing, like Irving Park, may need the most help but are often harder to change.</p>
+      <p>Each segment gets a 0–100 score. Defaults follow how transportation agencies weigh bike projects:</p>
+      <div class="wbar" role="img" aria-label="Safety 35, Connectivity 25, Equity 20, Demand 20">
+        <span style="flex:35;background:var(--f-L)">Safety 35</span><span style="flex:25;background:var(--f-P)">Connects 25</span><span style="flex:20;background:var(--f-CF)">Equity 20</span><span style="flex:20;background:var(--f-BF);color:#14201a">Demand 20</span>
+      </div>
+      <p class="small"><b>Safety:</b> injuries per mile and how busy the street is. <b>Connects:</b> whether it links separate low-stress pieces. <b>Equity:</b> households without a car and residents in poverty nearby. <b>Demand:</b> businesses, density, L stations and current bike commuting. Sliders in the Priorities tab let you change every weight.</p>
+      <p>The tool also rates how hard each fix is likely to be, using IDOT's street measurements: whether parking or a travel lane would have to go, how much traffic the street carries, its speed limit, and whether the state controls it. That separates <b>quick wins</b> from <b>long-term campaigns</b>.</p>
+      <p>Today's top five are numbered on the map:</p>
+      <ol class="top5" id="tourTop5"></ol>
+    </div></section>
+    <section class="step" data-step="budget"><div class="card">
+      <p class="eyebrow">Budget mode</p>
+      <h2>The most protection per dollar</h2>
+      <p>Money is the real constraint. Turn on <b>Budget mode</b> in the Priorities tab, enter a yearly budget, and the tool fills it with the highest-ranked segments that fit, using planning costs for each type of upgrade (for example, about $400,000 a mile for a concrete-curb protected lane).</p>
+      <p>At a <b data-v="bamt"></b> budget, our working estimate of what the city and the six wards might spend on bikeways in a year, it funds <b data-v="bn"></b> covering <b data-v="bmi"></b>, shown in gold.</p>
+      <p class="small">Switch to “most score per dollar” to favor cheaper upgrades, or edit any cost to match a real bid. All costs and sources are in the Sources tab.</p>
+    </div></section>
+    <section class="step" data-step="end"><div class="card big">
+      <p class="eyebrow">Your turn</p>
+      <h2>Explore the map</h2>
+      <p>Pick a ward, click any street or crash for details, turn on more layers, and test your own priorities and budget.</p>
+      <div class="btnrow"><button class="btn primary" id="tourDone">Explore the map</button><button class="btn" id="tourRestart">Back to the start</button></div>
+      <p class="small">You can replay this tour anytime with “How it works” at the top.</p>
+    </div></section>
+  </div>
+</div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+(function(){
+const D=JSON.parse(document.getElementById('data').textContent);
+const BL=D.meta.bike_label||'Dec 2025', RY=D.meta.ridership_year||2025, NEWS=D.segs.filter(s=>s.src).length;
+const WARDS=[33,40,46,47,48,49];
+const FAC={P:'Protected',CF:'Contraflow',G:'Neighborhood greenway',BF:'Buffered',L:'Painted lane',S:'Shared-lane markings',N:'No bike facility'};
+const FAC_ORDER=['P','CF','G','BF','L','S'];
+const cv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmt=(v,d=0)=>v==null||isNaN(v)?'–':Number(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const segType=s=>(s.cf&&s.t!=='P')?'CF':s.t;
+const W=k=>{const o=D.wardsum[state.ward==='all'?'all':String(state.ward)];for(const key in o){if(key.trim()===k)return o[key]}return null};
+let state={ward:'all',sel:null,sortKey:'score',sortDir:-1,emph:null};
+function setEmph(m){state.emph=m;restyle()}
+
+
+/* ---------------- map ---------------- */
+// One shared canvas for every vector layer, so clicks reach whichever feature is on top.
+const map=L.map('map',{preferCanvas:true,zoomSnap:0.25,attributionControl:false,minZoom:11,maxZoom:18});
+const RV=L.canvas({padding:0.3,tolerance:5});
+map.createPane('labels').style.zIndex=450; map.getPane('labels').style.pointerEvents='none';
+const groups={};
+const SNAPS=['Dec 2014','Mar 2016','Nov 2018','Feb 2020','Jan 2021','Nov 2021','Dec 2022',BL];
+const dt=s=>{const d=new Date(s.replace(' ','T'));return isNaN(d)?s:d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' · '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})};
+const dl=rows=>`<dl>${rows.filter(r=>r).map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('')}</dl>`;
+
+// streets
+const stStyle={'1':['--st1',3.2],'2':['--st2',2.2],'3':['--st3',1.4],'4':['--st4',0.9],'E':['--st1',3.2],'RIV':['--river',4]};
+groups.streets=L.layerGroup().addTo(map);
+D.streets.forEach(s=>{
+  const [col,w]=stStyle[s.k]||['--st4',0.8];
+  const pl=L.polyline(s.c,{renderer:RV,weight:w,interactive:['1','2','3','RIV'].includes(s.k)});
+  pl._k=s.k; pl._col=col;
+  if(pl.options.interactive) pl.bindTooltip(s.k==='RIV'?'Chicago River':esc(s.n),{sticky:true,direction:'top',opacity:1});
+  groups.streets.addLayer(pl);
+});
+
+// wards
+groups.wards=L.layerGroup().addTo(map); const wardPoly={};
+D.wards.forEach(w=>{
+  const p=L.polygon(w.c,{renderer:RV,fill:false,weight:2,dashArray:'6 5',interactive:false}); p._w=w.w; wardPoly[w.w]=p; groups.wards.addLayer(p);
+  L.marker(w.lab,{icon:L.divIcon({className:'ward-label',html:'Ward '+w.w,iconSize:null}),interactive:false,pane:'labels'}).addTo(groups.wards);
+});
+
+// bike segments
+groups.bike=L.layerGroup().addTo(map); groups.gaps=L.layerGroup(); const segLayer={}; const halo=L.layerGroup().addTo(map);
+const segW={P:5,CF:4,G:2.6,BF:3.2,L:3,S:2.4,N:3};
+D.segs.forEach(s=>{
+  const t=segType(s);
+  const pl=L.polyline(s.c,{renderer:RV,weight:segW[t],lineCap:t==='N'?'butt':'round',dashArray:t==='S'?'5 5':t==='N'?'2 5':null});
+  pl._t=t; pl._s=s; pl.on('click',e=>{L.DomEvent.stopPropagation(e);select(s.id,false,e.latlng)});
+  pl.bindTooltip(()=>esc(s.st)+' · '+FAC[t]+' · click for details',{sticky:true,direction:'top',opacity:1});
+  segLayer[s.id]=pl; (t==='N'?groups.gaps:groups.bike).addLayer(pl);
+});
+
+// crashes (one mark per injured pedestrian or cyclist)
+groups.ksi=L.layerGroup(); groups.inj=L.layerGroup();
+const SEV={K:'killed',A:'seriously injured',I:'injured'};
+function crashHTML(c){
+  const [lat,lng,who,sev,when,addr,sp,inj,ctype,ptype]=c;
+  return `<div class="pop"><h4>${who==='b'?'Cyclist':'Pedestrian'} ${SEV[sev]}</h4><div class="ext">${esc(dt(when))}</div>`+dl([
+    ['Location',esc(addr)],['Person',esc(ptype==='Non-motor vehicle'?'Other non-motorist (e.g. wheelchair, scooter)':ptype)],['Injury (police report)',esc(inj)],['Crash type',esc(ctype)],['Posted speed limit',sp?sp+' mph':'Not recorded']])+'</div>';
+}
+D.crashes.forEach(c=>{
+  const sev=c[3];
+  if(sev!=='I'){const m=L.circleMarker([c[0],c[1]],{renderer:RV,radius:sev==='K'?6:4.2,weight:1.4});m._sev=sev;m.bindPopup(()=>crashHTML(c),{maxWidth:300});groups.ksi.addLayer(m)}
+  const m2=L.circleMarker([c[0],c[1]],{renderer:RV,radius:2.6,weight:0,fillOpacity:.75});m2._who=c[2];m2.bindPopup(()=>crashHTML(c),{maxWidth:300});groups.inj.addLayer(m2);
+});
+
+
+// stations: CTA-style train badge, colored by line(s)
+const LINEC={Red:'#c60c30',Blue:'#00a1de',Brown:'#62361b',Green:'#009b3a',Orange:'#f9461c',Purple:'#522398',Pink:'#e27ea6',Yellow:'#f9e300'};
+const TRAIN='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M7 3h10a3 3 0 0 1 3 3v9a3 3 0 0 1-2.2 2.9l1.6 2.6h-2.3l-1.4-2.5H8.3l-1.4 2.5H4.6l1.6-2.6A3 3 0 0 1 4 15V6a3 3 0 0 1 3-3zm-.5 3.2v4.3h11V6.2h-11zM7.8 13a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6zm8.4 0a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6z"/></svg>';
+groups.stations=L.layerGroup();
+D.stations.forEach(s=>{
+  const cols=(s.l.length?s.l:['Red']).map(l=>LINEC[l]||'#565a5c');
+  const bg=cols.length===1?cols[0]:`linear-gradient(135deg,${cols.map((c,i)=>`${c} ${i/cols.length*100}% ${(i+1)/cols.length*100}%`).join(',')})`;
+  const big=s.r&&s.r>1e6; const sz=big?28:23;
+  const icon=L.divIcon({className:'cta',html:`<span class="cta-badge${big?' big':''}" style="background:${bg}">${TRAIN}</span>`,iconSize:[sz,sz],iconAnchor:[sz/2,sz/2],popupAnchor:[0,-sz/2]});
+  const m=L.marker(s.ll,{icon,title:s.n+' station',keyboard:true,riseOnHover:true});
+  m.bindPopup(`<div class="pop"><h4>${esc(s.n)}</h4><div class="ext">CTA ${s.l.join(' / ')||''} Line${s.l.length>1?'s':''}${s.w?' · Ward '+s.w:''}</div>`+dl([[`Entries in ${RY}`,s.r?fmt(s.r):'–'],['Average entries per day',s.r?fmt(s.r/365):'–']])+'</div>');
+  m.bindTooltip(esc(s.n),{direction:'top',offset:[0,-sz/2],opacity:1}); groups.stations.addLayer(m);
+});
+
+// block groups: census shading and business density share the same shapes
+groups.bgs=L.layerGroup(); groups.bizden=L.layerGroup(); const bgLayers=[], bzLayers=[];
+function bgHTML(b){return `<div class="pop"><h4>Census block group</h4><div class="ext">${b.id} · part inside the six wards</div>`+dl([
+  ['Residents (2020–24 est.)',fmt(b.pop)],['Residents per sq mi',fmt(b.den)],['Commute by bike',fmt(b.bk,1)+'%'],['Walk to work',fmt(b.wk,1)+'%'],['Commute by transit',fmt(b.tr,1)+'%'],['Households without a car',fmt(b.zc,1)+'%'],['Below poverty line',fmt(b.pov,1)+'%'],
+  ['Licensed businesses',fmt(b.bz)],['Businesses per sq mi',fmt(b.bzd)],['Businesses per 1,000 residents',b.bzp==null?'Too few residents':fmt(b.bzp,1)]])+'</div>'}
+D.bgs.forEach(b=>{
+  const p=L.polygon(b.c,{renderer:RV,weight:0.6});p._b=b;p.bindPopup(()=>bgHTML(b));bgLayers.push(p);groups.bgs.addLayer(p);
+  const q=L.polygon(b.c,{renderer:RV,weight:0.6});q._b=b;q.bindPopup(()=>bgHTML(b));bzLayers.push(q);groups.bizden.addLayer(q);
+});
+let bgMetric='den', bzMetric='bzd';
+const BGM={den:{label:'Residents per sq mi',stops:[5000,15000,25000,35000,50000],fmt:v=>fmt(v)},bk:{label:'% commuting by bike',stops:[0.5,1.5,2.5,4,6],fmt:v=>fmt(v,1)+'%'},tr:{label:'% commuting by transit',stops:[10,17,24,31,38],fmt:v=>fmt(v,0)+'%'},zc:{label:'% households without a car',stops:[10,20,30,40,55],fmt:v=>fmt(v,0)+'%'},pov:{label:'% below poverty line',stops:[5,10,15,25,35],fmt:v=>fmt(v,0)+'%'},
+  bzd:{label:'Businesses per sq mi',stops:[100,250,400,600,1000],fmt:v=>fmt(v)},bzp:{label:'Businesses per 1,000 residents',stops:[4,8,14,22,35],fmt:v=>fmt(v)}};
+
+// zoning
+groups.zoning=L.layerGroup();
+const zcat=z=>{if(/^PD/.test(z))return'PD';if(/^PMD/.test(z))return'M';const m=z.match(/^[A-Z]+/);const p=m?m[0]:'';if(p==='B'||p==='C'||p==='D'||p==='DX'||p==='DC')return'B';if(p==='RS'||p==='RT'||p==='RM'||p==='R')return'R';if(p==='M')return'M';if(p==='POS')return'POS';if(p==='T')return'T';return'O'};
+const ZC={B:['Business / commercial','#c2410c','#fb923c'],R:['Residential','#b9a37a','#7a6a4f'],M:['Manufacturing','#6b7280','#9ca3af'],POS:['Parks & open space','#3f8f4f','#4fa860'],PD:['Planned development','#7c3aed','#a78bfa'],T:['Transportation','#64748b','#94a3b8'],O:['Other','#9ca3af','#6b7280']};
+const ZDESC={B1:'Neighborhood shopping',B2:'Neighborhood mixed-use',B3:'Community shopping',C1:'Neighborhood commercial',C2:'Motor-vehicle-related commercial',C3:'Commercial, manufacturing and employment',RS:'Residential single-unit (detached house)',RT:'Residential two-flat, townhouse and multi-unit',RM:'Residential multi-unit',M1:'Limited manufacturing / business park',M2:'Light industry',M3:'Heavy industry',PMD:'Planned manufacturing district',POS:'Parks and open space',PD:'Planned development (site-specific rules)',T:'Transportation'};
+const zdesc=z=>{const k=Object.keys(ZDESC).sort((a,b)=>b.length-a.length).find(k=>z.startsWith(k));return k?ZDESC[k]:''};
+const dark=()=>{const t=document.documentElement.dataset.theme;return t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches)};
+D.zoning.forEach(z=>{const p=L.polygon(z.c,{renderer:RV,weight:0.3});p._z=zcat(z.z);
+  const n=(z.z.match(/-(\d+(\.\d+)?)$/)||[])[1];
+  p.bindPopup(`<div class="pop"><h4>${esc(z.z)}</h4><div class="ext">${esc(zdesc(z.z)||ZC[p._z][0])}</div>`+dl([['Group',ZC[p._z][0]],n?['Bulk/density number',n+' (higher allows more floor area)']:null])+'</div>');
+  p.bindTooltip(esc(z.z),{sticky:true,opacity:1});groups.zoning.addLayer(p)});
+
+// businesses
+groups.biz=L.layerGroup();
+D.biz.forEach(b=>{const m=L.circleMarker([b[0],b[1]],{renderer:RV,radius:2.2,weight:0,fillOpacity:.8});
+  m.bindPopup(`<div class="pop"><h4>${esc(b[2])}</h4><div class="ext">${esc(b[4])} · Ward ${b[5]}</div>`+dl([['License',esc(b[3])]])+'</div>',{maxWidth:280});
+  m.bindTooltip(esc(b[2]),{opacity:1});groups.biz.addLayer(m)});
+
+// keep the stacking order on the shared canvas: shading at the bottom, crashes on top
+const ORDER=['zoning','bgs','bizden','streets','wards','biz','hl','halo','gaps','bike','inj','ksi'];
+function reorder(){ORDER.forEach(k=>{const g=k==='halo'?halo:k==='hl'?(typeof hl!=='undefined'?hl:null):groups[k]; if(g&&map.hasLayer(g))g.eachLayer(l=>{if(l.bringToFront)l.bringToFront()})})}
+
+function rampColor(v,stops,dk,warm){
+  const cool=dk?['#1d2a2f','#1f4250','#235d70','#2c7a91','#3b98b0','#58b8cc']:['#eef5f7','#cfe4ea','#a3cbd8','#6facc2','#3b8aa7','#16627f'];
+  const wrm=dk?['#2a221b','#4a3220','#6b4223','#8f5627','#b66d2c','#d9893a']:['#fbf3ea','#f2dcc2','#e5bb8f','#d4945d','#b86b33','#8a4718'];
+  const L1=warm?wrm:cool;
+  if(v==null)return null; let i=0; while(i<stops.length&&v>=stops[i])i++; return L1[i];
+}
+function restyle(){
+  const dk=dark();
+  groups.streets.eachLayer(l=>l.setStyle({color:cv(l._col),opacity:1}));
+  groups.wards.eachLayer(l=>{if(l.setStyle){const on=state.ward==='all'||l._w===state.ward;l.setStyle({color:cv('--ward'),opacity:on?0.85:0.25,weight:on&&state.ward!=='all'?3:2})}});
+  const EM={good:{P:1,CF:1,G:1},gaps:{L:1,BF:1,S:1,N:1}};
+  [groups.bike,groups.gaps].forEach(G=>G.eachLayer(l=>{const sel=l._s.id===state.sel;let op=state.sel==null||sel?1:0.75;
+    if(state.emph==='dim')op=sel?1:0.45; else if(state.emph&&EM[state.emph])op=EM[state.emph][l._t]?1:0.12;
+    l.setStyle({color:cv('--f-'+l._t),opacity:op,weight:segW[l._t]+(sel?2:0)+(state.emph&&EM[state.emph]&&EM[state.emph][l._t]?1:0)})}));
+  groups.ksi.eachLayer(m=>m.setStyle({color:cv('--panel'),fillColor:cv(m._sev==='K'?'--k':'--a'),fillOpacity:.95}));
+  groups.inj.eachLayer(m=>m.setStyle({fillColor:cv(m._who==='b'?'--inj-b':'--inj-p')}));
+  const M=BGM[bgMetric]; bgLayers.forEach(p=>{const c=rampColor(p._b[bgMetric],M.stops,dk,false);p.setStyle({fillColor:c||cv('--map-bg'),fillOpacity:c?.85:0,color:cv('--map-bg'),weight:0.6})});
+  const Z=BGM[bzMetric]; bzLayers.forEach(p=>{const c=rampColor(p._b[bzMetric],Z.stops,dk,true);p.setStyle({fillColor:c||cv('--map-bg'),fillOpacity:c?.85:0,color:c?cv('--map-bg'):cv('--muted'),weight:c?0.6:0.8,dashArray:c?null:'2 3'})});
+  groups.zoning.eachLayer(p=>{const c=ZC[p._z][dk?2:1];p.setStyle({fillColor:c,fillOpacity:p._z==='R'?0.18:0.38,color:c,opacity:.5})});
+  groups.biz.eachLayer(m=>m.setStyle({fillColor:cv('--biz')}));
+  drawHalo(); if(typeof drawHighlights==='function')drawHighlights(); reorder(); renderLegends(); if(typeof renderMapLegend==='function')renderMapLegend();
+}
+function drawHalo(){
+  halo.clearLayers(); if(state.sel==null)return;
+  const s=D.segs.find(x=>x.id===state.sel); if(!s)return;
+  L.polyline(s.c,{renderer:RV,color:cv('--ink'),opacity:.35,weight:segW[segType(s)]+9,lineCap:'round',interactive:false}).addTo(halo);
+}
+function fitWard(){
+  const b=state.ward==='all'?L.featureGroup(Object.values(wardPoly)).getBounds():wardPoly[state.ward].getBounds();
+  map.fitBounds(b,{padding:[18,18]});
+}
+
+/* ---------------- popups for segments ---------------- */
+function histStrip(s){
+  const cells=s.hist.map(h=>h[1]).concat([s.t]);
+  const SHORT=['Dec ’14','Mar ’16','Nov ’18','Feb ’20','Jan ’21','Nov ’21','Dec ’22',s.src?'2026*':'Dec ’25'];
+  const FULL=SNAPS.map((x,i)=>(i===SNAPS.length-1&&s.src)?'2026 (news report)':(i===SNAPS.length-1?BL+' (current file)':x));
+  return `<div class="hist" role="list" aria-label="Facility type in each city snapshot">${cells.map((t,i)=>`<span role="listitem" tabindex="0" class="${t?'':'none'} ${i===0?'first':i===cells.length-1?'last':''}" style="background:${t?cv('--f-'+t):'transparent'}" data-tip="${FULL[i]}: ${t?FAC[t]:'not on the city bike map'}" aria-label="${FULL[i]}: ${t?FAC[t]:'not on the city bike map'}"></span>`).join('')}</div><div class="hist-lab">${SHORT.map(x=>`<span>${x}</span>`).join('')}</div>`;
+}
+function segHTML(s){
+  const t=segType(s); const sc=scores.get(s.id);
+  const NOUN={P:'protected lane',CF:'contraflow lane',G:'neighborhood greenway',BF:'buffered lane',L:'painted lane',S:'shared-lane street'};const base=s.cf&&s.t!=='P'?NOUN[s.t]:NOUN[t];
+  const rows=[
+    ['Covers',`${esc(s.st)}, ${esc(s.f)} to ${esc(s.to)}`],
+    s.src?['Data note',`<span class="rep">${s.src==='news'?'Added':'Updated'} from news report</span>`]:null,
+    ['Facility',FAC[t]+(s.cf&&s.t!=='P'?` (on a ${FAC[s.t].toLowerCase()})`:'')],
+    ['Length',fmt(s.mi,2)+' mi'],
+    ['First on the city bike map',s.add],
+    t==='N'?null:['Became a '+base,s.typ],
+  ];
+  const data=[
+    ['Cyclists injured within 100 ft',fmt(s.bi)],['Pedestrians injured within 100 ft',fmt(s.pi)],
+    ['Killed or seriously injured',fmt(s.ksi)+(s.k?` (${s.k} killed)`:'')],
+    ['Typical posted limit (crash reports)',s.sp?s.sp+' mph':'–'],
+    ['Nearest L station',fmt(s.rail,2)+' mi'],
+    ['Businesses within 300 ft',fmt(s.biz)],
+    ['Residents per sq mi (¼ mi around)',fmt(s.den)],
+    ['Commute by bike (¼ mi around)',fmt(s.bk,1)+'%'],
+    ['On a one-way street',s.ow>=0.5?'Yes':'No'],
+    ['Street type',STREETTYPE(s)],
+    s.lnk2!=null?['Low-stress pieces it touches',fmt(s.lnk2)+(s.lnk2>=2?' (closes a gap)':s.lnk2===1?' (extends one)':'')]:null,
+    ['Households without a car (¼ mi)',fmt(s.zc,1)+'%'],
+    ['Residents below poverty line (¼ mi)',fmt(s.pov,1)+'%'],
+    sc!=null?['Draft priority score',fmt(sc)]:null,
+  ];
+  return `<div class="pop"><h4>${esc(s.st)}</h4><div class="ext"><b style="color:${cv('--f-'+t)}">${FAC[t]}</b> · Ward ${s.w}</div>${dl(rows)}${s.src?`<p class="repnote">${esc(s.note)} ${L_('Read the report','https://chi.streetsblog.org/2026/09/30/sbc-bike-lane-fest-2025-26-far-north-side-including-lincoln-square-west-ridge-rogers-park-edgewater-and-uptown')}</p>`:''}<div class="pop-sec">History in city snapshots <span class="st-ext" style="text-transform:none;letter-spacing:0">· hover a box for details</span></div>${histStrip(s)}<div class="pop-sec">Conditions, 2021 to date</div>${dl(data)}<div class="pop-sec">Street design (IDOT inventory)</div>${dl(designRows(s))}<p class="repnote">Parking impact uses ${dimKey==='std'?'standard':'minimum'} widths. IDOT records can lag recent street changes; confirm with CDOT before relying on this.</p></div>`;
+}
+let popup=L.popup({maxWidth:340,autoPanPadding:[20,20]});
+function select(id,fromTable,at){
+  state.sel=id; restyle();
+  const s=D.segs.find(x=>x.id===id); if(!s)return;
+  const pl=segLayer[id];
+  if(!map.hasLayer(pl)){const el=document.getElementById('ly-gaps');if(el&&!el.checked){el.checked=true;el.dispatchEvent(new Event('change'))}}
+  if(fromTable) map.fitBounds(pl.getBounds(),{padding:[60,60],maxZoom:16});
+  popup.setLatLng(at||pl.getCenter()).setContent(segHTML(s)).openOn(map);
+  document.querySelectorAll('#segTable tbody tr').forEach(tr=>tr.classList.toggle('sel',+tr.dataset.id===id));
+  if(!fromTable){const tr=document.querySelector(`#segTable tbody tr[data-id="${id}"]`); if(tr&&!document.getElementById('p-pri').hidden) tr.scrollIntoView({block:'nearest'})}
+}
+map.on('popupclose',()=>{if(state.sel!=null){state.sel=null;restyle();document.querySelectorAll('#segTable tbody tr.sel').forEach(t=>t.classList.remove('sel'))}});
+
+/* ---------------- summary ---------------- */
+function tile(v,l,c){return `<div class="tile"><span class="v">${v}</span><span class="l">${l}</span>${c?`<span class="c">${c}</span>`:''}</div>`}
+function renderSummary(){
+  const w=state.ward, o=D.wardsum[w==='all'?'all':String(w)], f=o.fac, C=D.meta.city;
+  { const unprot=(f.L||0)+(f.BF||0)+(f.S||0), low=(f.CF||0)+(f.G||0), cn=D.meta.conn;
+    document.getElementById('glance').innerHTML=[
+      `<b>${fmt(f.P||0,1)} miles</b> of protected bike lanes${w==='all'?`, split into <b>${cn[0][2]} separate pieces</b>. The longest runs <b>${fmt(cn[0][3],1)} miles</b>.`:'.'}`,
+      `<b>${fmt(low,1)} miles</b> of low-stress side-street routes: greenways and contraflow lanes.`,
+      `<b>${fmt(unprot,1)} miles</b> of bike routes are paint or markings only, with nothing between riders and traffic.`,
+      `<b>${fmt(D.meta.unserved_mi[w==='all'?'all':String(w)],1)} miles</b> of major streets have no bike facility at all.`,
+      `<b>${fmt(W('Killed or seriously injured'))} people</b> walking or biking were killed or seriously injured since 2021. <b>${fmt(W('of which killed'))} died.</b>`,
+      `<b>${fmt(Math.round(W('Population')/1000)*1000)} residents</b>, <b>${fmt(W('L stations'))} L stations</b> and <b>${fmt(W('Licensed businesses'))} licensed businesses</b>${w==='all'?' across the six wards':''}.`
+    ].map(x=>`<li>${x}</li>`).join(''); }
+  document.getElementById('sumTitle').textContent=w==='all'?'All six wards':'Ward '+w;
+  document.getElementById('sumArea').textContent=fmt(W('Area (sq mi)'),1)+' sq mi';
+  const tot=FAC_ORDER.reduce((a,k)=>a+(f[k]||0),0);
+  document.getElementById('tilesFac').innerHTML=
+    tile(fmt(f.P||0,1),'Protected',fmt(100*(f.P||0)/tot,0)+'% of network')+
+    tile(fmt(f.CF||0,1),'Contraflow','two-way bikes on one-way streets')+
+    tile(fmt(f.G||0,1),'Neighborhood greenway','side streets, no lane')+
+    tile(fmt(f.BF||0,1),'Buffered','paint with a buffer')+
+    tile(fmt(f.L||0,1),'Painted lane','paint only')+
+    tile(fmt(f.S||0,1),'Shared-lane markings','no separate space');
+  const ksi=W('Killed or seriously injured'), pop=W('Population');
+  const perCap=ksi/pop*1e5, cityPer=C.ksi/C.pop*1e5;
+  document.getElementById('tilesSafe').innerHTML=
+    tile(fmt(W('Pedestrians injured since 2021')),'Pedestrians injured')+
+    tile(fmt(W('Cyclists injured since 2021')),'Cyclists injured')+
+    tile(fmt(ksi),'Killed or seriously injured',`<b>${fmt(W('of which killed'))}</b> killed`)+
+    tile(fmt(perCap,0),'Killed or seriously injured per 100k residents',`citywide <b>${fmt(cityPer,0)}</b>`)+
+    tile(fmt(W('% of injuries where posted limit ≥30'),0)+'%','of injuries on streets posted 30 mph+','30 is the city default')+
+    tile(fmt(W('L stations')),'L stations',`<b>${fmt(W('L entries last full year (millions)'),1)}M</b> entries in ${RY}`);
+  document.getElementById('tilesCtx').innerHTML=
+    tile(fmt(W('Pop per sq mi')),'Residents per sq mi',`citywide <b>${fmt(C.den)}</b>`)+
+    tile(fmt(W('% commute by bike'),1)+'%','Commute by bike',`citywide <b>${fmt(C.bk,1)}%</b>`)+
+    tile(fmt(W('% transit'),1)+'%','Commute by transit',`citywide <b>${fmt(C.tr,1)}%</b>`)+
+    tile(fmt(W('% walk'),1)+'%','Walk to work',`citywide <b>${fmt(C.wk,1)}%</b>`)+
+    tile(fmt(W('Licensed businesses')),'Licensed businesses',`<b>${fmt(W('Businesses per sq mi'))}</b> per sq mi`)+
+    tile(W('% zoned business/commercial')==null?'13–18%':fmt(W('% zoned business/commercial'),0)+'%','Land zoned business/commercial',W('% zoned business/commercial')==null?'range across the six':'');
+  renderBars();
+}
+function renderBars(){
+  const rows=WARDS.map(w=>({w,f:D.wardsum[String(w)].fac}));
+  const tot=r=>FAC_ORDER.reduce((a,k)=>a+(r.f[k]||0),0);
+  const max=Math.max(...rows.map(tot)); const W0=56,Wb=300,H=24,G=8,Wt=W0+Wb+46;
+  let svg=`<svg viewBox="0 0 ${Wt} ${rows.length*(H+G)}" role="img" aria-label="Stacked bars of bike facility miles by ward">`;
+  rows.forEach((r,i)=>{
+    const y=i*(H+G); let x=W0; const on=state.ward==='all'||state.ward===r.w;
+    svg+=`<text class="lab ${on?'':'dim'}" x="0" y="${y+H/2+4}">Ward ${r.w}</text>`;
+    FAC_ORDER.forEach(k=>{const v=r.f[k]||0; if(!v)return; const w=v/max*Wb; svg+=`<rect x="${x.toFixed(1)}" y="${y}" width="${Math.max(w-1,0.5).toFixed(1)}" height="${H}" fill="${cv('--f-'+k)}" opacity="${on?1:.3}"><title>Ward ${r.w}: ${FAC[k]} ${fmt(v,1)} mi</title></rect>`; x+=w;});
+    svg+=`<text x="${(x+6).toFixed(1)}" y="${y+H/2+4}" class="${on?'':'dim'}">${fmt(tot(r),1)} mi</text>`;
+  });
+  document.getElementById('facBars').innerHTML=svg+'</svg>';
+  document.getElementById('facLegend').innerHTML=FAC_ORDER.map(k=>`<span><span class="sw" style="background:${cv('--f-'+k)}"></span>${FAC[k]}</span>`).join('');
+}
+document.getElementById('connBody').innerHTML=D.meta.conn.map(r=>`<tr><td>${r[0]}</td><td>${fmt(r[1],1)}</td><td>${r[2]}</td><td>${fmt(r[3],1)} mi</td></tr>`).join('');
+document.querySelectorAll('.crashThrough').forEach(e=>e.textContent=new Date(D.meta.crash_max+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}));
+document.getElementById('aboutList').innerHTML=[
+ `Bike facilities: CDOT Bike Routes, last loaded ${D.meta.bike_rows}. Anything built since is missing. "Contraflow" means a one-way street where bikes can travel both ways.`,
+ `Crashes: Chicago Police crash reports and people records, Jan 2021 through ${D.meta.crash_max}. "Injured" includes any reported injury, including "reported, not evident". A crash counts toward a segment if it was located within 100 ft.`,
+ `Posted speed comes from the limit police record on crash reports near each segment, not from a city speed-limit inventory. Most streets show 30 mph, the city default.`,
+ `Wards: current boundaries (in effect since May 2023). Crashes on boundary streets fall in whichever ward their reported point lands.`,
+ `Population and commuting: Census American Community Survey 2020–24 five-year estimates by block group. Small areas carry wide margins of error.`,
+ `Transit: CTA L stations, ${RY} station entries. Bus frequency is not yet included.`,
+ `Businesses: active business licenses, which undercount some activity (e.g. businesses without a city license). Businesses outside the six wards are not loaded, so segments on the edge undercount.`,
+ `Zoning: current zoning districts. The city's pedestrian-street designation was blank in this export, so it is not shown.`,
+ `Street basemap: City of Chicago street centerlines.`,
+ `Street measurements (width, lanes, parking, traffic, speed limit, road owner) come from IDOT's 2026 road inventory and may lag recent changes. Major streets with no bike facility are city arterials with no bike route along them.`,
+ `Added by hand from a Streetsblog Chicago report (Sep 30, 2026), because they postdate the CDOT file: Pratt Blvd protected lane from Ravenswood to Ashland (replacing shared-lane markings), the Berwyn greenway from Ravenswood to Clark, and the East Lake Terrace greenway from Birchwood to Juneway Terrace. Bryn Mawr Ave from Kedzie to Maplewood is shown as protected, but the report did not confirm it was complete. Geometry comes from city street centerlines. Click any of these for the note.`,
+ `Segment history compares each segment against the city's archived bike-route snapshots (Dec 2014, Mar 2016, Nov 2018, Feb 2020, Jan 2021, Nov 2021, Dec 2022) and the current file. "Between X and Y" means it first appears in the Y snapshot. Exact install dates are not published. Older snapshots called protected lanes "cycle tracks", and contraflow was not tracked before 2021.`,
+ `Business density counts active licenses per block group (the part inside the six wards). Per-resident rates are left blank where fewer than 150 people live, since a few residents would make the rate meaningless.`
+].map(t=>`<li>${t}</li>`).join('');
+
+/* ---------------- priorities ---------------- */
+// Factor groups and default points follow agency precedent (see Sources tab). Points sum to 100.
+const FACTORS=[
+  {k:'safety',g:'Safety',label:'Injury history',def:20,get:s=>(s.bi+s.pi+2*s.ksi)/Math.max(s.mi,0.25),how:'Pedestrians + cyclists injured within 100 ft, with killed/seriously injured counted 3×, per mile'},
+  {k:'stress',g:'Safety',label:'Traffic stress (street type)',def:15,get:s=>s.stress,how:'Share of the segment on a major arterial (1.0) or secondary arterial (0.75); side streets 0'},
+  {k:'link',g:'Connectivity',label:'Connects the low-stress network',def:25,get:s=>Math.min(s.lnk2??0,2),how:'Separate low-stress pieces (protected lanes, greenways, contraflow) the segment touches; 2+ means it closes a gap'},
+  {k:'zc',g:'Equity',label:'Households without a car',def:10,get:s=>s.zc??0,how:'Share of households with no vehicle, within ¼ mile'},
+  {k:'pov',g:'Equity',label:'Residents below poverty line',def:10,get:s=>s.pov??0,how:'Share of residents below the federal poverty line, within ¼ mile'},
+  {k:'biz',g:'Demand',label:'Destinations (businesses per mile)',def:7,get:s=>s.biz/Math.max(s.mi,0.25),how:'Licensed businesses within 300 ft, per mile'},
+  {k:'den',g:'Demand',label:'Residential density',def:5,get:s=>s.den,how:'Residents per sq mi within ¼ mile'},
+  {k:'rail',g:'Demand',label:'Close to an L station',def:5,get:s=>-s.rail,how:'Distance to the nearest L station (closer ranks higher)'},
+  {k:'bk',g:'Demand',label:'Existing bike commuting',def:3,get:s=>s.bk??0,how:'Share of workers who bike to work, within ¼ mile'},
+];
+let weights={}; FACTORS.forEach(f=>weights[f.k]=f.def);
+let types={N:true,L:true,BF:true,S:true,G:false,CF:false};
+try{const s=JSON.parse(localStorage.getItem('bn-pri2')||'null'); if(s){Object.assign(weights,s.w||{});Object.assign(types,s.t||{})}}catch(e){}
+const saveP=()=>{try{localStorage.setItem('bn-pri2',JSON.stringify({w:weights,t:types}))}catch(e){}};
+document.getElementById('typeFilter').innerHTML=['L','BF','S','G','CF'].map(k=>`<label><input type="checkbox" id="ty-${k}" ${types[k]?'checked':''}><span class="sw" style="background:${k==='N'?`repeating-linear-gradient(90deg,${cv('--f-N')} 0 3px,transparent 3px 7px)`:cv('--f-'+k)}"></span>${k==='N'?'No bike facility (major streets)':FAC[k]}</label>`).join('');
+['L','BF','S','G','CF'].forEach(k=>document.getElementById('ty-'+k).addEventListener('change',e=>{types[k]=e.target.checked;saveP();renderTable()}));
+const incN=document.getElementById('incN'); incN.checked=!!types.N;
+incN.addEventListener('change',e=>{types.N=e.target.checked;saveP();renderTable()});
+const wEl=document.getElementById('weights');
+let lastG=null;
+wEl.innerHTML=FACTORS.map(f=>{const head=f.g!==lastG?`<div class="wgroup">${f.g}</div>`:'';lastG=f.g;return head+`<label for="w-${f.k}" title="${esc(f.how)}">${f.label}</label><input type="range" min="0" max="40" step="1" id="w-${f.k}" value="${weights[f.k]}"><output id="o-${f.k}">${weights[f.k]}</output>`}).join('')+`<div class="wtotal" id="wTotal"></div>`;
+const showTotal=()=>{const t=FACTORS.reduce((a,f)=>a+weights[f.k],0);const g={};FACTORS.forEach(f=>g[f.g]=(g[f.g]||0)+weights[f.k]);document.getElementById('wTotal').textContent=`Total ${t} points · `+Object.entries(g).map(([k,v])=>`${k} ${t?Math.round(100*v/t):0}%`).join(' · ')};
+FACTORS.forEach(f=>document.getElementById('w-'+f.k).addEventListener('input',e=>{weights[f.k]=+e.target.value;document.getElementById('o-'+f.k).textContent=e.target.value;showTotal();saveP();renderTable()}));
+document.getElementById('resetW').onclick=()=>{FACTORS.forEach(f=>{weights[f.k]=f.def;document.getElementById('w-'+f.k).value=f.def;document.getElementById('o-'+f.k).textContent=f.def});showTotal();saveP();renderTable()};
+showTotal();
+
+let scores=new Map(); let current=[];
+function computeScores(){
+  const cand=D.segs.filter(s=>{const t=segType(s);return t!=='P'&&types[t]});
+  scores=new Map();
+  const tw=FACTORS.reduce((a,f)=>a+weights[f.k],0)||1;
+  const pct={};
+  FACTORS.forEach(f=>{const vals=cand.map(f.get).slice().sort((a,b)=>a-b);
+    pct[f.k]=v=>{let lo=0,hi=vals.length;while(lo<hi){const m=(lo+hi)>>1;if(vals[m]<v)lo=m+1;else hi=m}let lo2=lo;while(lo2<vals.length&&vals[lo2]===v)lo2++;return vals.length>1?((lo+lo2-1)/2)/(vals.length-1):0.5}});
+  cand.forEach(s=>{let sc=0;FACTORS.forEach(f=>sc+=weights[f.k]*pct[f.k](f.get(s)));scores.set(s.id,Math.round(100*sc/tw))});
+  return cand;
+}
+const STREETTYPE=s=>s.art>=0.5?'Major arterial':s.stress>=0.5?'Secondary arterial':'Side street';
+/* ---------------- street design: parking impact + ease ---------------- */
+const DIMS={std:{lane:10,park:8,bike:7,n:'Standard: 10-ft travel lanes, 8-ft parking lanes, 7-ft protected lane with buffer'},min:{lane:10,park:7,bike:6,n:'Minimum: 10-ft travel lanes, 7-ft parking lanes, 6-ft protected lane with buffer'}};
+let dimKey='std'; try{const v=localStorage.getItem('bn-dims');if(v&&DIMS[v])dimKey=v}catch(e){}
+const PI={fits:['Fits, parking kept','Kept',0],diet:['Road diet (4 lanes to 3), parking kept','Diet',.35],one:['Parking removed on one side','1 side',.6],diet1:['Road diet + parking removed on one side','Diet+1',.75],both:['Parking removed on both sides','2 sides',1],lanes:['Travel lane removal needed','Lanes',.9],na:['No parking change (side-street greenway)','–',0],unk:['Unknown (no IDOT width data)','?',.5]};
+function parkImpact(s){
+  if(!(s.stress>=0.5)) return 'na';
+  const d=s.idot; if(!d||!d.w||!d.l) return 'unk';
+  const M=DIMS[dimKey], two=d.ow!==1, pk=[d.pl,d.pr].filter(v=>v===2||v===3).length, bike=M.bike*(two?2:1), W=d.w, L=d.l, A=d.aadt||0;
+  if(L*M.lane+pk*M.park+bike<=W) return 'fits';
+  if(two&&L>=4&&A<=20000&&3*M.lane+pk*M.park+bike<=W) return 'diet';
+  if(pk>=1&&L*M.lane+(pk-1)*M.park+bike<=W) return 'one';
+  if(two&&L>=4&&A<=20000&&pk>=1&&3*M.lane+(pk-1)*M.park+bike<=W) return 'diet1';
+  return pk>=1?'both':'lanes';
+}
+function difficulty(s){
+  const p=PI[parkImpact(s)][2], d=s.idot||{};
+  const j=d.jur===1?1:d.jur===3?.5:0;
+  const a=d.aadt, tr=a==null?.5:a>20000?1:a>=10000?.5:0;
+  const sp=(d.sp||s.sp||0)>=35?1:0;
+  return Math.round(100*(.4*p+.25*j+.25*tr+.1*sp));
+}
+const EASE=v=>v<=33?['Easier','good']:v<=60?['Moderate','warn']:['Harder','crit'];
+const OWNER=j=>j===1?'IDOT (state)':j===3?'Cook County':j===4?'City of Chicago':'Not recorded';
+const easeChip=s=>{const v=difficulty(s),[l,c]=EASE(v);return `<span class="ease ${c}" title="Difficulty ${v} of 100">${l}</span>`};
+function designRows(s){
+  const d=s.idot; if(!d) return [['Street data','No IDOT record']];
+  const pk=[d.pl,d.pr].filter(v=>v===2||v===3).length, unk=[d.pl,d.pr].every(v=>!v);
+  return [
+    ['Width, curb to curb',d.w?d.w+' ft':'Not recorded'],
+    ['Through travel lanes',d.l?fmt(d.l)+(d.ow===1?' (one-way)':''):'–'],
+    ['Parking',unk?'Not recorded':pk===2?'Both sides':pk===1?'One side':'None'],
+    ['Daily traffic',d.aadt?fmt(d.aadt)+' vehicles'+(d.yr?` (${d.yr})`:''):'–'],
+    ['Speed limit',d.sp?d.sp+' mph':'–'],
+    ['Road owner',OWNER(d.jur)],
+    ['Likely parking impact',PI[parkImpact(s)][0]],
+    ['Ease',easeChip(s)+` <span class="st-ext">difficulty ${difficulty(s)}/100</span>`],
+  ];
+}
+function renderNVE(rows){
+  const el=document.getElementById('nveChart'); if(!el) return;
+  if(!rows.length){el.innerHTML='<p class="note">No segments to show.</p>';return}
+  const Wd=420,H=270,m={l:34,r:12,t:14,b:34},iw=Wd-m.l-m.r,ih=H-m.t-m.b;
+  const xs=v=>m.l+iw*v/100, ys=v=>m.t+ih*(1-v/100);
+  const sc=rows.map(s=>scores.get(s.id)).sort((a,b)=>a-b), med=sc[Math.floor(sc.length/2)];
+  let g=`<svg viewBox="0 0 ${Wd} ${H}" role="img" aria-label="Scatter of priority score against ease for ${rows.length} segments">`;
+  g+=`<rect x="${xs(50)}" y="${ys(100)}" width="${xs(100)-xs(50)}" height="${ys(med)-ys(100)}" class="q-win"/>`;
+  [0,25,50,75,100].forEach(v=>{g+=`<line x1="${m.l}" x2="${Wd-m.r}" y1="${ys(v)}" y2="${ys(v)}" class="grid"/><text x="${m.l-6}" y="${ys(v)+4}" class="ax" text-anchor="end">${v}</text>`});
+  g+=`<line x1="${xs(50)}" x2="${xs(50)}" y1="${m.t}" y2="${H-m.b}" class="split"/><line x1="${m.l}" x2="${Wd-m.r}" y1="${ys(med)}" y2="${ys(med)}" class="split"/>`;
+  g+=`<text x="${xs(98)}" y="${ys(98)+10}" class="ql" text-anchor="end">Quick wins</text><text x="${xs(2)}" y="${ys(98)+10}" class="ql">Long-term campaigns</text><text x="${xs(98)}" y="${H-m.b-6}" class="ql dim" text-anchor="end">Opportunistic</text><text x="${xs(2)}" y="${H-m.b-6}" class="ql dim">Lower priority</text>`;
+  g+=`<text x="${m.l+iw/2}" y="${H-6}" class="ax" text-anchor="middle">← harder to build · easier to build →</text><text x="10" y="${m.t+ih/2}" class="ax" text-anchor="middle" transform="rotate(-90 10 ${m.t+ih/2})">priority score</text>`;
+  rows.slice().sort((a,b)=>(a.id===state.sel)-(b.id===state.sel)).forEach(s=>{const t=segType(s),jit=((s.id*2654435761)%1000/1000-0.5)*7,x=xs(100-difficulty(s))+jit,y=ys(scores.get(s.id)),sel=s.id===state.sel,inp=plan.ids.has(s.id);
+    g+=`<circle data-id="${s.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${sel?7:4.6}" fill="${cv('--f-'+t)}" stroke="${inp?cv('--plan'):cv('--panel')}" stroke-width="${inp?2.5:1}" tabindex="0"><title>${esc(s.st)}, ${esc(s.f)} – ${esc(s.to)} · score ${scores.get(s.id)} · ${EASE(difficulty(s))[0].toLowerCase()} (${PI[parkImpact(s)][1]})</title></circle>`});
+  el.innerHTML=g+'</svg>';
+  el.querySelectorAll('circle').forEach(c=>{const go=()=>select(+c.dataset.id,true);c.addEventListener('click',go);c.addEventListener('keydown',e=>{if(e.key==='Enter')go()})});
+}
+
+const COLS=[
+  {k:'rank',label:'#',v:s=>s._rank},
+  {k:'st',label:'Segment',v:s=>s.st},
+  {k:'score',label:'Score',v:s=>scores.get(s.id)},
+  {k:'ease',label:'Ease',v:s=>-difficulty(s)},
+  {k:'park',label:'Parking',v:s=>PI[parkImpact(s)][2]},
+  {k:'mi',label:'Mi',v:s=>s.mi},
+  {k:'inj',label:'Injured',v:s=>s.bi+s.pi},
+  {k:'ksi',label:'KSI',v:s=>s.ksi},
+  {k:'lnk',label:'Links',v:s=>s.lnk2??0},
+  {k:'cost',label:'Est. cost',v:s=>segCost(s)??-1},
+];
+const thead=document.querySelector('#segTable thead tr');
+thead.innerHTML=COLS.map(c=>`<th data-k="${c.k}" scope="col" title="${{rank:'Rank by score',st:'Street, current facility, street type and limits',mi:'Length in miles',inj:'Cyclists + pedestrians injured within 100 ft, 2021 to date',ksi:'Killed or seriously injured within 100 ft',lnk:'Separate low-stress pieces (protected, greenway, contraflow) this segment touches',ease:'How hard the fix is likely to be: parking impact, traffic, speed and road owner',park:'Likely parking impact of a protected lane, from IDOT street widths',cost:'Planning estimate to upgrade (see Budget plan); – if already at the target type',score:'Draft priority score, 0–100'}[c.k]}">${c.label}</th>`).join('');
+thead.querySelectorAll('th').forEach(th=>th.addEventListener('click',()=>{const k=th.dataset.k; if(state.sortKey===k)state.sortDir*=-1; else {state.sortKey=k; state.sortDir=(k==='st'||k==='rail'||k==='rank')?1:-1} renderTable()}));
+function renderTable(){
+  const cand=computeScores();
+  const ranked=cand.slice().sort((a,b)=>scores.get(b.id)-scores.get(a.id)); ranked.forEach((s,i)=>s._rank=i+1);
+  let rows=ranked.filter(s=>state.ward==='all'||s.w===state.ward);
+  computePlan(rows.slice());
+  const col=COLS.find(c=>c.k===state.sortKey)||COLS[2];
+  rows.sort((a,b)=>{const x=col.v(a),y=col.v(b);return (typeof x==='string'?x.localeCompare(y):x-y)*state.sortDir});
+  current=rows;
+  thead.querySelectorAll('th').forEach(th=>th.setAttribute('aria-sort',th.dataset.k===state.sortKey?(state.sortDir<0?'descending':'ascending'):'none'));
+  const tb=document.querySelector('#segTable tbody');
+  tb.innerHTML=rows.map(s=>{const t=segType(s),sc=scores.get(s.id);
+    return `<tr data-id="${s.id}" class="${s.id===state.sel?'sel':''} ${plan.ids.has(s.id)?'inplan':''}" tabindex="0"><td>${s._rank}</td><td><div class="st-name">${esc(s.st)} <span class="pill" style="background:${cv('--f-'+t)};color:${t==='G'||t==='S'||t==='BF'?'#14201a':'#fff'}">${{L:'PAINT',BF:'BUFF',S:'SHARED',G:'GRNWY',CF:'CONTRA',N:'NONE'}[t]}</span></div><div class="st-ext">${esc(s.f)} – ${esc(s.to)} · W${s.w} · ${STREETTYPE(s)}${s.src?' · <span class="rep">reported</span>':''}</div></td><td><span class="score"><i style="width:${Math.round(sc*0.3)}px"></i>${sc}</span></td><td>${easeChip(s)}</td><td title="${PI[parkImpact(s)][0]}">${PI[parkImpact(s)][1]}</td><td>${fmt(s.mi,2)}</td><td>${fmt(s.bi+s.pi)}</td><td>${fmt(s.ksi)}</td><td>${(s.lnk2??0)>=2?'<b>'+s.lnk2+'</b>':fmt(s.lnk2??0)}</td><td>${segCost(s)==null?'–':money(segCost(s))}</td></tr>`}).join('');
+  tb.querySelectorAll('tr').forEach(tr=>{const go=()=>select(+tr.dataset.id,true);tr.addEventListener('click',go);tr.addEventListener('keydown',e=>{if(e.key==='Enter')go()})});
+  renderPlan(); renderNVE(rows); if(typeof drawHighlights==='function'){drawHighlights();reorder()}
+  document.getElementById('tblNote').textContent=`${rows.length} segment${rows.length===1?'':'s'}${state.ward==='all'?'':' in Ward '+state.ward} · ranks are across all six wards · click a row to find it on the map`;
+}
+document.getElementById('copyT').onclick=async()=>{
+  const hdr=['Rank','Street','From','To','Ward','Current','Street type','Miles','Cyclists injured','Pedestrians injured','Killed or seriously injured','Killed','Low-stress pieces touched','Households without car %','Below poverty %','Businesses within 300 ft','Residents per sq mi','Nearest L (mi)','Bike commute %','Score','Ease','Difficulty (0-100)','Likely parking impact','Width (ft)','Through lanes','Daily traffic','Speed limit','Road owner'];
+  const tsv=[hdr.join('\t')].concat(current.map(s=>[s._rank,s.st,s.f,s.to,s.w,FAC[segType(s)],STREETTYPE(s),s.mi,s.bi,s.pi,s.ksi,s.k,s.lnk2??'',s.zc??'',s.pov??'',s.biz,s.den,s.rail,s.bk??'',scores.get(s.id),EASE(difficulty(s))[0],difficulty(s),PI[parkImpact(s)][0],s.idot?.w??'',s.idot?.l??'',s.idot?.aadt??'',s.idot?.sp??'',OWNER(s.idot?.jur)].join('\t'))).join('\n');
+  const msg=document.getElementById('copyMsg');
+  try{await navigator.clipboard.writeText(tsv);msg.textContent='Copied '+current.length+' rows. Paste into a spreadsheet.'}
+  catch(e){msg.textContent='Copy was blocked here. Select the table and copy it instead.'}
+};
+
+
+/* ---------------- top 5 + budget plan ---------------- */
+const COSTDEF={PC:400000,PP:300000,G:200000,BF:150000,L:125000,CF:150000};
+const COSTLBL={PC:'Protected lane, concrete curb',PP:'Protected lane, flexible posts',G:'Neighborhood greenway',BF:'Buffered lane',L:'Painted lane',CF:'Contraflow lane'};
+const COSTNOTE={PC:'Chicago standard since 2022',PP:'Quicker, lower-cost protection',G:'Signs, markings, speed humps, crossings',BF:'Paint only, with a striped buffer',L:'Paint only',CF:'Paint and signs; estimate'};
+const BDEF={amt:2500000,art:'PC',side:'G',pick:'score',skip:false};
+let costs={...COSTDEF}, bud={...BDEF}, hlTop5=false, budgetOn=false, plan={ids:new Set(),list:[],spent:0,miles:0,missed:null}, top5=[];
+try{const s=JSON.parse(localStorage.getItem('bn-budget')||'null');if(s){Object.assign(costs,s.c||{});Object.assign(bud,s.b||{});}}catch(e){}
+const saveB=()=>{try{localStorage.setItem('bn-budget',JSON.stringify({c:costs,b:bud,t5:hlTop5,on:budgetOn}))}catch(e){}};
+const money=v=>v>=1e6?'$'+(v/1e6).toLocaleString('en-US',{maximumFractionDigits:2})+'M':'$'+Math.round(v/1000).toLocaleString('en-US')+'K';
+function target(s){const t=segType(s);const tg=s.stress>=0.5?bud.art:bud.side;const same=(tg==='BF'&&t==='BF')||(tg==='G'&&t==='G')||(tg==='CF'&&t==='CF');return same?null:tg}
+function segCost(s){const tg=target(s);return tg?s.mi*costs[tg]:null}
+function computePlan(ranked){
+  top5=ranked.slice(0,5);
+  plan={ids:new Set(),list:[],spent:0,miles:0,missed:null};
+  if(!budgetOn)return;
+  let pool=ranked.filter(s=>segCost(s)!=null&&segCost(s)>0&&(!bud.skip||difficulty(s)<=60));
+  if(bud.pick==='value') pool=pool.slice().sort((a,b)=>scores.get(b.id)/segCost(b)-scores.get(a.id)/segCost(a));
+  let left=bud.amt;
+  for(const s of pool){const c=segCost(s);
+    if(c<=left){plan.ids.add(s.id);plan.list.push(s);left-=c;plan.spent+=c;plan.miles+=s.mi}
+    else if(!plan.missed) plan.missed=s;}
+}
+function renderPlan(){
+  const el=document.getElementById('planSummary'); if(!budgetOn){el.innerHTML='';return}
+  const pct=bud.amt?Math.min(100,100*plan.spent/bud.amt):0;
+  el.innerHTML=`<div class="plan-head"><b>${plan.list.length} segment${plan.list.length===1?'':'s'} · ${fmt(plan.miles,1)} mi</b><span>${money(plan.spent)} of ${money(bud.amt)}</span></div>
+  <div class="meter" role="img" aria-label="${Math.round(pct)}% of budget used"><i style="width:${pct}%"></i></div>
+  <ol class="plan-list">${plan.list.map(s=>`<li data-id="${s.id}" tabindex="0"><div class="pl-row"><div class="pl-main"><b>${esc(s.st)}</b> <span class="st-ext">${esc(s.f)} – ${esc(s.to)} · W${s.w}</span><div class="st-ext">${FAC[segType(s)]} → ${COSTLBL[target(s)]} · score ${scores.get(s.id)} · ${easeChip(s)}</div></div><span class="c">${money(segCost(s))}</span></div></li>`).join('')||'<li class="st-ext">Nothing fits this budget. Raise the budget or lower the costs.</li>'}</ol>
+  ${plan.missed?`<p class="note" style="margin:6px 0 0">Next in line but over budget: <b>${esc(plan.missed.st)}</b> (${esc(plan.missed.f)} – ${esc(plan.missed.to)}), ${money(segCost(plan.missed))}.</p>`:''}
+  <p class="note" style="margin:6px 0 0">${bud.pick==='score'?'Takes segments in score order, skipping any that no longer fit.':'Takes the most score per dollar first, so cheaper segments come earlier.'} Applies to ${state.ward==='all'?'all six wards':'Ward '+state.ward} and the segment types ticked above.</p>`;
+  el.querySelectorAll('li[data-id]').forEach(li=>{const go=()=>select(+li.dataset.id,true);li.addEventListener('click',go);li.addEventListener('keydown',e=>{if(e.key==='Enter')go()})});
+}
+const hl=L.layerGroup().addTo(map);
+function drawHighlights(){
+  hl.clearLayers();
+  if(budgetOn) plan.list.forEach(s=>L.polyline(s.c,{renderer:RV,color:cv('--plan'),opacity:.55,weight:segW[segType(s)]+12,lineCap:'round',interactive:false}).addTo(hl));
+  if(hlTop5) top5.forEach((s,i)=>{
+    L.polyline(s.c,{renderer:RV,color:cv('--ink'),opacity:.85,weight:segW[segType(s)]+5,lineCap:'round',interactive:false}).addTo(hl);
+    const c=s.c[0][Math.floor(s.c[0].length/2)];
+    L.marker(c,{icon:L.divIcon({className:'rank-badge',html:`<span>${i+1}</span>`,iconSize:[22,22],iconAnchor:[11,11]}),interactive:true,keyboard:false,pane:'markerPane',title:`#${i+1} ${s.st}`}).on('click',()=>select(s.id,false)).addTo(hl);
+  });
+}
+// controls
+const elB=id=>document.getElementById(id);
+elB('top5').checked=hlTop5; elB('budgetOn').checked=budgetOn; elB('budgetPanel').hidden=!budgetOn;
+elB('bAmt').value=bud.amt; elB('bArt').value=bud.art; elB('bSide').value=bud.side; elB('bPick').value=bud.pick; elB('bSkip').checked=!!bud.skip;
+elB('bSkip').addEventListener('change',e=>{bud.skip=e.target.checked;refresh()});
+elB('dims').value=dimKey; elB('dimNote').textContent=DIMS[dimKey].n+'. IDOT measures width curb to curb, including parking lanes.';
+elB('dims').addEventListener('change',e=>{dimKey=e.target.value;try{localStorage.setItem('bn-dims',dimKey)}catch(x){};elB('dimNote').textContent=DIMS[dimKey].n+'. IDOT measures width curb to curb, including parking lanes.';refresh()});
+elB('costGrid').innerHTML=Object.keys(COSTDEF).map(k=>`<label for="c-${k}"><span>${COSTLBL[k]}</span><span class="st-ext">${COSTNOTE[k]}</span></label><div class="money"><span>$</span><input id="c-${k}" type="number" min="0" step="5000" value="${costs[k]}" inputmode="numeric"></div>`).join('');
+const refresh=()=>{saveB();renderTable();restyle()};
+elB('top5').addEventListener('change',e=>{hlTop5=e.target.checked;refresh()});
+elB('budgetOn').addEventListener('change',e=>{budgetOn=e.target.checked;elB('budgetPanel').hidden=!budgetOn;refresh()});
+elB('bAmt').addEventListener('input',e=>{bud.amt=Math.max(0,+e.target.value||0);refresh()});
+['bArt','bSide','bPick'].forEach(id=>elB(id).addEventListener('change',e=>{bud[{bArt:'art',bSide:'side',bPick:'pick'}[id]]=e.target.value;refresh()}));
+Object.keys(COSTDEF).forEach(k=>elB('c-'+k).addEventListener('input',e=>{costs[k]=Math.max(0,+e.target.value||0);refresh()}));
+elB('resetC').onclick=()=>{costs={...COSTDEF};bud={...BDEF};Object.keys(COSTDEF).forEach(k=>elB('c-'+k).value=costs[k]);elB('bAmt').value=bud.amt;elB('bArt').value=bud.art;elB('bSide').value=bud.side;elB('bPick').value=bud.pick;refresh()};
+
+/* ---------------- on-map legend ---------------- */
+const legendCtl=L.control({position:'bottomright'});
+legendCtl.onAdd=()=>{const d=L.DomUtil.create('div','map-legend');L.DomEvent.disableClickPropagation(d);L.DomEvent.disableScrollPropagation(d);return d};
+legendCtl.addTo(map);
+let legendOpen=matchMedia('(min-width: 700px)').matches;
+try{const v=localStorage.getItem('bn-legend');if(v!=null)legendOpen=v==='1'}catch(e){}
+function renderMapLegend(){
+  const d=document.querySelector('.map-legend'); if(!d)return;
+  const on=k=>typeof layerOn!=='undefined'&&layerOn[k];
+  const line=(c,lbl,dash,w=4)=>`<div class="lg-row"><svg width="26" height="10" aria-hidden="true"><line x1="2" y1="5" x2="24" y2="5" stroke="${c}" stroke-width="${w}" stroke-linecap="round" ${dash?'stroke-dasharray="4 4"':''}/></svg>${lbl}</div>`;
+  const dot=(c,lbl,r=5,ring)=>`<div class="lg-row"><svg width="26" height="12" aria-hidden="true"><circle cx="13" cy="6" r="${r}" fill="${c}" ${ring?`stroke="${ring}" stroke-width="1.2"`:''}/></svg>${lbl}</div>`;
+  let h='';
+  if(on('bike')) h+=`<div class="lg-h">Bike facilities</div>`+line(cv('--f-P'),'Protected lane',0,5)+line(cv('--f-CF'),'Contraflow',0,4)+line(cv('--f-G'),'Neighborhood greenway',0,3)+line(cv('--f-BF'),'Buffered lane',0,3.5)+line(cv('--f-L'),'Painted lane',0,3)+line(cv('--f-S'),'Shared-lane markings',1,2.5)+(on('gaps')?`<div class="lg-row"><svg width="26" height="10" aria-hidden="true"><line x1="2" y1="5" x2="24" y2="5" stroke="${cv('--f-N')}" stroke-width="3" stroke-dasharray="2 4"/></svg>No bike facility</div>`:'');
+  if(hlTop5||budgetOn){h+=`<div class="lg-h">Priorities</div>`;
+    if(hlTop5) h+=`<div class="lg-row"><span class="rank-badge inline"><span>1</span></span>Top 5 by current score</div>`;
+    if(budgetOn) h+=line(cv('--plan'),'Fits the budget plan',0,9);}
+  if(on('ksi')||on('inj')){h+=`<div class="lg-h">Crashes, 2021–today</div>`;
+    if(on('ksi')) h+=dot(cv('--k'),'Killed',5,cv('--panel'))+dot(cv('--a'),'Seriously injured',4,cv('--panel'));
+    if(on('inj')) h+=dot(cv('--inj-b'),'Cyclist injured',3)+dot(cv('--inj-p'),'Pedestrian injured',3);}
+  if(on('stations')) h+=`<div class="lg-h">Transit</div><div class="lg-row"><span class="cta-badge" style="background:#c60c30;position:static;width:18px;height:18px;border-width:1.5px;box-shadow:none">${TRAIN}</span>CTA L station</div>`;
+  const shade=on('bgs')?BGM[bgMetric]:on('bizden')?BGM[bzMetric]:null;
+  if(shade){const warm=!on('bgs');h+=`<div class="lg-h">${shade.label}</div><div class="lg-ramp">${[null,...shade.stops].map(s=>`<span title="${s==null?'under '+shade.fmt(shade.stops[0]):shade.fmt(s)+'+'}" style="background:${rampColor(s==null?-Infinity:s,shade.stops,dark(),warm)}"></span>`).join('')}</div><div class="lg-ramp-lab"><span>${'&lt;'+shade.fmt(shade.stops[0])}</span><span>${shade.fmt(shade.stops[shade.stops.length-1])}+</span></div>`}
+  if(on('zoning')) h+=`<div class="lg-h">Zoning</div>`+Object.entries(ZC).filter(([k])=>k!=='O').map(([k,v])=>dot(v[dark()?2:1],v[0],5)).join('');
+  d.innerHTML=`<button class="lg-toggle" aria-expanded="${legendOpen}" aria-controls="lgBody">${legendOpen?'Hide legend':'Legend'}</button><div id="lgBody" class="lg-body" ${legendOpen?'':'hidden'}>${h||'<div class="lg-row">No layers are on.</div>'}</div>`;
+  d.querySelector('.lg-toggle').onclick=()=>{legendOpen=!legendOpen;try{localStorage.setItem('bn-legend',legendOpen?'1':'0')}catch(e){};renderMapLegend()};
+}
+
+/* ---------------- sources tab ---------------- */
+const L_=(t,u)=>`<a href="${u}" target="_blank" rel="noopener">${t}</a>`;
+const SRC=[
+ {k:'safety',str:'moderate',why:'Agencies score where people have been hurt: Berkeley gives crash history 20 of 100 points, Hennepin County scores crashes, serious injuries and deaths per mile, and Chicago\'s Vision Zero plans direct upgrades to High Crash Corridors. The limit: serious bike and pedestrian crashes are rare at any one spot, so FHWA recommends also scoring risk factors (next card) instead of relying on crash history alone.',
+  refs:[L_('Berkeley Bike Plan App. E, 2025','https://berkeleyca.gov/sites/default/files/2026-07/Berkeley%20Bicycle%20Plan%202026%20Appendix%20E%20Prioritization%20Methodology.pdf'),L_('Hennepin County Bicycle Plan App. H','https://www.hennepin.us/-/media/hennepinus/residents/transportation/biking/appendix-h-project-prioritization.pdf'),L_('Vision Zero Chicago Downtown Action Plan','https://www.chicago.gov/content/dam/city/depts/cdot/CDOT%20Projects/VisionZero/VZDT_PlanDocument.pdf'),L_('FHWA Systemic Safety case studies (FHWA-SA-17-002), 2016','https://highways.dot.gov/sites/fhwa.dot.gov/files/2022-06/fhwasa17002.pdf')]},
+ {k:'stress',str:'strong',note:'Evidence strong; this tool\'s measure is a stand-in (street type, not measured traffic).',why:'The "level of traffic stress" method rates streets by car speed and number of lanes; most adults will only ride on low-stress streets. NACTO calls for protected lanes where cars exceed 25 mph, traffic exceeds ~6,000 vehicles a day, or there is more than one lane each way. In Vancouver and Toronto, injury risk on cycle tracks was about one-ninth that of major streets with parked cars and no bike facility, while painted lanes on major streets showed no statistically clear benefit. A pedestrian hit at 31 mph has a 50% chance of severe injury, versus 25% at 23 mph.',
+  refs:[L_('Mekuria, Furth & Nixon, Mineta Transportation Institute, 2012','https://scholarworks.sjsu.edu/mti_publications/74'),L_('NACTO, Designing for All Ages & Abilities','https://nacto.org/publication/urban-bikeway-design-guide/designing-ages-abilities-new/separate-bicyclists-speed-volume-high'),L_('Teschke et al., American Journal of Public Health, 2012','https://doi.org/10.2105/AJPH.2012.300762'),L_('Tefft, AAA Foundation, 2011','https://aaafoundation.org/impact-speed-pedestrians-risk-severe-injury-death/'),L_('FHWA-SA-17-002, 2016','https://highways.dot.gov/sites/fhwa.dot.gov/files/2022-06/fhwasa17002.pdf')]},
+ {k:'link',str:'strong',why:'A network is only as useful as its weakest link: a few targeted gap closures in San Jose raised the share of work trips possible on low-stress routes from 4.7% to 12.7%. Ranking projects by how much low-stress access they add is an established method. Across 74 U.S. cities, bike networks that were more connected and direct had more bike commuting, beyond total mileage. Chicago\'s 2023 strategy makes a connected network its first goal and defines low-stress as trails, greenways and protected lanes.',
+  refs:[L_('Mekuria, Furth & Nixon, 2012','https://scholarworks.sjsu.edu/mti_publications/74'),L_('Lowry, Furth & Hadden-Loh, Transportation Research Part A, 2016','https://doi.org/10.1016/j.tra.2016.02.003'),L_('Schoner & Levinson, Transportation, 2014','https://doi.org/10.1007/s11116-014-9538-1'),L_('Chicago Cycling Strategy, 2023','https://www.chicago.gov/content/dam/city/sites/complete-streets/pdfs/2023_Chicago%20Cycling%20Strategy_Executive%20Summary.pdf')]},
+ {k:'zc',str:'moderate',why:'Households without a car depend most on walking, biking and transit. Hennepin County scores zero-car households directly, and Berkeley and Dublin give equity 20% of the score.',
+  refs:[L_('Hennepin County App. H','https://www.hennepin.us/-/media/hennepinus/residents/transportation/biking/appendix-h-project-prioritization.pdf'),L_('Berkeley App. E','https://berkeleyca.gov/sites/default/files/2026-07/Berkeley%20Bicycle%20Plan%202026%20Appendix%20E%20Prioritization%20Methodology.pdf'),L_('Dublin, CA draft framework, 2020','https://www.alamedactc.org/wp-content/uploads/2020/09/5.1D_BPAC_Prioritization_Framework_20200917.pdf')]},
+ {k:'pov',str:'moderate',why:'Across 22 large U.S. cities, lower-income and less-educated areas had less access to bike lanes, and some gaps (education, Hispanic share, overall socioeconomic status) remained after accounting for demand. Scoring poverty works against that pattern.',
+  refs:[L_('Braun, Rodriguez & Gordon-Larsen, Journal of Transport Geography, 2019','https://doi.org/10.1016/j.jtrangeo.2019.102544')]},
+ {k:'biz',str:'moderate',why:'Low-stress access to everyday destinations (shops, banks, restaurants) is the outcome the leading ranking method measures. Hennepin County scores destinations and jobs per mile. Business licenses stand in for destinations here.',
+  refs:[L_('Lowry, Furth & Hadden-Loh, 2016','https://doi.org/10.1016/j.tra.2016.02.003'),L_('Hennepin County App. H','https://www.hennepin.us/-/media/hennepinus/residents/transportation/biking/appendix-h-project-prioritization.pdf')]},
+ {k:'den',str:'moderate',why:'More people nearby means more potential riders. Hennepin County scores population density, and the bike-lane equity study above treats density as a core demand measure.',
+  refs:[L_('Hennepin County App. H','https://www.hennepin.us/-/media/hennepinus/residents/transportation/biking/appendix-h-project-prioritization.pdf'),L_('Braun et al., 2019','https://doi.org/10.1016/j.jtrangeo.2019.102544')]},
+ {k:'rail',str:'moderate',why:'Biking extends a station\'s reach from about ¼–½ mile on foot to roughly 1–3 miles. In a Chicago survey, 76% of Divvy members said they sometimes or often use bike share to reach transit, and riders preferred protected lanes for getting to stations. A Melbourne study of 207 stations found more people bike to stations with more low-speed streets around them.',
+  refs:[L_('Griffin & Sener, Journal of Public Transportation, 2016','https://doi.org/10.5038/2375-0901.19.2.1'),L_('Weliwitiya, Rose & Johnson, Journal of Transport Geography, 2019','https://doi.org/10.1016/j.jtrangeo.2018.12.016')]},
+ {k:'bk',str:'weak',why:'Current bike commuting shows where riding already happens, and researchers use it as a demand control. It is kept small because it rewards places that already have good facilities, which pulls against the equity factors.',
+  refs:[L_('Braun et al., 2019','https://doi.org/10.1016/j.jtrangeo.2019.102544'),L_('Dill & McNeil, Transportation Research Record, 2016','https://doi.org/10.3141/2587-11')]},
+];
+const STRL={strong:'Strong evidence',moderate:'Moderate evidence',weak:'Limited evidence'};
+document.getElementById('srcFactors').innerHTML=`<h3 style="margin:0">Scoring factors</h3>`+SRC.map(s=>{const f=FACTORS.find(x=>x.k===s.k);
+  return `<div class="src"><div class="hd"><b>${f.label}</b><span class="pts">${f.g} · ${f.def} pts default</span></div><div><span class="str ${s.str}">${STRL[s.str]}</span></div><p>${s.why}</p>${s.note?`<p class="meas"><b>Note:</b> ${s.note}</p>`:''}<p class="meas"><b>Measured as:</b> ${esc(f.how)}.</p><p class="meas"><b>Sources:</b> ${s.refs.join(' · ')}</p></div>`}).join('')+
+  `<p class="note" style="margin:0"><b>Dropped:</b> business/commercial zoning. It mostly repeated the business count, and no source scores it.</p>`;
+
+/* ---------------- layers panel ---------------- */
+const LAYERS=[
+  {id:'bike',g:groups.bike,on:true,t:'Bike facilities',d:`CDOT bike routes (${BL}), plus ${NEWS} newer changes added from news reports. Click a segment for its numbers.`,key:()=>FAC_ORDER.map(k=>`<span><span class="sw" style="background:${cv('--f-'+k)}"></span>${FAC[k]}</span>`).join('')},
+  {id:'gaps',g:groups.gaps,on:false,t:'Major streets with no bike facility',d:'Arterial streets with no bike lane, greenway or markings (dotted). They are ranked in Priorities.',key:()=>`<span><span class="sw" style="background:repeating-linear-gradient(90deg,${cv('--f-N')} 0 3px,transparent 3px 7px)"></span>No bike facility</span>`},
+  {id:'ksi',g:groups.ksi,on:false,t:'Killed or seriously injured',d:'Pedestrians and cyclists, 2021 to date. One mark per person.',key:()=>`<span><span class="dot" style="background:${cv('--k')}"></span>Killed</span><span><span class="dot" style="background:${cv('--a')}"></span>Seriously injured</span>`},
+  {id:'inj',g:groups.inj,on:false,t:'All pedestrian and cyclist injuries',d:'Every reported injury, 2021 to date.',key:()=>`<span><span class="dot" style="background:${cv('--inj-b')}"></span>Cyclist</span><span><span class="dot" style="background:${cv('--inj-p')}"></span>Pedestrian</span>`},
+  {id:'stations',g:groups.stations,on:false,t:'CTA L stations',d:'Badge color shows the line. Larger badges had over 1 million entries in '+RY+'.',key:()=>`<span style="display:inline-flex;align-items:center;gap:5px"><span class="cta-badge" style="background:#62361b;position:static">${TRAIN}</span>Station</span>`},
+  {id:'bgs',g:groups.bgs,on:false,t:'Census shading',d:'Block groups, 2020–24 estimates.',extra:true},
+  {id:'zoning',g:groups.zoning,on:false,t:'Zoning',d:'Current zoning districts, grouped.',key:()=>Object.entries(ZC).filter(([k])=>k!=='O').map(([k,v])=>`<span><span class="dot" style="background:${v[dark()?2:1]}"></span>${v[0]}</span>`).join('')},
+  {id:'bizden',g:groups.bizden,on:false,t:'Business density',d:'Active business licenses by Census block group, inside the six wards.',extra:'bz'},
+  {id:'biz',g:groups.biz,on:false,t:'Businesses',d:'Active business licenses in the six wards.',key:()=>`<span><span class="dot" style="background:${cv('--biz')}"></span>Licensed business</span>`},
+];
+let layerOn={}; LAYERS.forEach(l=>layerOn[l.id]=l.on);
+
+const layerList=document.getElementById('layerList');
+layerList.innerHTML=LAYERS.map(l=>`<div class="layer"><input type="checkbox" id="ly-${l.id}" ${layerOn[l.id]?'checked':''}><label class="ttl" for="ly-${l.id}">${l.t}</label><div class="desc">${l.d}</div>${l.extra==='bz'?`<div class="key"><select id="bzMetric" aria-label="Business density measure"><option value="bzd">Businesses per sq mi</option><option value="bzp">Businesses per 1,000 residents</option></select></div><div class="key" id="bzKey"></div>`:l.extra?`<div class="key"><select id="bgMetric" aria-label="Census measure"><option value="den">Residents per sq mi</option><option value="bk">% commuting by bike</option><option value="tr">% commuting by transit</option><option value="zc">% households without a car</option><option value="pov">% below poverty line</option></select></div><div class="key" id="bgKey"></div>`:`<div class="key" id="key-${l.id}"></div>`}</div>`).join('');
+LAYERS.forEach(l=>{
+  const el=document.getElementById('ly-'+l.id);
+  const apply=()=>{if(el.checked){l.g.addTo(map);reorder()}else map.removeLayer(l.g);setTimeout(()=>renderMapLegend(),0);layerOn[l.id]=el.checked;try{localStorage.setItem('bn-layers',JSON.stringify(layerOn))}catch(e){};updateNote()};
+  el.addEventListener('change',apply); if(layerOn[l.id])l.g.addTo(map); else map.removeLayer(l.g);
+});
+document.getElementById('bgMetric').addEventListener('change',e=>{bgMetric=e.target.value;restyle()});
+document.getElementById('bzMetric').addEventListener('change',e=>{bzMetric=e.target.value;restyle()});
+function renderLegends(){
+  LAYERS.forEach(l=>{const k=document.getElementById('key-'+l.id); if(k&&l.key)k.innerHTML=l.key()});
+  const M=BGM[bgMetric],dk=dark();
+  const cells=[null,...M.stops].map((s,i)=>`<span style="display:inline-flex;align-items:center;gap:4px"><span class="dot" style="border-radius:2px;background:${rampColor(s==null?-Infinity:s,M.stops,dk,false)};border:1px solid ${cv('--line')}"></span>${s==null?'&lt; '+M.fmt(M.stops[0]):M.fmt(s)+'+'}</span>`).join('');
+  const bk=document.getElementById('bgKey'); if(bk)bk.innerHTML=cells;
+  const Z=BGM[bzMetric];
+  const zc=[null,...Z.stops].map((s,i)=>`<span style="display:inline-flex;align-items:center;gap:4px"><span class="dot" style="border-radius:2px;background:${rampColor(s==null?-Infinity:s,Z.stops,dk,true)};border:1px solid ${cv('--line')}"></span>${s==null?'&lt; '+Z.fmt(Z.stops[0]):Z.fmt(s)+'+'}</span>`).join('')+(bzMetric==='bzp'?`<span style="display:inline-flex;align-items:center;gap:4px"><span class="dot" style="border-radius:2px;border:1px dashed ${cv('--muted')}"></span>under 150 residents</span>`:'');
+  const zk=document.getElementById('bzKey'); if(zk)zk.innerHTML=zc;
+  if(document.getElementById('facLegend').innerHTML)renderBars();
+}
+function updateNote(){
+  const on=LAYERS.filter(l=>layerOn[l.id]).map(l=>l.t.toLowerCase());
+  document.getElementById('mapNote').textContent='Showing: '+on.join(' · ')+'. Hover a street for its name.';
+}
+
+/* ---------------- ward chips, tabs ---------------- */
+const chips=document.getElementById('wardChips');
+chips.innerHTML=['all',...WARDS].map(w=>`<button class="chip" data-w="${w}" aria-pressed="${state.ward===w}">${w==='all'?'All six':'Ward '+w}</button>`).join('');
+chips.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{
+  const w=b.dataset.w==='all'?'all':+b.dataset.w; state.ward=w;
+  chips.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c===b)));
+  try{localStorage.setItem('bn-ward',String(w))}catch(e){}
+  map.closePopup(); fitWard(); restyle(); renderSummary(); renderTable();
+}));
+const tabs=[...document.querySelectorAll('.tab')];
+function showTab(id){tabs.forEach(t=>{const on=t.id===id;t.setAttribute('aria-selected',on);document.getElementById(t.getAttribute('aria-controls')).hidden=!on});try{localStorage.setItem('bn-tab',id)}catch(e){}}
+tabs.forEach(t=>t.addEventListener('click',()=>showTab(t.id)));
+const hashTab={'#priorities':'t-pri','#layers':'t-lay','#summary':'t-sum','#sources':'t-src'}[location.hash];
+showTab(hashTab||'t-sum');
+
+/* ---------------- boot ---------------- */
+fitWard(); renderTable(); restyle(); renderSummary(); updateNote();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{restyle();renderTable()});
+new MutationObserver(()=>{restyle();renderTable()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+window.addEventListener('resize',()=>map.invalidateSize());
+/* ---------------- intro tour ---------------- */
+(function(){
+const tour=document.getElementById('tour'), sc=document.getElementById('tourScroll');
+const steps=[...tour.querySelectorAll('.step')];
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const narrow=()=>innerWidth<=900;
+const A=D.wardsum.all, F=A.fac, Wa=k=>{for(const key in A){if(key.trim()===k)return A[key]}return null};
+const seg=(st,f)=>D.segs.find(s=>s.st===st&&s.f===f);
+const clark=seg('Clark St','W Winnemac Ave'), damen=seg('Damen Ave','W Belle Plaine Ave');
+const conn=D.meta.conn;
+const days=(new Date(D.meta.crash_max)-new Date('2021-01-01'))/864e5;
+const V={P:fmt(F.P,1)+' miles',CF:fmt(F.CF,1)+' miles',G:fmt(F.G,1)+' miles',L:fmt(F.L,1)+' miles',BF:fmt(F.BF,1)+' miles',S:fmt(F.S,1)+' miles',
+  lsbig:fmt(conn[2][3],1)+' miles',ppieces:String(conn[0][2]),unserved:fmt(D.meta.unserved_mi.all,1)+' miles',plong:fmt(conn[0][3],1)+' miles',
+  clarkmi:clark?fmt(clark.mi,1)+' miles':'about a mile',clarkinj:clark?String(clark.bi+clark.pi):'–',
+  ksi:fmt(Wa('Killed or seriously injured')),ksi2:fmt(Wa('Killed or seriously injured')),killed:fmt(Wa('of which killed')),
+  every:fmt(days/Wa('Killed or seriously injured'),0)+' days',pct30:fmt(Wa('% of injuries where posted limit ≥30'),0)+'%'};
+tour.querySelectorAll('[data-v]').forEach(e=>{if(V[e.dataset.v]!=null)e.textContent=V[e.dataset.v]});
+document.getElementById('tourDots').innerHTML=steps.map((s,i)=>`<button data-i="${i}" aria-label="Go to step ${i+1}"></button>`).join('');
+const dots=[...document.querySelectorAll('#tourDots button')];
+dots.forEach(b=>b.onclick=()=>steps[+b.dataset.i].scrollIntoView({behavior:RM?'auto':'smooth',block:'start'}));
+
+// helpers that drive the real controls, so the page ends up in a normal state
+const setLayer=(id,on)=>{const el=document.getElementById('ly-'+id);if(el&&el.checked!==on){el.checked=on;el.dispatchEvent(new Event('change'))}};
+const setChk=(id,on)=>{const el=document.getElementById(id);if(el&&el.checked!==on){el.checked=on;el.dispatchEvent(new Event('change'))}};
+const setWard=w=>{const b=document.querySelector(`#wardChips .chip[data-w="${w}"]`);if(b&&state.ward!==w)b.click()};
+const pulse=L.layerGroup().addTo(map);
+function pad(){return narrow()?{paddingTopLeft:[20,20],paddingBottomRight:[20,Math.round(innerHeight*0.12)]}:{paddingTopLeft:[Math.min(470,innerWidth*0.4),40],paddingBottomRight:[40,40]}}
+function go(bounds,maxZoom){map.fitBounds(bounds,{...pad(),maxZoom:maxZoom||16,animate:!RM,duration:.8})}
+function allBounds(){return L.featureGroup(Object.values(wardPoly)).getBounds()}
+function segBounds(list){return L.featureGroup(list.filter(Boolean).map(s=>segLayer[s.id])).getBounds()}
+function focusAt(ll,z){
+  // put the point in the middle of the map area the card leaves uncovered
+  const W=map.getSize().x, H=map.getSize().y;
+  const dx=narrow()?0:Math.min(470,innerWidth*0.4)/2, dy=narrow()?Math.round(H*0.2):0;
+  const p=map.project(L.latLng(ll),z).subtract([dx,-dy]);
+  map.setView(map.unproject(p,z),z,{animate:!RM});
+}
+function pin(ll){pulse.clearLayers();L.marker(ll,{icon:L.divIcon({className:'pulse',html:'<span></span>',iconSize:[34,34],iconAnchor:[17,17]}),interactive:false,pane:'labels'}).addTo(pulse)}
+const ACT={
+  intro(){setEmph(null);pulse.clearLayers();go(allBounds())},
+  good(){setEmph('good');setLayer('gaps',false);pulse.clearLayers();go(allBounds())},
+  gaps(){setEmph('gaps');setLayer('ksi',false);setLayer('gaps',true);pulse.clearLayers();go(allBounds())},
+  clark(){setEmph(null);setLayer('ksi',false);setLayer('gaps',false);pulse.clearLayers();state.sel=clark?clark.id:null;restyle();go(segBounds([seg('Clark St','W Montrose Ave'),clark,seg('Clark St','W Edgewater Ave')]),15)},
+  toll(){state.sel=null;setEmph('dim');setLayer('gaps',false);setChk('top5',false);setLayer('ksi',true);pulse.clearLayers();go(allBounds())},
+  irving(){setEmph('dim');setLayer('ksi',true);state.sel=null;restyle();pin([41.95443,-87.66686]);focusAt([41.95443,-87.66686],16)},
+  estes(){setEmph('dim');setLayer('ksi',true);state.sel=null;restyle();pin([42.01164,-87.66791]);focusAt([42.01164,-87.66791],16)},
+  damen(){setEmph('dim');setLayer('ksi',true);state.sel=damen?damen.id:null;restyle();pin([41.97521,-87.67923]);focusAt([41.97521,-87.67923],15)},
+  pri(){state.sel=null;setEmph(null);setLayer('ksi',false);setLayer('gaps',true);setChk('budgetOn',false);setChk('top5',true);pulse.clearLayers();showTab('t-pri');
+    document.getElementById('tourTop5').innerHTML=top5.map(s=>`<li><b>${esc(s.st)}</b> <span class="st-ext">${esc(s.f)} – ${esc(s.to)} · Ward ${s.w} · score ${scores.get(s.id)}</span></li>`).join('');
+    go(segBounds(top5),15)},
+  budget(){setEmph(null);setChk('top5',false);setChk('budgetOn',true);pulse.clearLayers();showTab('t-pri');
+    tour.querySelector('[data-v="bamt"]').textContent=money(bud.amt);tour.querySelector('[data-v="bn"]').textContent=plan.list.length+' segments';tour.querySelector('[data-v="bmi"]').textContent=fmt(plan.miles,1)+' miles';
+    go(plan.list.length?segBounds(plan.list):allBounds(),15)},
+  end(){setEmph(null);setChk('budgetOn',false);setLayer('ksi',false);setLayer('gaps',false);showTab('t-sum');pulse.clearLayers();go(allBounds())}
+};
+let cur=-1;
+function activate(i){if(i===cur)return;cur=i;dots.forEach((d,j)=>d.setAttribute('aria-current',j===i?'step':'false'));
+  steps.forEach((s,j)=>s.classList.toggle('on',j===i));
+  tour.classList.toggle('dim',steps[i].dataset.step==='intro'||steps[i].dataset.step==='end');
+  try{ACT[steps[i].dataset.step]()}catch(e){console.error(e)}}
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)activate(steps.indexOf(e.target))})},{root:sc,rootMargin:'-45% 0px -45% 0px',threshold:0});
+steps.forEach(s=>io.observe(s));
+let before=null;
+window.openTour=function(){
+  before={layers:{...layerOn},top5:hlTop5,budget:budgetOn,ward:state.ward};
+  setWard('all');LAYERS.forEach(l=>setLayer(l.id,l.id==='bike'));
+  tour.hidden=false;document.body.classList.add('touring');cur=-1;sc.scrollTop=0;activate(0);setTimeout(()=>sc.focus({preventScroll:true}),50);
+};
+window.closeTour=function(restore){
+  tour.hidden=true;document.body.classList.remove('touring');pulse.clearLayers();setEmph(null);state.sel=null;map.closePopup();
+  try{localStorage.setItem('bn-tour-seen','1')}catch(e){}
+  // land on the clean starting view: bike lanes only, Summary tab
+  LAYERS.forEach(l=>setLayer(l.id,l.id==='bike'));setChk('top5',false);setChk('budgetOn',false);showTab('t-sum');restyle();fitWard();
+};
+document.getElementById('tourSkip').onclick=()=>closeTour();
+document.getElementById('tourDone').onclick=()=>closeTour();
+document.getElementById('tourRestart').onclick=()=>steps[0].scrollIntoView({behavior:RM?'auto':'smooth'});
+tour.addEventListener('keydown',e=>{if(e.key==='Escape')closeTour()});
+let seen=false;try{seen=localStorage.getItem('bn-tour-seen')==='1'}catch(e){}
+if(!seen||location.hash==='#tour') setTimeout(openTour,60);
+})();
+
+document.getElementById('howBtn').onclick=()=>openTour();
+document.getElementById('goTour').onclick=()=>openTour();
+document.getElementById('goPri').onclick=()=>showTab('t-pri');
+
+})();
+</script>

@@ -1,0 +1,44 @@
+name: Refresh data
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [pipeline-test]   # test runs: results are committed back to this branch
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Download sources
+        run: |
+          set -o pipefail
+          python -W ignore pipeline/fetch.py 2>&1 | tee data/build/fetch_log.txt
+      - name: Build data
+        run: |
+          set -o pipefail
+          cd pipeline && python -W ignore build_data.py 2>&1 | tee ../data/build/build_log.txt
+      - name: Check
+        run: cd pipeline && python checks.py
+      - name: Build page
+        run: cd pipeline && python build_page.py
+      - name: Save test results to the branch
+        if: always() && github.ref_name == 'pipeline-test'
+        run: |
+          cp data/raw/_meta.json data/build/raw_meta.json 2>/dev/null || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -r -q --cached data/build/debug 2>/dev/null || true
+          rm -rf data/build/debug
+          git add -A data/build index.html
+          git commit -m "Test refresh run ${{ github.run_number }} [skip ci]" || echo "nothing to commit"
+          git push
