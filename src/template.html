@@ -519,7 +519,7 @@ details.more>summary{cursor:pointer;font-weight:600}
       <div class="card-head"><p class="eyebrow">Lake View · Ward 47 · Aug. 8, 2026</p><span class="card-tag">The human toll</span></div>
       <h2>Irving Park Road near Greenview</h2>
       <p>On a Saturday night, a driver hit and killed a 25-year-old woman as she walked into the street on the 1400 block of West Irving Park Road. Police say he fled, set off a chain crash with two other cars, hit a tree and ran before officers arrested him. Charges were pending when Fox 32 reported the crash.</p>
-      <p><b>Irving Park Road</b> is one of the busiest streets in the area. It has no bike facility anywhere in these six wards, and this was one of three pedestrian deaths on it since 2021.</p>
+      <p><b>Irving Park Road</b> is one of the busiest streets in the area. It has no bike facility anywhere in these <span class="nw"></span> wards, and this was one of three pedestrian deaths on it since 2021.</p>
       <p class="src"><a href="https://www.fox32chicago.com/news/deadly-crash-flee-arrest-8-8" target="_blank" rel="noopener">Fox 32 Chicago: Driver hits, kills woman on Chicago's North Side, flees and crashes twice more</a></p>
     </div></section>
     <section class="step" data-step="estes"><div class="card">
@@ -790,7 +790,7 @@ function renderSummary(){
       `<b>${fmt(unprot,1)} miles</b> of bike routes are paint or markings only, with nothing between riders and traffic.`,
       `<b>${fmt(D.meta.unserved_mi[w==='all'?'all':String(w)],1)} miles</b> of major streets have no bike facility at all.`,
       `<b>${fmt(W('Killed or seriously injured'))} people</b> walking or biking were killed or seriously injured since 2021. <b>${fmt(W('of which killed'))} died.</b>`,
-      `<b>${fmt(Math.round(W('Population')/1000)*1000)} residents</b>, <b>${fmt(W('L stations'))} L stations</b> and <b>${fmt(W('Licensed businesses'))} licensed businesses</b>${w==='all'?` across the ${NW} wards`:''}.`
+      `<b>${fmt(Math.round(W('Population')/1000)*1000)} residents</b>, <b>${fmt(W('L stations'))} L station${W('L stations')===1?'':'s'}</b> and <b>${fmt(W('Licensed businesses'))} licensed businesses</b>${w==='all'?` across the ${NW} wards`:''}.`
     ].map(x=>`<li>${x}</li>`).join(''); }
   document.getElementById('sumTitle').textContent=w==='all'?`All ${NW} wards`:'Ward '+w;
   document.getElementById('sumArea').textContent=fmt(W('Area (sq mi)'),1)+' sq mi';
