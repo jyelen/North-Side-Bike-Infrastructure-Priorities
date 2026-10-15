@@ -79,8 +79,9 @@ def main():
     for k in ['wards', 'streets', 'segs', 'crashes', 'stations', 'bgs', 'zoning', 'biz', 'wardsum', 'meta']:
         if not D.get(k):
             fail(f'Section "{k}" is empty.')
-    if len(D['wards']) != 6:
-        fail(f'Expected 6 wards, found {len(D["wards"])}.')
+    from config import WARDS
+    if len(D['wards']) != len(WARDS):
+        fail(f'Expected {len(WARDS)} wards, found {len(D["wards"])}.')
 
     # ---- completeness of segment measures
     segs = D['segs']
@@ -125,13 +126,19 @@ def main():
 
     # ---- compare with the previous version
     rows = []
-    if P:
+    old_wards = (P or {}).get('meta', {}).get('wards') or [33, 40, 46, 47, 48, 49]
+    scope_changed = P is not None and sorted(old_wards) != sorted(D['meta'].get('wards', []))
+    if scope_changed:
+        INFO.append(f'Ward list changed from {old_wards} to {D["meta"]["wards"]}: size checks against the previous '
+                    f'version are skipped for this run.')
+    if P and not scope_changed:
         ratio_check('Segment count', len(segs), len(P['segs']), 0.85, 1.20)
         ratio_check('Injured people on the map', len(D['crashes']), len(P['crashes']), 0.95, 1.30)
         ratio_check('Licensed businesses', len(D['biz']), len(P['biz']), 0.75, 1.30)
         ratio_check('Census block groups', len(D['bgs']), len(P['bgs']), 0.95, 1.05)
         ratio_check('Street basemap pieces', len(D['streets']), len(P['streets']), 0.90, 1.10)
         ratio_check('Zoning classes', len(D['zoning']), len(P['zoning']), 0.80, 1.25)
+    if P:
         if D['meta']['crash_max'] < P['meta']['crash_max']:
             fail(f'Crash data went backwards: {P["meta"]["crash_max"]} -> {D["meta"]["crash_max"]}.')
         hn, ho = headline(D), headline(P)

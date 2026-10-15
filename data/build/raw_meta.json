@@ -1,16 +1,16 @@
 {
  "fetched": {
-  "wards": "2026-10-14",
-  "bike_routes": "2026-10-14",
-  "streets": "2026-10-14",
-  "zoning": "2026-10-14",
-  "crashes": "2026-10-14",
-  "people": "2026-10-14",
-  "businesses": "2026-10-14",
-  "l_stops": "2026-10-14",
-  "l_ridership": "2026-10-14",
-  "acs": "2026-10-14",
-  "idot": "2026-10-14"
+  "wards": "2026-10-15",
+  "bike_routes": "2026-10-15",
+  "streets": "2026-10-15",
+  "zoning": "2026-10-15",
+  "crashes": "2026-10-15",
+  "people": "2026-10-15",
+  "businesses": "2026-10-15",
+  "l_stops": "2026-10-15",
+  "l_ridership": "2026-10-15",
+  "acs": "2026-10-15",
+  "idot": "2026-10-15"
  },
  "counts": {
   "wards": {
@@ -22,19 +22,19 @@
    "name": "Bike Routes"
   },
   "streets": {
-   "features": 12767
+   "features": 14554
   },
   "zoning": {
-   "features": 5322
+   "features": 5681
   },
   "crashes": {
-   "rows": 167392
+   "rows": 183631
   },
   "people": {
-   "rows": 31085
+   "rows": 31101
   },
   "businesses": {
-   "rows": 5518
+   "rows": 6846
   },
   "l_stops": {
    "rows": 302
@@ -50,7 +50,7 @@
    "not_available_values": 0
   },
   "idot": {
-   "features": 6851,
+   "features": 7751,
    "service": "TrafficSafety/cis_LocationTool2026"
   }
  },

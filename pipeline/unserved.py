@@ -1,6 +1,6 @@
 """Find major streets with no bike facility.
 
-City arterials (street centerline classes 2 and 3) inside the six wards,
+City arterials (street centerline classes 2 and 3) inside the study wards,
 minus any stretch that already has a bike route along the same street, cut
 into pieces at crossing arterials at least a quarter mile apart.
 """
@@ -50,7 +50,7 @@ def build_unserved(bikes, street_features, UN):
             d = g.distance(pt_)
             if best is None or d < best[0] or (abs(d - best[0]) < 15 and c in ('2', '3') and best[2] not in ('2', '3')):
                 best = (d, n, c)
-        return best[1] if best else 'edge of the six wards'
+        return best[1] if best else 'edge of the study area'
 
     out = []
     for name, G in artU.items():

@@ -122,7 +122,7 @@ def ward_summary(wards, L):
     allc['% walk'] = 100 * A['walk'] / A['workers']
     allc['% transit'] = 100 * A['transit'] / A['workers']
     allc['% zoned business/commercial'] = None
-    df['All 6'] = pd.Series(allc)
+    df['All'] = pd.Series(allc)
     # the original build wrote this table to CSV and read it back; do the same
     # so numbers (and their float rounding) are identical
     path = BUILD / 'ward_layer_summary.csv'
@@ -296,7 +296,7 @@ def segments_and_layers(bikes, wards, U6, segs, L, summ):
                 fac[w][k] += l_
     OUT['wardsum'] = {str(w): {**{k: (None if pd.isna(v) else float(v)) for k, v in summ[str(w)].items()},
                                'fac': {k: round(v, 2) for k, v in fac[w].items()}} for w in T}
-    OUT['wardsum']['all'] = {**{k: (None if pd.isna(v) else float(v)) for k, v in summ['All 6'].items()},
+    OUT['wardsum']['all'] = {**{k: (None if pd.isna(v) else float(v)) for k, v in summ['All'].items()},
                              'fac': {k: round(sum(fac[w].get(k, 0) for w in T), 2) for k in ['P', 'CF', 'G', 'BF', 'L', 'S']}}
     OUT['meta'] = {'crash_max': str(CRASH.crash_date.max())[:10]}
     return OUT
@@ -602,7 +602,7 @@ def main():
         if s['t'] == 'N':
             un[str(s['w'])] = round(un[str(s['w'])] + s['mi'], 2)
     un['all'] = round(sum(s['mi'] for s in D['segs'] if s['t'] == 'N'), 1)
-    D['meta'] = {'crash_max': D['meta']['crash_max'], 'bike_rows': rawmeta['bike_routes_updated'][:10],
+    D['meta'] = {'wards': T, 'crash_max': D['meta']['crash_max'], 'bike_rows': rawmeta['bike_routes_updated'][:10],
                  'city': city_comparison(wards, L), 'conn': conn, 'manual': MANUAL_SOURCE_DATE,
                  'idot': f"IDOT road inventory (ROAD NETWORK layer, {rawmeta['idot_service'].split('/')[-1]}), downloaded {rawmeta['fetched']['idot']}",
                  'unserved_mi': un,
