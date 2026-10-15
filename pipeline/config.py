@@ -12,7 +12,7 @@ MANUAL = ROOT / "data" / "manual"    # hand-curated additions (committed, edit b
 BUILD = ROOT / "data" / "build"      # intermediate + final outputs
 SRC = ROOT / "src"                   # page template and styles
 
-WARDS = [33, 40, 46, 47, 48, 49]
+WARDS = [33, 39, 40, 46, 47, 48, 49, 50]
 CRASH_START = "2021-01-01"
 
 # Chicago Data Portal (Socrata) dataset IDs

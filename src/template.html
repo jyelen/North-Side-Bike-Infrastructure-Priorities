@@ -297,7 +297,7 @@ details.more>summary{cursor:pointer;font-weight:600}
 
 <div class="app">
   <header class="top">
-    <div class="brand"><h1>North Side Bike Network</h1><span class="sub">Wards 33 · 40 · 46 · 47 · 48 · 49</span></div>
+    <div class="brand"><h1>North Side Bike Network</h1><span class="sub" id="wardSub"></span></div>
     <button class="btn howbtn" id="howBtn">How it works</button>
     <div class="wards" role="group" aria-label="Choose ward" id="wardChips"></div>
   </header>
@@ -312,7 +312,7 @@ details.more>summary{cursor:pointer;font-weight:600}
       </div>
 
       <section class="pane" id="p-sum" role="tabpanel" aria-labelledby="t-sum">
-        <div class="scope"><h2 id="sumTitle">All six wards</h2><span class="note" id="sumArea"></span></div>
+        <div class="scope"><h2 id="sumTitle">All wards</h2><span class="note" id="sumArea"></span></div>
         <ul class="glance" id="glance"></ul>
         <div class="btnrow"><button class="btn primary" id="goPri">See the priorities</button><button class="btn" id="goTour">How it works</button></div>
         <details class="more" id="moreNums">
@@ -336,7 +336,7 @@ details.more>summary{cursor:pointer;font-weight:600}
           <div class="legend-row" id="facLegend"></div>
         </div>
         <div>
-          <h3>How connected is the network? (all six wards)</h3>
+          <h3>How connected is the network? (all <span class="nw"></span> wards)</h3>
           <table class="conn"><thead><tr><th>Counting</th><th>Miles</th><th>Separate pieces</th><th>Longest piece</th></tr></thead><tbody id="connBody"></tbody></table>
           <p class="note" style="margin:6px 0 0">A piece is a run of connected segments. Pieces touching within 40 ft count as connected.</p>
         </div>
@@ -427,7 +427,7 @@ details.more>summary{cursor:pointer;font-weight:600}
         <div>
           <h3>Street design, parking impact and ease</h3>
           <ul class="srclist">
-            <li><b>Street measurements</b> come from IDOT's road inventory (2026 edition): curb-to-curb width, through travel lanes, parking on each side, daily traffic (mostly 2022–23 counts), speed limit and road owner. It covers essentially every arterial in the six wards (<a href="https://gis1.dot.illinois.gov/arcgis/rest/services/TrafficSafety/cis_LocationTool2025/MapServer/12" target="_blank" rel="noopener">IDOT road network service</a>; field definitions in the <a href="https://public.powerdms.com/IDOT/documents/2013644" target="_blank" rel="noopener">IDOT roadway information manual</a>, including <a href="https://idot.illinois.gov/content/dam/soi/en/web/idot/documents/doing-business/manuals-split/opp/iris/item-020.pdf" target="_blank" rel="noopener">surface width</a> and <a href="https://idot.illinois.gov/content/dam/soi/en/web/idot/documents/doing-business/manuals-split/opp/iris/item-067a.pdf" target="_blank" rel="noopener">parking</a>).</li>
+            <li><b>Street measurements</b> come from IDOT's road inventory (2026 edition): curb-to-curb width, through travel lanes, parking on each side, daily traffic (mostly 2022–23 counts), speed limit and road owner. It covers essentially every arterial in the <span class="nw"></span> wards (<a href="https://gis1.dot.illinois.gov/arcgis/rest/services/TrafficSafety/cis_LocationTool2025/MapServer/12" target="_blank" rel="noopener">IDOT road network service</a>; field definitions in the <a href="https://public.powerdms.com/IDOT/documents/2013644" target="_blank" rel="noopener">IDOT roadway information manual</a>, including <a href="https://idot.illinois.gov/content/dam/soi/en/web/idot/documents/doing-business/manuals-split/opp/iris/item-020.pdf" target="_blank" rel="noopener">surface width</a> and <a href="https://idot.illinois.gov/content/dam/soi/en/web/idot/documents/doing-business/manuals-split/opp/iris/item-067a.pdf" target="_blank" rel="noopener">parking</a>).</li>
             <li><b>Likely parking impact</b> asks whether protected lanes on both sides fit within the measured width with today's lanes and parking. If not, it tries a road diet (four lanes to three, only where traffic is under 20,000 vehicles a day, roughly the range where the federal Road Diet guide reports most projects), then removing parking on one side, then both. Results depend on assumed widths; switch between standard and minimum in the Priorities tab to see the range (<a href="https://highways.dot.gov/safety/other/road-diets/road-diet-informational-guide/1-introduction" target="_blank" rel="noopener">FHWA Road Diet Informational Guide</a>).</li>
             <li><b>Ease</b> is a 0–100 difficulty score: parking impact 40%, traffic volume 25% (over 20,000 vehicles a day is hardest), road owner 25% (state roads need IDOT approval; county roads, county approval), and speed limit 10% (35 mph or more). Up to 33 is "Easier", up to 60 "Moderate", above that "Harder". These weights are a judgment call, not from a published method.</li>
             <li><b>Limits.</b> IDOT's records can lag recent changes: it still lists parking on both sides of several streets that already have protected lanes. The check ignores bus stops, loading zones, turn lanes and drainage, and it cannot tell how full the parking is. Treat the label as a screen; confirm with CDOT designs or a site visit before using it with businesses or neighbors. Parking occupancy counts are the standard way to show whether a block has spare parking.</li>
@@ -441,7 +441,7 @@ details.more>summary{cursor:pointer;font-weight:600}
             <li><b>Flexible-post protected lane $300K, buffered lane $150K, neighborhood greenway $200K per mile.</b> Based on 2025 planning estimates of $290K (posts), $110–140K (buffered) and $200–285K (greenways with traffic circles) per mile, both directions (<a href="https://longmontcolorado.gov/wp-content/uploads/2025/07/Appendix-E_Cost-Assumptions.pdf" target="_blank" rel="noopener">Longmont, CO bike plan, App. E</a>). Chicago greenways use fewer traffic circles, so the default is at the low end.</li>
             <li><b>Painted lane, $125K per mile.</b> National median $89K per mile in 2012 dollars, adjusted for inflation (<a href="https://www.pedbikeinfo.org/downloads/Countermeasure_Costs_Summary_Oct2013.pdf" target="_blank" rel="noopener">Bushell et al., UNC Highway Safety Research Center for FHWA, 2013</a>).</li>
             <li><b>Contraflow lane, $150K per mile.</b> No published figure found; estimated as paint plus signs.</li>
-            <li><b>Annual budget, $2.5M default.</b> About $1M as the six wards' population share (about 12%) of CDOT's $17M, two-year citywide bike program (<a href="https://www.roadsbridges.com/chicago-dot-announces-largest-bike-lane-expansion-citys-history" target="_blank" rel="noopener">2021–22</a>), plus $250K from each ward's $1.5M yearly ward infrastructure fund ("menu money"; <a href="https://40thward.org/2023/12/peoples-budget-2024-qa" target="_blank" rel="noopener">40th Ward</a>, <a href="https://www.46thward.com/participatory-budgeting" target="_blank" rel="noopener">46th Ward</a>). Menu money also pays for street, alley and sidewalk repair, so the real bike share depends on each alderperson.</li>
+            <li><b>Annual budget, <span class="bdef"></span> default.</b> About <span class="bcity"></span> a year as the <span class="nw"></span> wards' population share (about <span class="pshare"></span>) of CDOT's $17M, two-year citywide bike program (<a href="https://www.roadsbridges.com/chicago-dot-announces-largest-bike-lane-expansion-citys-history" target="_blank" rel="noopener">2021–22</a>), plus $250K from each ward's $1.5M yearly ward infrastructure fund ("menu money"; <a href="https://40thward.org/2023/12/peoples-budget-2024-qa" target="_blank" rel="noopener">40th Ward</a>, <a href="https://www.46thward.com/participatory-budgeting" target="_blank" rel="noopener">46th Ward</a>). Menu money also pays for street, alley and sidewalk repair, so the real bike share depends on each alderperson.</li>
           </ul>
         </div>
         <div>
@@ -475,7 +475,7 @@ details.more>summary{cursor:pointer;font-weight:600}
   </div>
   <div class="tour-scroll" id="tourScroll" tabindex="0">
     <section class="step" data-step="intro"><div class="card big">
-      <p class="eyebrow">North Side Bike Network · Wards 33, 40, 46, 47, 48 and 49</p>
+      <p class="eyebrow">North Side Bike Network · Wards <span class="wlist"></span></p>
       <h2 id="tourH0">The Case for Connectivity</h2>
       <p class="lede">Our lives and daily activities - from work commutes and daycare drop-offs to visits with loved ones - don’t stop at the edges of ward boundaries, so why should our infrastructure? A complete bike grid would make all road users, including pedestrians and drivers, safer. This mapping tool shows how starting with minor improvements to connect our existing bike infrastructure across a cluster of wards could create a safer, continuous set of protected roads for everyone.</p>
       <p class="scrollhint" aria-hidden="true">Scroll to begin <span>↓</span></p>
@@ -511,7 +511,7 @@ details.more>summary{cursor:pointer;font-weight:600}
     <section class="step" data-step="toll"><div class="card">
       <p class="eyebrow">The human toll · 2021 to <span class="crashThrough"></span></p>
       <h2><span data-v="ksi"></span> people seriously injured or killed</h2>
-      <p>Since January 2021, <b data-v="ksi2"></b> people walking or biking in these six wards were seriously injured or killed in traffic crashes. <b data-v="killed"></b> of them died. That is one person roughly every <b data-v="every"></b>.</p>
+      <p>Since January 2021, <b data-v="ksi2"></b> people walking or biking in these <span class="nw"></span> wards were seriously injured or killed in traffic crashes. <b data-v="killed"></b> of them died. That is one person roughly every <b data-v="every"></b>.</p>
       <p><b data-v="pct30"></b> of the injuries happened on streets posted at 30 mph or more. A pedestrian hit at 31 mph has about a 50% chance of severe injury, double the risk at 23 mph.</p>
       <p class="legend-inline"><span><i class="dot" style="background:var(--k)"></i>Killed</span><span><i class="dot" style="background:var(--a)"></i>Seriously injured</span></p>
     </div></section>
@@ -553,7 +553,7 @@ details.more>summary{cursor:pointer;font-weight:600}
       <p class="eyebrow">Budget mode</p>
       <h2>The most protection per dollar</h2>
       <p>Money is the real constraint. Turn on <b>Budget mode</b> in the Priorities tab, enter a yearly budget, and the tool fills it with the highest-ranked segments that fit, using planning costs for each type of upgrade (for example, about $400,000 a mile for a concrete-curb protected lane).</p>
-      <p>At a <b data-v="bamt"></b> budget, our working estimate of what the city and the six wards might spend on bikeways in a year, it funds <b data-v="bn"></b> covering <b data-v="bmi"></b>, shown in gold.</p>
+      <p>At a <b data-v="bamt"></b> budget, our working estimate of what the city and the <span class="nw"></span> wards might spend on bikeways in a year, it funds <b data-v="bn"></b> covering <b data-v="bmi"></b>, shown in gold.</p>
       <p class="small">Switch to “most score per dollar” to favor cheaper upgrades, or edit any cost to match a real bid. All costs and sources are in the Sources tab.</p>
     </div></section>
     <section class="step" data-step="end"><div class="card big">
@@ -572,7 +572,19 @@ details.more>summary{cursor:pointer;font-weight:600}
 (function(){
 const D=JSON.parse(document.getElementById('data').textContent);
 const BL=D.meta.bike_label||'Dec 2025', RY=D.meta.ridership_year||2025, NEWS=D.segs.filter(s=>s.src).length;
-const WARDS=[33,40,46,47,48,49];
+const WARDS=D.meta.wards||[33,40,46,47,48,49];
+const NW=({6:'six',7:'seven',8:'eight',9:'nine',10:'ten',11:'eleven',12:'twelve'})[WARDS.length]||String(WARDS.length);
+const WLIST=WARDS.slice(0,-1).join(', ')+' and '+WARDS[WARDS.length-1];
+const ZR=WARDS.map(w=>D.wardsum[String(w)]['% zoned business/commercial']).filter(v=>v!=null);
+const ZRANGE=ZR.length?Math.round(Math.min(...ZR))+'–'+Math.round(Math.max(...ZR))+'%':'–';
+const POPSHARE=D.wardsum.all.Population/D.meta.city.pop;
+const BUDGET_DEFAULT=Math.round((POPSHARE*8.5e6+250000*WARDS.length)/1e5)*1e5;  // population share of $17M over two years + $250K per ward
+document.getElementById('wardSub').textContent='Wards '+WARDS.join(' · ');
+document.querySelectorAll('.nw').forEach(e=>e.textContent=NW);
+document.querySelectorAll('.wlist').forEach(e=>e.textContent=WLIST);
+document.querySelectorAll('.pshare').forEach(e=>e.textContent=Math.round(POPSHARE*100)+'%');
+document.querySelectorAll('.bcity').forEach(e=>e.textContent='$'+(Math.round(POPSHARE*8.5e6/1e5)/10).toFixed(1)+'M');
+document.querySelectorAll('.bdef').forEach(e=>e.textContent='$'+(BUDGET_DEFAULT/1e6).toFixed(1)+'M');
 const FAC={P:'Protected',CF:'Contraflow',G:'Neighborhood greenway',BF:'Buffered',L:'Painted lane',S:'Shared-lane markings',N:'No bike facility'};
 const FAC_ORDER=['P','CF','G','BF','L','S'];
 const cv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -654,7 +666,7 @@ D.stations.forEach(s=>{
 
 // block groups: census shading and business density share the same shapes
 groups.bgs=L.layerGroup(); groups.bizden=L.layerGroup(); const bgLayers=[], bzLayers=[];
-function bgHTML(b){return `<div class="pop"><h4>Census block group</h4><div class="ext">${b.id} · part inside the six wards</div>`+dl([
+function bgHTML(b){return `<div class="pop"><h4>Census block group</h4><div class="ext">${b.id} · part inside the ${NW} wards</div>`+dl([
   ['Residents (2020–24 est.)',fmt(b.pop)],['Residents per sq mi',fmt(b.den)],['Commute by bike',fmt(b.bk,1)+'%'],['Walk to work',fmt(b.wk,1)+'%'],['Commute by transit',fmt(b.tr,1)+'%'],['Households without a car',fmt(b.zc,1)+'%'],['Below poverty line',fmt(b.pov,1)+'%'],
   ['Licensed businesses',fmt(b.bz)],['Businesses per sq mi',fmt(b.bzd)],['Businesses per 1,000 residents',b.bzp==null?'Too few residents':fmt(b.bzp,1)]])+'</div>'}
 D.bgs.forEach(b=>{
@@ -778,9 +790,9 @@ function renderSummary(){
       `<b>${fmt(unprot,1)} miles</b> of bike routes are paint or markings only, with nothing between riders and traffic.`,
       `<b>${fmt(D.meta.unserved_mi[w==='all'?'all':String(w)],1)} miles</b> of major streets have no bike facility at all.`,
       `<b>${fmt(W('Killed or seriously injured'))} people</b> walking or biking were killed or seriously injured since 2021. <b>${fmt(W('of which killed'))} died.</b>`,
-      `<b>${fmt(Math.round(W('Population')/1000)*1000)} residents</b>, <b>${fmt(W('L stations'))} L stations</b> and <b>${fmt(W('Licensed businesses'))} licensed businesses</b>${w==='all'?' across the six wards':''}.`
+      `<b>${fmt(Math.round(W('Population')/1000)*1000)} residents</b>, <b>${fmt(W('L stations'))} L stations</b> and <b>${fmt(W('Licensed businesses'))} licensed businesses</b>${w==='all'?` across the ${NW} wards`:''}.`
     ].map(x=>`<li>${x}</li>`).join(''); }
-  document.getElementById('sumTitle').textContent=w==='all'?'All six wards':'Ward '+w;
+  document.getElementById('sumTitle').textContent=w==='all'?`All ${NW} wards`:'Ward '+w;
   document.getElementById('sumArea').textContent=fmt(W('Area (sq mi)'),1)+' sq mi';
   const tot=FAC_ORDER.reduce((a,k)=>a+(f[k]||0),0);
   document.getElementById('tilesFac').innerHTML=
@@ -805,7 +817,7 @@ function renderSummary(){
     tile(fmt(W('% transit'),1)+'%','Commute by transit',`citywide <b>${fmt(C.tr,1)}%</b>`)+
     tile(fmt(W('% walk'),1)+'%','Walk to work',`citywide <b>${fmt(C.wk,1)}%</b>`)+
     tile(fmt(W('Licensed businesses')),'Licensed businesses',`<b>${fmt(W('Businesses per sq mi'))}</b> per sq mi`)+
-    tile(W('% zoned business/commercial')==null?'13–18%':fmt(W('% zoned business/commercial'),0)+'%','Land zoned business/commercial',W('% zoned business/commercial')==null?'range across the six':'');
+    tile(W('% zoned business/commercial')==null?ZRANGE:fmt(W('% zoned business/commercial'),0)+'%','Land zoned business/commercial',W('% zoned business/commercial')==null?`range across the ${NW}`:'');
   renderBars();
 }
 function renderBars(){
@@ -831,13 +843,13 @@ document.getElementById('aboutList').innerHTML=[
  `Wards: current boundaries (in effect since May 2023). Crashes on boundary streets fall in whichever ward their reported point lands.`,
  `Population and commuting: Census American Community Survey 2020–24 five-year estimates by block group. Small areas carry wide margins of error.`,
  `Transit: CTA L stations, ${RY} station entries. Bus frequency is not yet included.`,
- `Businesses: active business licenses, which undercount some activity (e.g. businesses without a city license). Businesses outside the six wards are not loaded, so segments on the edge undercount.`,
+ `Businesses: active business licenses, which undercount some activity (e.g. businesses without a city license). Businesses outside the ${NW} wards are not loaded, so segments on the edge undercount.`,
  `Zoning: current zoning districts. The city's pedestrian-street designation was blank in this export, so it is not shown.`,
  `Street basemap: City of Chicago street centerlines.`,
  `Street measurements (width, lanes, parking, traffic, speed limit, road owner) come from IDOT's 2026 road inventory and may lag recent changes. Major streets with no bike facility are city arterials with no bike route along them.`,
  `Added by hand from a Streetsblog Chicago report (Sep 30, 2026), because they postdate the CDOT file: Pratt Blvd protected lane from Ravenswood to Ashland (replacing shared-lane markings), and the Berwyn greenway from Ravenswood to Clark. (The report also covered the East Lake Terrace greenway, which the CDOT file already includes.) Bryn Mawr Ave from Kedzie to Maplewood is shown as protected, but the report did not confirm it was complete. Geometry comes from city street centerlines. Click any of these for the note.`,
  `Segment history compares each segment against the city's archived bike-route snapshots (Dec 2014, Mar 2016, Nov 2018, Feb 2020, Jan 2021, Nov 2021, Dec 2022) and the current file. "Between X and Y" means it first appears in the Y snapshot. Exact install dates are not published. Older snapshots called protected lanes "cycle tracks", and contraflow was not tracked before 2021.`,
- `Business density counts active licenses per block group (the part inside the six wards). Per-resident rates are left blank where fewer than 150 people live, since a few residents would make the rate meaningless.`
+ `Business density counts active licenses per block group (the part inside the ${NW} wards). Per-resident rates are left blank where fewer than 150 people live, since a few residents would make the rate meaningless.`
 ].map(t=>`<li>${t}</li>`).join('');
 
 /* ---------------- priorities ---------------- */
@@ -966,7 +978,7 @@ function renderTable(){
     return `<tr data-id="${s.id}" class="${s.id===state.sel?'sel':''} ${plan.ids.has(s.id)?'inplan':''}" tabindex="0"><td>${s._rank}</td><td><div class="st-name">${esc(s.st)} <span class="pill" style="background:${cv('--f-'+t)};color:${t==='G'||t==='S'||t==='BF'?'#14201a':'#fff'}">${{L:'PAINT',BF:'BUFF',S:'SHARED',G:'GRNWY',CF:'CONTRA',N:'NONE'}[t]}</span></div><div class="st-ext">${esc(s.f)} – ${esc(s.to)} · W${s.w} · ${STREETTYPE(s)}${s.src?' · <span class="rep">reported</span>':''}</div></td><td><span class="score"><i style="width:${Math.round(sc*0.3)}px"></i>${sc}</span></td><td>${easeChip(s)}</td><td title="${PI[parkImpact(s)][0]}">${PI[parkImpact(s)][1]}</td><td>${fmt(s.mi,2)}</td><td>${fmt(s.bi+s.pi)}</td><td>${fmt(s.ksi)}</td><td>${(s.lnk2??0)>=2?'<b>'+s.lnk2+'</b>':fmt(s.lnk2??0)}</td><td>${segCost(s)==null?'–':money(segCost(s))}</td></tr>`}).join('');
   tb.querySelectorAll('tr').forEach(tr=>{const go=()=>select(+tr.dataset.id,true);tr.addEventListener('click',go);tr.addEventListener('keydown',e=>{if(e.key==='Enter')go()})});
   renderPlan(); renderNVE(rows); if(typeof drawHighlights==='function'){drawHighlights();reorder()}
-  document.getElementById('tblNote').textContent=`${rows.length} segment${rows.length===1?'':'s'}${state.ward==='all'?'':' in Ward '+state.ward} · ranks are across all six wards · click a row to find it on the map`;
+  document.getElementById('tblNote').textContent=`${rows.length} segment${rows.length===1?'':'s'}${state.ward==='all'?'':' in Ward '+state.ward} · ranks are across all ${NW} wards · click a row to find it on the map`;
 }
 document.getElementById('copyT').onclick=async()=>{
   const hdr=['Rank','Street','From','To','Ward','Current','Street type','Miles','Cyclists injured','Pedestrians injured','Killed or seriously injured','Killed','Low-stress pieces touched','Households without car %','Below poverty %','Businesses within 300 ft','Residents per sq mi','Nearest L (mi)','Bike commute %','Score','Ease','Difficulty (0-100)','Likely parking impact','Width (ft)','Through lanes','Daily traffic','Speed limit','Road owner'];
@@ -981,7 +993,7 @@ document.getElementById('copyT').onclick=async()=>{
 const COSTDEF={PC:400000,PP:300000,G:200000,BF:150000,L:125000,CF:150000};
 const COSTLBL={PC:'Protected lane, concrete curb',PP:'Protected lane, flexible posts',G:'Neighborhood greenway',BF:'Buffered lane',L:'Painted lane',CF:'Contraflow lane'};
 const COSTNOTE={PC:'Chicago standard since 2022',PP:'Quicker, lower-cost protection',G:'Signs, markings, speed humps, crossings',BF:'Paint only, with a striped buffer',L:'Paint only',CF:'Paint and signs; estimate'};
-const BDEF={amt:2500000,art:'PC',side:'G',pick:'score',skip:false};
+const BDEF={amt:BUDGET_DEFAULT,art:'PC',side:'G',pick:'score',skip:false};
 let costs={...COSTDEF}, bud={...BDEF}, hlTop5=false, budgetOn=false, plan={ids:new Set(),list:[],spent:0,miles:0,missed:null}, top5=[];
 try{const s=JSON.parse(localStorage.getItem('bn-budget')||'null');if(s){Object.assign(costs,s.c||{});Object.assign(bud,s.b||{});}}catch(e){}
 const saveB=()=>{try{localStorage.setItem('bn-budget',JSON.stringify({c:costs,b:bud,t5:hlTop5,on:budgetOn}))}catch(e){}};
@@ -1006,7 +1018,7 @@ function renderPlan(){
   <div class="meter" role="img" aria-label="${Math.round(pct)}% of budget used"><i style="width:${pct}%"></i></div>
   <ol class="plan-list">${plan.list.map(s=>`<li data-id="${s.id}" tabindex="0"><div class="pl-row"><div class="pl-main"><b>${esc(s.st)}</b> <span class="st-ext">${esc(s.f)} – ${esc(s.to)} · W${s.w}</span><div class="st-ext">${FAC[segType(s)]} → ${COSTLBL[target(s)]} · score ${scores.get(s.id)} · ${easeChip(s)}</div></div><span class="c">${money(segCost(s))}</span></div></li>`).join('')||'<li class="st-ext">Nothing fits this budget. Raise the budget or lower the costs.</li>'}</ol>
   ${plan.missed?`<p class="note" style="margin:6px 0 0">Next in line but over budget: <b>${esc(plan.missed.st)}</b> (${esc(plan.missed.f)} – ${esc(plan.missed.to)}), ${money(segCost(plan.missed))}.</p>`:''}
-  <p class="note" style="margin:6px 0 0">${bud.pick==='score'?'Takes segments in score order, skipping any that no longer fit.':'Takes the most score per dollar first, so cheaper segments come earlier.'} Applies to ${state.ward==='all'?'all six wards':'Ward '+state.ward} and the segment types ticked above.</p>`;
+  <p class="note" style="margin:6px 0 0">${bud.pick==='score'?'Takes segments in score order, skipping any that no longer fit.':'Takes the most score per dollar first, so cheaper segments come earlier.'} Applies to ${state.ward==='all'?'all '+NW+' wards':'Ward '+state.ward} and the segment types ticked above.</p>`;
   el.querySelectorAll('li[data-id]').forEach(li=>{const go=()=>select(+li.dataset.id,true);li.addEventListener('click',go);li.addEventListener('keydown',e=>{if(e.key==='Enter')go()})});
 }
 const hl=L.layerGroup().addTo(map);
@@ -1098,8 +1110,8 @@ const LAYERS=[
   {id:'stations',g:groups.stations,on:false,t:'CTA L stations',d:'Badge color shows the line. Larger badges had over 1 million entries in '+RY+'.',key:()=>`<span style="display:inline-flex;align-items:center;gap:5px"><span class="cta-badge" style="background:#62361b;position:static">${TRAIN}</span>Station</span>`},
   {id:'bgs',g:groups.bgs,on:false,t:'Census shading',d:'Block groups, 2020–24 estimates.',extra:true},
   {id:'zoning',g:groups.zoning,on:false,t:'Zoning',d:'Current zoning districts, grouped.',key:()=>Object.entries(ZC).filter(([k])=>k!=='O').map(([k,v])=>`<span><span class="dot" style="background:${v[dark()?2:1]}"></span>${v[0]}</span>`).join('')},
-  {id:'bizden',g:groups.bizden,on:false,t:'Business density',d:'Active business licenses by Census block group, inside the six wards.',extra:'bz'},
-  {id:'biz',g:groups.biz,on:false,t:'Businesses',d:'Active business licenses in the six wards.',key:()=>`<span><span class="dot" style="background:${cv('--biz')}"></span>Licensed business</span>`},
+  {id:'bizden',g:groups.bizden,on:false,t:'Business density',d:`Active business licenses by Census block group, inside the ${NW} wards.`,extra:'bz'},
+  {id:'biz',g:groups.biz,on:false,t:'Businesses',d:`Active business licenses in the ${NW} wards.`,key:()=>`<span><span class="dot" style="background:${cv('--biz')}"></span>Licensed business</span>`},
 ];
 let layerOn={}; LAYERS.forEach(l=>layerOn[l.id]=l.on);
 
@@ -1129,7 +1141,7 @@ function updateNote(){
 
 /* ---------------- ward chips, tabs ---------------- */
 const chips=document.getElementById('wardChips');
-chips.innerHTML=['all',...WARDS].map(w=>`<button class="chip" data-w="${w}" aria-pressed="${state.ward===w}">${w==='all'?'All six':'Ward '+w}</button>`).join('');
+chips.innerHTML=['all',...WARDS].map(w=>`<button class="chip" data-w="${w}" aria-pressed="${state.ward===w}">${w==='all'?'All '+NW:'Ward '+w}</button>`).join('');
 chips.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{
   const w=b.dataset.w==='all'?'all':+b.dataset.w; state.ward=w;
   chips.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c===b)));

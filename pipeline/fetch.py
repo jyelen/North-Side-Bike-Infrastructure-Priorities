@@ -127,7 +127,7 @@ def _bounds(geoms):
 
 
 def ward_box():
-    """Bounding box of the six wards, from the freshly downloaded ward file."""
+    """Bounding box of the study wards, from the freshly downloaded ward file."""
     W = json.load(open(RAW / 'wards.geojson'))['features']
     return _bounds([f['geometry'] for f in W if str(f['properties'].get('ward')) in {str(w) for w in WARDS} and f['geometry']])
 

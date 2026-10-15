@@ -1,6 +1,6 @@
 # North Side Bike Network
 
-An interactive map and ranking tool for a connected protected bike network across Chicago Wards 33, 40, 46, 47, 48 and 49. The live page is `index.html`, served by GitHub Pages.
+An interactive map and ranking tool for a connected protected bike network across Chicago Wards 33, 39, 40, 46, 47, 48, 49 and 50. The live page is `index.html`, served by GitHub Pages.
 
 ## How the data is refreshed
 
