@@ -434,10 +434,62 @@ def f_idot(M):
     return {'features': len(feats), 'service': name}
 
 
+OVERPASS = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter']
+
+
+def f_trails(M):
+    """Off-street bike trails from OpenStreetMap (the city's bike route file
+    dropped off-street trails after 2021). Paths built for bikes: cycleways,
+    and paths or footways marked for bicycles. Paths that run beside a street
+    (sidepaths, protected lanes drawn as separate lines) are removed later in
+    the build. Falls back to data/static/trails.geojson."""
+    import shutil
+    from config import STATIC
+    x0, y0, x1, y1 = study_box()
+    q = f"""[out:json][timeout:180];
+(
+  way["highway"="cycleway"]({y0},{x0},{y1},{x1});
+  way["highway"~"^(path|footway)$"]["bicycle"="designated"]({y0},{x0},{y1},{x1});
+);
+out geom tags;"""
+    last = None
+    for url in [u for u in OVERPASS for _ in range(2)]:   # two tries per server
+        if last:
+            time.sleep(20)
+        try:
+            r = S.post(url, data={'data': q}, timeout=240)
+            if r.status_code == 200 and r.text.lstrip().startswith('{'):
+                els = r.json().get('elements', [])
+                feats = []
+                for e in els:
+                    if e.get('type') != 'way' or not e.get('geometry'):
+                        continue
+                    tags = e.get('tags', {})
+                    keep = {k: tags.get(k) for k in ('name', 'highway', 'bicycle', 'foot', 'surface', 'segregated', 'access',
+                                                     'cycleway', 'footway', 'path', 'operator')}
+                    keep['osm_id'] = e['id']
+                    feats.append({'type': 'Feature', 'properties': keep,
+                                  'geometry': {'type': 'LineString', 'coordinates': [[g['lon'], g['lat']] for g in e['geometry']]}})
+                assert feats, 'no trail features returned'
+                json.dump({'type': 'FeatureCollection', 'source': 'OpenStreetMap via Overpass (ODbL)',
+                           'fetched': TODAY.isoformat(), 'features': feats}, open(RAW / 'trails.geojson', 'w'))
+                M['trails_source'] = 'OpenStreetMap'
+                return {'ways': len(feats), 'server': url}
+            last = f'HTTP {r.status_code}: {r.text[:200]!r}'
+        except Exception as e:
+            last = str(e)
+        log(f'   {url}: {last}')
+    if (STATIC / 'trails.geojson').exists():
+        shutil.copy(STATIC / 'trails.geojson', RAW / 'trails.geojson')
+        M['trails_source'] = 'saved copy (data/static/trails.geojson)'
+        return {'source': 'saved copy', 'live_error': last}
+    raise RuntimeError(f'trail download failed: {last}')
+
+
 # wards and bike routes must come first: other queries use their bounding box
 SOURCES = {'wards': f_wards, 'bike_routes': f_bike_routes, 'streets': f_streets, 'zoning': f_zoning,
            'crashes': f_crashes, 'people': f_people, 'businesses': f_businesses, 'l_stops': f_l_stops,
-           'l_ridership': f_l_ridership, 'acs': f_acs, 'idot': f_idot}
+           'l_ridership': f_l_ridership, 'acs': f_acs, 'idot': f_idot, 'trails': f_trails}
 
 
 def main(names):

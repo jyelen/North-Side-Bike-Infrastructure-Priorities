@@ -1,3 +1,9 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Interactive map and ranking tool for a connected, protected bike network on Chicago's North Side.">
 <title>North Side Bike Network</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -9,7 +15,7 @@
   --bg:#f4f6f4; --panel:#ffffff; --ink:#18221d; --muted:#5a6862; --line:#dde3df; --soft:#eef2ef;
   --accent:#0b7a55; --accent-ink:#ffffff; --focus:#1f5fbf;
   --map-bg:#e9ede9; --st1:#9aa59f; --st2:#b4bdb8; --st3:#c9d0cc; --st4:#dbe0dc; --river:#9cc2dd; --ward:#2b3a33;
-  --f-P:#0b7a55; --f-CF:#7b3fc4; --f-G:#69b585; --f-BF:#df9a2e; --f-L:#d4443b; --f-S:#9a958e; --f-N:#3d4652;
+  --f-P:#0b7a55; --f-CF:#7b3fc4; --f-G:#69b585; --f-BF:#df9a2e; --f-L:#d4443b; --f-S:#9a958e; --f-N:#3d4652; --f-T:#7a4e22;
   --k:#7a0d0d; --a:#e8590c; --inj-b:#c2410c; --inj-p:#7c3aed; --rail:#1f5fbf; --biz:#6b5b45;
   --good:#0b7a55; --warn:#b45309; --crit:#b42318; --plan:#f2b705;
   --font-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
@@ -19,19 +25,19 @@
   --bg:#101513; --panel:#171e1b; --ink:#e6ece8; --muted:#9aa7a0; --line:#2b3531; --soft:#1e2622;
   --accent:#3cc994; --accent-ink:#0d1411; --focus:#7fb0ff;
   --map-bg:#141a17; --st1:#56625c; --st2:#46514b; --st3:#36403b; --st4:#29312d; --river:#2f5670; --ward:#d5ddd8;
-  --f-P:#3cc994; --f-CF:#b28cf5; --f-G:#4f8f66; --f-BF:#f0b45a; --f-L:#f2675d; --f-S:#7d7973; --f-N:#c3cad1;
+  --f-P:#3cc994; --f-CF:#b28cf5; --f-G:#4f8f66; --f-BF:#f0b45a; --f-L:#f2675d; --f-S:#7d7973; --f-N:#c3cad1; --f-T:#b08158;
   --k:#ff8a8a; --a:#ffa94d; --inj-b:#fb923c; --inj-p:#b794f4; --rail:#7fb0ff; --biz:#c8b393;
   --good:#3cc994; --warn:#f0b45a; --crit:#ff7a70; --plan:#ffd23f; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#101513; --panel:#171e1b; --ink:#e6ece8; --muted:#9aa7a0; --line:#2b3531; --soft:#1e2622;
   --accent:#3cc994; --accent-ink:#0d1411; --focus:#7fb0ff;
   --map-bg:#141a17; --st1:#56625c; --st2:#46514b; --st3:#36403b; --st4:#29312d; --river:#2f5670; --ward:#d5ddd8;
-  --f-P:#3cc994; --f-CF:#b28cf5; --f-G:#4f8f66; --f-BF:#f0b45a; --f-L:#f2675d; --f-S:#7d7973; --f-N:#c3cad1;
+  --f-P:#3cc994; --f-CF:#b28cf5; --f-G:#4f8f66; --f-BF:#f0b45a; --f-L:#f2675d; --f-S:#7d7973; --f-N:#c3cad1; --f-T:#b08158;
   --k:#ff8a8a; --a:#ffa94d; --inj-b:#fb923c; --inj-p:#b794f4; --rail:#7fb0ff; --biz:#c8b393;
   --good:#3cc994; --warn:#f0b45a; --crit:#ff7a70; --plan:#ffd23f; color-scheme:dark}
 
 html,body{height:100%}
-body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:14px;line-height:1.45}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.5}
 *{box-sizing:border-box}
 button,select,input{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
@@ -54,7 +60,7 @@ aside{border-left:1px solid var(--line);background:var(--panel);display:flex;fle
 .pane[hidden]{display:none!important}
 h2{font-family:var(--font-display);font-weight:700;font-size:19px;letter-spacing:.02em;margin:0;text-wrap:balance}
 h3{font-family:var(--font-display);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 8px}
-.note{color:var(--muted);font-size:12.5px}
+.note{color:var(--muted);font-size:13.5px;line-height:1.45}
 .scope{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
 .tile{background:var(--panel);padding:10px 10px 9px;display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -76,7 +82,7 @@ h3{font-family:var(--font-display);font-weight:600;font-size:13px;text-transform
 .layer{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:start;padding:9px 0;border-bottom:1px solid var(--line)}
 .layer input[type=checkbox]{margin:3px 0 0;width:16px;height:16px;accent-color:var(--accent)}
 .layer .ttl{font-weight:600}
-.layer .desc{grid-column:2;color:var(--muted);font-size:12.5px}
+.layer .desc{grid-column:2;color:var(--muted);font-size:13.5px}
 .layer .key{grid-column:2;display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted);margin-top:3px}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:-1px;margin-right:4px}
 select{border:1px solid var(--line);background:var(--panel);border-radius:4px;padding:3px 6px}
@@ -89,7 +95,7 @@ select{border:1px solid var(--line);background:var(--panel);border-radius:4px;pa
 .types label{display:flex;align-items:center;gap:5px;cursor:pointer}
 .types input{accent-color:var(--accent)}
 .tbl-wrap{overflow:auto;border:1px solid var(--line);border-radius:6px;max-height:64vh;min-height:340px;flex-shrink:0}
-table.seg{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+table.seg{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
 table.seg th{position:sticky;top:0;background:var(--soft);text-align:right;font-weight:600;font-size:11.5px;color:var(--muted);padding:6px 6px;cursor:pointer;white-space:nowrap;border-bottom:1px solid var(--line);user-select:none}
 table.seg th:nth-child(2){text-align:left}
 table.seg th[aria-sort="descending"]::after{content:" ↓"}
@@ -100,12 +106,12 @@ table.seg tr{cursor:pointer}
 table.seg tbody tr:hover{background:var(--soft)}
 table.seg tr.sel{background:color-mix(in srgb,var(--accent) 14%,transparent)}
 .st-name{font-weight:600}
-.st-ext{color:var(--muted);font-size:11.5px}
+.st-ext{color:var(--muted);font-size:12.5px}
 .pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:1px 6px;border-radius:999px;color:#fff;white-space:nowrap}
 .score{display:inline-flex;align-items:center;gap:6px;justify-content:flex-end}
 .score i{display:inline-block;height:6px;border-radius:3px;background:var(--accent)}
 .btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.btn{border:1px solid var(--line);background:var(--panel);border-radius:5px;padding:5px 10px;cursor:pointer;font-weight:600;font-size:12.5px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:5px;padding:5px 10px;cursor:pointer;font-weight:600;font-size:13.5px}
 .btn:hover{border-color:var(--muted)}
 .btn.primary{background:var(--ink);color:var(--panel);border-color:var(--ink)}
 details{border-top:1px solid var(--line);padding-top:10px}
@@ -114,7 +120,7 @@ details ul{padding-left:18px;margin:8px 0 0;color:var(--muted);font-size:12.5px;
 /* leaflet theming */
 .leaflet-container{font-family:var(--font-body);background:var(--map-bg)}
 .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--panel);color:var(--ink);box-shadow:0 4px 18px rgb(0 0 0/.18)}
-.leaflet-popup-content{margin:12px 14px;font-size:12.5px;line-height:1.4;min-width:230px}
+.leaflet-popup-content{margin:12px 14px;font-size:13.5px;line-height:1.45;min-width:230px}
 .leaflet-container a.leaflet-popup-close-button{color:var(--muted)}
 .leaflet-tooltip{background:var(--panel);color:var(--ink);border:1px solid var(--line);box-shadow:none;font-size:12px}
 .leaflet-tooltip-top:before{border-top-color:var(--line)}
@@ -209,7 +215,7 @@ body.touring{overflow:hidden}
 .card{width:min(430px,100%);background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:22px 24px;box-shadow:0 10px 32px rgb(0 0 0/.16);display:grid;gap:10px;opacity:.4;transform:translateY(10px);transition:opacity .45s ease,transform .45s ease}
 .step.on .card{opacity:1;transform:none}
 .card p{margin:0;font-size:14.5px;line-height:1.55}
-.card .small{font-size:13px;color:var(--muted)}
+.card .small{font-size:14px;color:var(--muted)}
 .card h2{font-size:28px;line-height:1.05;margin:0}
 .card.big{width:min(560px,100%)}
 .card.big h2{font-size:42px}
@@ -265,7 +271,7 @@ body.touring{overflow:hidden}
 /* summary glance */
 .glance{list-style:none;margin:0;padding:0;display:grid;gap:12px;font-size:15px;line-height:1.45}
 .glance li{padding-left:14px;border-left:3px solid var(--line)}
-.glance li:nth-child(1){border-color:var(--f-P)}.glance li:nth-child(2){border-color:var(--f-G)}.glance li:nth-child(3){border-color:var(--f-L)}.glance li:nth-child(4){border-color:var(--f-N)}.glance li:nth-child(5){border-color:var(--k)}
+.glance li:nth-child(1){border-color:var(--f-P)}.glance li:nth-child(2){border-color:var(--f-G)}.glance li:nth-child(3){border-color:var(--f-T)}.glance li:nth-child(4){border-color:var(--f-L)}.glance li:nth-child(5){border-color:var(--f-N)}.glance li:nth-child(6){border-color:var(--k)}
 .glance b{font-family:var(--font-display);font-size:19px;font-weight:700;letter-spacing:.01em}
 details.more>summary{cursor:pointer;font-weight:600}
 .more-body{display:flex;flex-direction:column;gap:18px;margin-top:14px}
@@ -275,7 +281,7 @@ details.more>summary{cursor:pointer;font-weight:600}
 .swrow .callout-txt b{font-size:16px}
 .callout-txt{display:grid;gap:2px}
 .callout-txt b{font-family:var(--font-display);font-size:19px}
-.callout-txt span{font-size:12.5px;color:var(--muted)}
+.callout-txt span{font-size:13.5px;color:var(--muted)}
 .sr-switch{position:absolute;opacity:0;width:1px;height:1px}
 .switch{width:42px;height:24px;border-radius:12px;background:var(--line);position:relative;transition:background .2s}
 .switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--panel);box-shadow:0 1px 3px rgb(0 0 0/.3);transition:transform .2s}
@@ -292,8 +298,44 @@ details.more>summary{cursor:pointer;font-weight:600}
   .tbl-wrap{max-height:70vh}
 }
 @media (max-width: 480px){ .tiles{grid-template-columns:repeat(2,minmax(0,1fr))} .brand .sub{display:none} }
+/* phones: compact header, one scrolling row of ward buttons, larger text and tap targets */
+@media (max-width: 600px){
+  body{font-size:16px}
+  header.top{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;padding:8px 12px;gap:8px 10px}
+  .brand h1{font-size:21px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .howbtn{grid-column:2;grid-row:1}
+  .wards{grid-column:1/-1}
+  .btn{font-size:14.5px;padding:7px 11px}
+  .wards{flex-wrap:nowrap;overflow-x:auto;width:calc(100% + 24px);margin:0 -12px;padding:2px 12px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .wards::-webkit-scrollbar{display:none}
+  .chip{flex:none;padding:7px 14px;font-size:16px}
+  .mapwrap{height:58vh}
+  .tabs{position:sticky;top:0;z-index:500;background:var(--panel)}
+  .tab{font-size:17px;padding:14px 4px 12px}
+  .pane{padding:16px 14px 32px}
+  .glance{font-size:16px}
+  .glance b{font-size:20px}
+  .note,.layer .desc,.callout-txt span{font-size:14.5px}
+  table.seg{font-size:14.5px}
+  table.seg th{font-size:13px;padding:8px 6px}
+  table.seg td{padding:9px 6px}
+  .st-ext{font-size:13.5px}
+  .leaflet-popup-content{font-size:14.5px;min-width:0}
+  .pop h4{font-size:20px}
+  .lg-row{font-size:14px;line-height:1.8}
+  .card .small{font-size:15px}
+  #gloss{font-size:15px}
+}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+/* glossary terms */
+.term{text-decoration:underline dotted;text-decoration-thickness:1.5px;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,currentColor 55%,transparent);cursor:help}
+.term:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
+#gloss{position:fixed;z-index:10000;max-width:min(320px,calc(100vw - 24px));background:var(--ink);color:var(--panel);padding:9px 12px 10px;border-radius:8px;font-size:14px;line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0;box-shadow:0 6px 20px rgb(0 0 0/.25);pointer-events:none}
+#gloss[hidden]{display:none}
+#gloss b{display:block;font-family:var(--font-display);font-size:16px;letter-spacing:.02em;margin-bottom:2px}
 </style>
+</head>
+<body>
 
 <div class="app">
   <header class="top">
@@ -483,21 +525,22 @@ details.more>summary{cursor:pointer;font-weight:600}
     <section class="step" data-step="good"><div class="card">
       <p class="eyebrow">What's already here</p>
       <h2>A strong start</h2>
-      <p>Three kinds of bikeway already give riders real separation from fast traffic:</p>
+      <p>Four kinds of bikeway already give riders real separation from fast traffic:</p>
       <ul class="tl">
-        <li><i style="background:var(--f-P)"></i><span><b data-v="P"></b> of <b>protected lanes</b>, with a curb or posts between bikes and cars</span></li>
-        <li><i style="background:var(--f-CF)"></i><span><b data-v="CF"></b> of <b>contraflow lanes</b>, letting bikes ride both ways on quiet one-way streets</span></li>
-        <li><i style="background:var(--f-G)"></i><span><b data-v="G"></b> of <b>neighborhood greenways</b>, side streets signed and calmed for biking</span></li>
+        <li><i style="background:var(--f-P)"></i><span><b data-v="P"></b> of <b><span class="term" tabindex="0" data-t="protected">protected lanes</span></b>, with a curb or posts between bikes and cars</span></li>
+        <li><i style="background:var(--f-CF)"></i><span><b data-v="CF"></b> of <b><span class="term" tabindex="0" data-t="contraflow">contraflow lanes</span></b>, letting bikes ride both ways on quiet one-way streets</span></li>
+        <li><i style="background:var(--f-G)"></i><span><b data-v="G"></b> of <b><span class="term" tabindex="0" data-t="greenway">neighborhood greenways</span></b>, side streets signed and calmed for biking</span></li>
+        <li><i style="background:var(--f-T)"></i><span><b data-v="T"></b> of <b><span class="term" tabindex="0" data-t="trail">off-street trails</span></b>, like the lakefront and river trails</span></li>
       </ul>
-      <p>Joined together, they already form one low-stress route network <b data-v="lsbig"></b> long.</p>
+      <p>Joined together, they already form one <span class="term" tabindex="0" data-t="lowstress">low-stress</span> route network <b data-v="lsbig"></b> long.</p>
     </div></section>
     <section class="step" data-step="gaps"><div class="card">
       <p class="eyebrow">Where it breaks down</p>
       <h2>Paint is not protection</h2>
       <ul class="tl">
-        <li><i style="background:var(--f-L)"></i><span><b data-v="L"></b> of <b>painted lanes</b></span></li>
-        <li><i style="background:var(--f-BF)"></i><span><b data-v="BF"></b> of <b>buffered lanes</b> (paint with a striped gap)</span></li>
-        <li><i class="dash" style="--c:var(--f-S)"></i><span><b data-v="S"></b> of <b>shared-lane markings</b>, arrows painted in traffic</span></li>
+        <li><i style="background:var(--f-L)"></i><span><b data-v="L"></b> of <b><span class="term" tabindex="0" data-t="painted">painted lanes</span></b></span></li>
+        <li><i style="background:var(--f-BF)"></i><span><b data-v="BF"></b> of <b><span class="term" tabindex="0" data-t="buffered">buffered lanes</span></b> (paint with a striped gap)</span></li>
+        <li><i class="dash" style="--c:var(--f-S)"></i><span><b data-v="S"></b> of <b><span class="term" tabindex="0" data-t="shared">shared-lane markings</span></b>, arrows painted in traffic</span></li>
       </ul>
       <p>None of these put anything between a rider and a car. In a Vancouver and Toronto study, painted lanes on major streets showed no clear safety benefit, while the few protected cycle tracks studied had about one-ninth the injury risk of busy streets with no bike facility.</p>
       <p>The protected lanes that do exist come in <b data-v="ppieces"></b> separate pieces; the longest runs just <b data-v="plong"></b>. And <b data-v="unserved"></b> of major streets, including <b>Western Avenue</b>, <b>Irving Park Road</b> and <b>Peterson Avenue</b>, have no bike facility at all (dotted on the map).</p>
@@ -510,7 +553,7 @@ details.more>summary{cursor:pointer;font-weight:600}
     </div></section>
     <section class="step" data-step="toll"><div class="card">
       <p class="eyebrow">The human toll · 2021 to <span class="crashThrough"></span></p>
-      <h2><span data-v="ksi"></span> people seriously injured or killed</h2>
+      <h2><span data-v="ksi"></span> people <span class="term" tabindex="0" data-t="ksi">seriously injured or killed</span></h2>
       <p>Since January 2021, <b data-v="ksi2"></b> people walking or biking in these <span class="nw"></span> wards were seriously injured or killed in traffic crashes. <b data-v="killed"></b> of them died. That is one person roughly every <b data-v="every"></b>.</p>
       <p><b data-v="pct30"></b> of the injuries happened on streets posted at 30 mph or more. A pedestrian hit at 31 mph has about a 50% chance of severe injury, double the risk at 23 mph.</p>
       <p class="legend-inline"><span><i class="dot" style="background:var(--k)"></i>Killed</span><span><i class="dot" style="background:var(--a)"></i>Seriously injured</span></p>
@@ -544,7 +587,7 @@ details.more>summary{cursor:pointer;font-weight:600}
       <div class="wbar" role="img" aria-label="Safety 35, Connectivity 25, Equity 20, Demand 20">
         <span style="flex:35;background:var(--f-L)">Safety 35</span><span style="flex:25;background:var(--f-P)">Connects 25</span><span style="flex:20;background:var(--f-CF)">Equity 20</span><span style="flex:20;background:var(--f-BF);color:#14201a">Demand 20</span>
       </div>
-      <p class="small"><b>Safety:</b> injuries per mile and how busy the street is. <b>Connects:</b> whether it links separate low-stress pieces. <b>Equity:</b> households without a car and residents in poverty nearby. <b>Demand:</b> businesses, density, L stations and current bike commuting. Sliders in the Priorities tab let you change every weight.</p>
+      <p class="small"><b>Safety:</b> injuries per mile and how busy the street is. <b>Connects:</b> whether it links separate <span class="term" tabindex="0" data-t="lowstress">low-stress</span> pieces. <b>Equity:</b> households without a car and residents in poverty nearby. <b>Demand:</b> businesses, density, L stations and current bike commuting. Sliders in the Priorities tab let you change every weight.</p>
       <p>The tool also rates how hard each fix is likely to be, using IDOT's street measurements: whether parking or a travel lane would have to go, how much traffic the street carries, its speed limit, and whether the state controls it. That separates <b>quick wins</b> from <b>long-term campaigns</b>.</p>
       <p>Today's top five are numbered on the map:</p>
       <ol class="top5" id="tourTop5"></ol>
@@ -585,11 +628,43 @@ document.querySelectorAll('.wlist').forEach(e=>e.textContent=WLIST);
 document.querySelectorAll('.pshare').forEach(e=>e.textContent=Math.round(POPSHARE*100)+'%');
 document.querySelectorAll('.bcity').forEach(e=>e.textContent='$'+(Math.round(POPSHARE*8.5e6/1e5)/10).toFixed(1)+'M');
 document.querySelectorAll('.bdef').forEach(e=>e.textContent='$'+(BUDGET_DEFAULT/1e6).toFixed(1)+'M');
-const FAC={P:'Protected',CF:'Contraflow',G:'Neighborhood greenway',BF:'Buffered',L:'Painted lane',S:'Shared-lane markings',N:'No bike facility'};
+const FACG={P:'protected',CF:'contraflow',G:'greenway',BF:'buffered',L:'painted',S:'shared',T:'trail',N:'major'};
+const FAC={P:'Protected',CF:'Contraflow',G:'Neighborhood greenway',BF:'Buffered',L:'Painted lane',S:'Shared-lane markings',N:'No bike facility',T:'Off-street trail'};
 const FAC_ORDER=['P','CF','G','BF','L','S'];
 const cv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const fmt=(v,d=0)=>v==null||isNaN(v)?'–':Number(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------------- glossary: definitions shown on hover, focus or tap ---------------- */
+const GLOSS={
+  protected:['Protected bike lane','A bike lane separated from car traffic by something physical, such as a curb, concrete barrier or flexible posts.'],
+  buffered:['Buffered bike lane','A painted bike lane with an extra striped space between bikes and cars. Nothing physical separates them.'],
+  painted:['Painted bike lane','A bike lane marked with a painted line only.'],
+  shared:['Shared-lane markings','Bike symbols ("sharrows") painted in the car lane. Bikes and cars share the same lane.'],
+  greenway:['Neighborhood greenway','A quiet side street set up for biking, with signs, markings and traffic calming such as speed humps or turn barriers. Usually no separate bike lane.'],
+  contraflow:['Contraflow bike lane','A bike lane that lets people bike against car traffic on a one-way street, so the street works both ways for bikes.'],
+  trail:['Off-street trail','A path away from any street, shared by people biking and walking, such as the Lakefront Trail or the North Shore Channel Trail.'],
+  lowstress:['Low-stress network','Routes most people would feel comfortable biking: protected lanes, neighborhood greenways, contraflow lanes and off-street trails. Chicago\'s 2023 Cycling Strategy uses the same definition.'],
+  major:['Major street','A through street that carries most traffic (an "arterial"), such as Western Ave or Lawrence Ave. The city classifies these as street types 2 and 3.'],
+  stress:['Traffic stress','How uncomfortable a street is to bike on, driven mostly by car speed, traffic volume and number of lanes. Here it is estimated from street type: major streets score highest.'],
+  roaddiet:['Road diet','Turning a four-lane street (two lanes each way) into two travel lanes plus a center turn lane. The freed-up width can hold bike lanes. Usually considered only where traffic is under about 20,000 vehicles a day.'],
+  ksi:['Killed or seriously injured','People who died, or whose police crash report lists an "incapacitating injury": an injury that kept them from walking, driving or carrying on normally at the scene.'],
+  ease:['Ease','A 0–100 estimate of how hard an upgrade would be: parking impact (40%), daily traffic (25%), road owner (25%) and speed limit (10%). Up to 33 is "Easier", up to 60 "Moderate", above that "Harder". The weights are a judgment call.'],
+  score:['Priority score','Each segment is ranked against the others on every factor (as a percentile), then the ranks are weighted by the points you set. 100 means top on every factor.'],
+  owner:['Road owner','Who controls the street. Changes to state routes need IDOT approval, and county roads need county approval. Most streets here are city streets.'],
+  aadt:['Daily traffic','Average vehicles per day, from IDOT counts (mostly 2022–23).'],
+  menu:['Menu money','The roughly $1.5 million each alderperson gets every year for local infrastructure: street and alley repair, sidewalks, lighting and, at their choice, bike projects.'],
+  park:['Likely parking impact','A screening estimate of whether protected lanes on both sides fit in the measured street width, and what would have to change if not. It ignores bus stops, loading zones and turn lanes, and IDOT records can lag recent changes.'],
+  'pi-fits':['Fits','Protected lanes fit in today\'s street width without removing parking or travel lanes.'],
+  'pi-diet':['Road diet','Protected lanes fit if the street goes from four travel lanes to three (a road diet). Parking stays.'],
+  'pi-one':['Parking removed on one side','Protected lanes fit only if parking is removed on one side of the street.'],
+  'pi-diet1':['Road diet + parking on one side','Protected lanes fit only with a road diet (four travel lanes to three) and parking removed on one side.'],
+  'pi-both':['Parking removed on both sides','Protected lanes fit only if parking is removed on both sides of the street.'],
+  'pi-lanes':['Travel lane removal','Protected lanes do not fit even without parking, so a travel lane would have to go, on a street where a standard road diet does not apply.'],
+  'pi-na':['No parking change','Greenways use the existing side street, so no parking change is assumed.'],
+  'pi-unk':['Unknown','IDOT has no width data for this street, so the impact cannot be estimated.'],
+};
+function term(k,txt){return GLOSS[k]?`<span class="term" tabindex="0" data-t="${k}">${txt}</span>`:txt}
 const segType=s=>(s.cf&&s.t!=='P')?'CF':s.t;
 const W=k=>{const o=D.wardsum[state.ward==='all'?'all':String(state.ward)];for(const key in o){if(key.trim()===k)return o[key]}return null};
 let state={ward:'all',sel:null,sortKey:'score',sortDir:-1,emph:null};
@@ -599,6 +674,7 @@ function setEmph(m){state.emph=m;restyle()}
 /* ---------------- map ---------------- */
 // One shared canvas for every vector layer, so clicks reach whichever feature is on top.
 const map=L.map('map',{preferCanvas:true,zoomSnap:0.25,attributionControl:false,minZoom:11,maxZoom:18});
+L.control.attribution({prefix:false,position:'bottomleft'}).addAttribution('Trails © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors').addTo(map);
 const RV=L.canvas({padding:0.3,tolerance:5});
 map.createPane('labels').style.zIndex=450; map.getPane('labels').style.pointerEvents='none';
 const groups={};
@@ -633,6 +709,18 @@ D.segs.forEach(s=>{
   pl._t=t; pl._s=s; pl.on('click',e=>{L.DomEvent.stopPropagation(e);select(s.id,false,e.latlng)});
   pl.bindTooltip(()=>esc(s.st)+' · '+FAC[t]+' · click for details',{sticky:true,direction:'top',opacity:1});
   segLayer[s.id]=pl; (t==='N'?groups.gaps:groups.bike).addLayer(pl);
+});
+
+// off-street trails (OpenStreetMap)
+groups.trails=L.layerGroup().addTo(map);
+function trailHTML(r){return `<div class="pop"><h4>${esc(r.n)}</h4><div class="ext"><b style="color:${cv('--f-T')}">${term('trail','Off-street trail')}</b></div>`+
+  dl([['Inside the '+NW+' wards',r.mi>0?fmt(r.mi,2)+' mi':'outside (shown for connections)']])+
+  `<p class="note" style="margin:6px 0 0">A path separate from streets, for people biking and walking. Counted as part of the low-stress network. Source: OpenStreetMap.</p></div>`}
+(D.trails||[]).forEach(r=>{
+  const pl=L.polyline(r.c,{renderer:RV,weight:3.4,lineCap:'round'});pl._r=r;
+  pl.bindPopup(()=>trailHTML(r),{maxWidth:300});
+  pl.bindTooltip(()=>esc(r.n)+' · off-street trail',{sticky:true,direction:'top',opacity:1});
+  groups.trails.addLayer(pl);
 });
 
 // crashes (one mark per injured pedestrian or cyclist)
@@ -696,7 +784,7 @@ D.biz.forEach(b=>{const m=L.circleMarker([b[0],b[1]],{renderer:RV,radius:2.2,wei
   m.bindTooltip(esc(b[2]),{opacity:1});groups.biz.addLayer(m)});
 
 // keep the stacking order on the shared canvas: shading at the bottom, crashes on top
-const ORDER=['zoning','bgs','bizden','streets','wards','biz','hl','halo','gaps','bike','inj','ksi'];
+const ORDER=['zoning','bgs','bizden','streets','wards','biz','hl','halo','trails','gaps','bike','inj','ksi'];
 function reorder(){ORDER.forEach(k=>{const g=k==='halo'?halo:k==='hl'?(typeof hl!=='undefined'?hl:null):groups[k]; if(g&&map.hasLayer(g))g.eachLayer(l=>{if(l.bringToFront)l.bringToFront()})})}
 
 function rampColor(v,stops,dk,warm){
@@ -713,6 +801,8 @@ function restyle(){
   [groups.bike,groups.gaps].forEach(G=>G.eachLayer(l=>{const sel=l._s.id===state.sel;let op=state.sel==null||sel?1:0.75;
     if(state.emph==='dim')op=sel?1:0.45; else if(state.emph&&EM[state.emph])op=EM[state.emph][l._t]?1:0.12;
     l.setStyle({color:cv('--f-'+l._t),opacity:op,weight:segW[l._t]+(sel?2:0)+(state.emph&&EM[state.emph]&&EM[state.emph][l._t]?1:0)})}));
+  groups.trails.eachLayer(l=>{let op=1; if(state.emph==='dim')op=.45; else if(state.emph==='gaps')op=.12; else if(state.sel!=null)op=.75;
+    l.setStyle({color:cv('--f-T'),opacity:op,weight:3.4+(state.emph==='good'?1:0)})});
   groups.ksi.eachLayer(m=>m.setStyle({color:cv('--panel'),fillColor:cv(m._sev==='K'?'--k':'--a'),fillOpacity:.95}));
   groups.inj.eachLayer(m=>m.setStyle({fillColor:cv(m._who==='b'?'--inj-b':'--inj-p')}));
   const M=BGM[bgMetric]; bgLayers.forEach(p=>{const c=rampColor(p._b[bgMetric],M.stops,dk,false);p.setStyle({fillColor:c||cv('--map-bg'),fillOpacity:c?.85:0,color:cv('--map-bg'),weight:0.6})});
@@ -744,7 +834,7 @@ function segHTML(s){
   const rows=[
     ['Covers',`${esc(s.st)}, ${esc(s.f)} to ${esc(s.to)}`],
     s.src?['Data note',`<span class="rep">${s.src==='news'?'Added':'Updated'} from news report</span>`]:null,
-    ['Facility',FAC[t]+(s.cf&&s.t!=='P'?` (on a ${FAC[s.t].toLowerCase()})`:'')],
+    ['Facility',term(FACG[t],FAC[t])+(s.cf&&s.t!=='P'?` (on a ${FAC[s.t].toLowerCase()})`:'')],
     ['Length',fmt(s.mi,2)+' mi'],
     ['First on the city bike map',s.add],
     t==='N'?null:['Became a '+base,s.typ],
@@ -759,20 +849,23 @@ function segHTML(s){
     ['Commute by bike (¼ mi around)',fmt(s.bk,1)+'%'],
     ['On a one-way street',s.ow>=0.5?'Yes':'No'],
     ['Street type',STREETTYPE(s)],
-    s.lnk2!=null?['Low-stress pieces it touches',fmt(s.lnk2)+(s.lnk2>=2?' (closes a gap)':s.lnk2===1?' (extends one)':'')]:null,
+    s.lnk2!=null?[term('lowstress','Low-stress')+' pieces it touches',fmt(s.lnk2)+(s.lnk2>=2?' (closes a gap)':s.lnk2===1?' (extends one)':'')]:null,
     ['Households without a car (¼ mi)',fmt(s.zc,1)+'%'],
     ['Residents below poverty line (¼ mi)',fmt(s.pov,1)+'%'],
     sc!=null?['Draft priority score',fmt(sc)]:null,
   ];
-  return `<div class="pop"><h4>${esc(s.st)}</h4><div class="ext"><b style="color:${cv('--f-'+t)}">${FAC[t]}</b> · Ward ${s.w}</div>${dl(rows)}${s.src?`<p class="repnote">${esc(s.note)} ${L_('Read the report','https://chi.streetsblog.org/2026/09/30/sbc-bike-lane-fest-2025-26-far-north-side-including-lincoln-square-west-ridge-rogers-park-edgewater-and-uptown')}</p>`:''}<div class="pop-sec">History in city snapshots <span class="st-ext" style="text-transform:none;letter-spacing:0">· hover a box for details</span></div>${histStrip(s)}<div class="pop-sec">Conditions, 2021 to date</div>${dl(data)}<div class="pop-sec">Street design (IDOT inventory)</div>${dl(designRows(s))}<p class="repnote">Parking impact uses ${dimKey==='std'?'standard':'minimum'} widths. IDOT records can lag recent street changes; confirm with CDOT before relying on this.</p></div>`;
+  return `<div class="pop"><h4>${esc(s.st)}</h4><div class="ext"><b style="color:${cv('--f-'+t)}">${FAC[t]}</b> · Ward ${s.w}</div>${dl(rows)}${s.src?`<p class="repnote">${esc(s.note)} ${L_('Read the report','https://chi.streetsblog.org/2026/09/30/sbc-bike-lane-fest-2025-26-far-north-side-including-lincoln-square-west-ridge-rogers-park-edgewater-and-uptown')}</p>`:''}<div class="pop-sec">History in city snapshots <span class="st-ext" style="text-transform:none;letter-spacing:0">· hover or tap a box for details</span></div>${histStrip(s)}<div class="pop-sec">Conditions, 2021 to date</div>${dl(data)}<div class="pop-sec">Street design (IDOT inventory)</div>${dl(designRows(s))}<p class="repnote">Parking impact uses ${dimKey==='std'?'standard':'minimum'} widths. IDOT records can lag recent street changes; confirm with CDOT before relying on this.</p></div>`;
 }
-let popup=L.popup({maxWidth:340,autoPanPadding:[20,20]});
+const PHONE=matchMedia('(max-width: 600px)');
+if(PHONE.matches){L.Popup.prototype.options.maxHeight=Math.round(innerHeight*0.4);L.Popup.prototype.options.autoPanPadding=[10,10]}
+let popup=L.popup({maxWidth:340,autoPanPadding:[20,20],...(PHONE.matches?{maxHeight:Math.round(innerHeight*0.4),maxWidth:300}:{})});
 function select(id,fromTable,at){
   state.sel=id; restyle();
   const s=D.segs.find(x=>x.id===id); if(!s)return;
   const pl=segLayer[id];
   if(!map.hasLayer(pl)){const el=document.getElementById('ly-gaps');if(el&&!el.checked){el.checked=true;el.dispatchEvent(new Event('change'))}}
-  if(fromTable) map.fitBounds(pl.getBounds(),{padding:[60,60],maxZoom:16});
+  if(fromTable){ if(PHONE.matches) document.querySelector('.mapwrap').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+    map.fitBounds(pl.getBounds(),{padding:PHONE.matches?[30,30]:[60,60],maxZoom:16,animate:!PHONE.matches}); }
   popup.setLatLng(at||pl.getCenter()).setContent(segHTML(s)).openOn(map);
   document.querySelectorAll('#segTable tbody tr').forEach(tr=>tr.classList.toggle('sel',+tr.dataset.id===id));
   if(!fromTable){const tr=document.querySelector(`#segTable tbody tr[data-id="${id}"]`); if(tr&&!document.getElementById('p-pri').hidden) tr.scrollIntoView({block:'nearest'})}
@@ -786,7 +879,8 @@ function renderSummary(){
   { const unprot=(f.L||0)+(f.BF||0)+(f.S||0), low=(f.CF||0)+(f.G||0), cn=D.meta.conn;
     document.getElementById('glance').innerHTML=[
       `<b>${fmt(f.P||0,1)} miles</b> of protected bike lanes${w==='all'?`, split into <b>${cn[0][2]} separate pieces</b>. The longest runs <b>${fmt(cn[0][3],1)} miles</b>.`:'.'}`,
-      `<b>${fmt(low,1)} miles</b> of low-stress side-street routes: greenways and contraflow lanes.`,
+      `<b>${fmt(low,1)} miles</b> of low-stress side-street routes: ${term('greenway','greenways')} and ${term('contraflow','contraflow lanes')}.`,
+      `<b>${fmt(f.T||0,1)} miles</b> of ${term('trail','off-street trails')}, such as the lakefront and river trails.`,
       `<b>${fmt(unprot,1)} miles</b> of bike routes are paint or markings only, with nothing between riders and traffic.`,
       `<b>${fmt(D.meta.unserved_mi[w==='all'?'all':String(w)],1)} miles</b> of major streets have no bike facility at all.`,
       `<b>${fmt(W('Killed or seriously injured'))} people</b> walking or biking were killed or seriously injured since 2021. <b>${fmt(W('of which killed'))} died.</b>`,
@@ -801,7 +895,8 @@ function renderSummary(){
     tile(fmt(f.G||0,1),'Neighborhood greenway','side streets, no lane')+
     tile(fmt(f.BF||0,1),'Buffered','paint with a buffer')+
     tile(fmt(f.L||0,1),'Painted lane','paint only')+
-    tile(fmt(f.S||0,1),'Shared-lane markings','no separate space');
+    tile(fmt(f.S||0,1),'Shared-lane markings','no separate space')+
+    tile(fmt(f.T||0,1),'Off-street trail','paths away from streets');
   const ksi=W('Killed or seriously injured'), pop=W('Population');
   const perCap=ksi/pop*1e5, cityPer=C.ksi/C.pop*1e5;
   document.getElementById('tilesSafe').innerHTML=
@@ -841,6 +936,7 @@ document.getElementById('aboutList').innerHTML=[
  `Crashes: Chicago Police crash reports and people records, Jan 2021 through ${D.meta.crash_max}. "Injured" includes any reported injury, including "reported, not evident". A crash counts toward a segment if it was located within 100 ft.`,
  `Posted speed comes from the limit police record on crash reports near each segment, not from a city speed-limit inventory. Most streets show 30 mph, the city default.`,
  `Wards: current boundaries (in effect since May 2023). Crashes on boundary streets fall in whichever ward their reported point lands.`,
+ `Off-street trails: OpenStreetMap paths built for bikes (cycleways, and paths marked for bicycles), refreshed with the rest of the data. The city's bike route file stopped listing trails after 2021. Paths that run right beside a street are left out (those are sidewalk paths or protected lanes drawn separately), as are pieces under 0.15 mile. Trails count as part of the low-stress network, so they affect the "connects the network" factor, but they are not ranked. Map data © OpenStreetMap contributors, available under the Open Database License.`,
  `Population and commuting: Census American Community Survey 2020–24 five-year estimates by block group. Small areas carry wide margins of error.`,
  `Transit: CTA L stations, ${RY} station entries. Bus frequency is not yet included.`,
  `Businesses: active business licenses, which undercount some activity (e.g. businesses without a city license). Businesses outside the ${NW} wards are not loaded, so segments on the edge undercount.`,
@@ -856,8 +952,8 @@ document.getElementById('aboutList').innerHTML=[
 // Factor groups and default points follow agency precedent (see Sources tab). Points sum to 100.
 const FACTORS=[
   {k:'safety',g:'Safety',label:'Injury history',def:20,get:s=>(s.bi+s.pi+2*s.ksi)/Math.max(s.mi,0.25),how:'Pedestrians + cyclists injured within 100 ft, with killed/seriously injured counted 3×, per mile'},
-  {k:'stress',g:'Safety',label:'Traffic stress (street type)',def:15,get:s=>s.stress,how:'Share of the segment on a major arterial (1.0) or secondary arterial (0.75); side streets 0'},
-  {k:'link',g:'Connectivity',label:'Connects the low-stress network',def:25,get:s=>Math.min(s.lnk2??0,2),how:'Separate low-stress pieces (protected lanes, greenways, contraflow) the segment touches; 2+ means it closes a gap'},
+  {k:'stress',g:'Safety',label:'Traffic stress (street type)',gl:'stress',def:15,get:s=>s.stress,how:'Share of the segment on a major arterial (1.0) or secondary arterial (0.75); side streets 0'},
+  {k:'link',g:'Connectivity',label:'Connects the low-stress network',gl:'lowstress',def:25,get:s=>Math.min(s.lnk2??0,2),how:'Separate low-stress pieces (protected lanes, greenways, contraflow lanes, off-street trails) the segment touches; 2+ means it closes a gap'},
   {k:'zc',g:'Equity',label:'Households without a car',def:10,get:s=>s.zc??0,how:'Share of households with no vehicle, within ¼ mile'},
   {k:'pov',g:'Equity',label:'Residents below poverty line',def:10,get:s=>s.pov??0,how:'Share of residents below the federal poverty line, within ¼ mile'},
   {k:'biz',g:'Demand',label:'Destinations (businesses per mile)',def:7,get:s=>s.biz/Math.max(s.mi,0.25),how:'Licensed businesses within 300 ft, per mile'},
@@ -875,7 +971,7 @@ const incN=document.getElementById('incN'); incN.checked=!!types.N;
 incN.addEventListener('change',e=>{types.N=e.target.checked;saveP();renderTable()});
 const wEl=document.getElementById('weights');
 let lastG=null;
-wEl.innerHTML=FACTORS.map(f=>{const head=f.g!==lastG?`<div class="wgroup">${f.g}</div>`:'';lastG=f.g;return head+`<label for="w-${f.k}" title="${esc(f.how)}">${f.label}</label><input type="range" min="0" max="40" step="1" id="w-${f.k}" value="${weights[f.k]}"><output id="o-${f.k}">${weights[f.k]}</output>`}).join('')+`<div class="wtotal" id="wTotal"></div>`;
+wEl.innerHTML=FACTORS.map(f=>{const head=f.g!==lastG?`<div class="wgroup">${f.g}</div>`:'';lastG=f.g;return head+`<label for="w-${f.k}" title="${esc(f.how)}">${f.gl?term(f.gl,f.label):f.label}</label><input type="range" min="0" max="40" step="1" id="w-${f.k}" value="${weights[f.k]}"><output id="o-${f.k}">${weights[f.k]}</output>`}).join('')+`<div class="wtotal" id="wTotal"></div>`;
 const showTotal=()=>{const t=FACTORS.reduce((a,f)=>a+weights[f.k],0);const g={};FACTORS.forEach(f=>g[f.g]=(g[f.g]||0)+weights[f.k]);document.getElementById('wTotal').textContent=`Total ${t} points · `+Object.entries(g).map(([k,v])=>`${k} ${t?Math.round(100*v/t):0}%`).join(' · ')};
 FACTORS.forEach(f=>document.getElementById('w-'+f.k).addEventListener('input',e=>{weights[f.k]=+e.target.value;document.getElementById('o-'+f.k).textContent=e.target.value;showTotal();saveP();renderTable()}));
 document.getElementById('resetW').onclick=()=>{FACTORS.forEach(f=>{weights[f.k]=f.def;document.getElementById('w-'+f.k).value=f.def;document.getElementById('o-'+f.k).textContent=f.def});showTotal();saveP();renderTable()};
@@ -896,7 +992,8 @@ const STREETTYPE=s=>s.art>=0.5?'Major arterial':s.stress>=0.5?'Secondary arteria
 /* ---------------- street design: parking impact + ease ---------------- */
 const DIMS={std:{lane:10,park:8,bike:7,n:'Standard: 10-ft travel lanes, 8-ft parking lanes, 7-ft protected lane with buffer'},min:{lane:10,park:7,bike:6,n:'Minimum: 10-ft travel lanes, 7-ft parking lanes, 6-ft protected lane with buffer'}};
 let dimKey='std'; try{const v=localStorage.getItem('bn-dims');if(v&&DIMS[v])dimKey=v}catch(e){}
-const PI={fits:['Fits, parking kept','Kept',0],diet:['Road diet (4 lanes to 3), parking kept','Diet',.35],one:['Parking removed on one side','1 side',.6],diet1:['Road diet + parking removed on one side','Diet+1',.75],both:['Parking removed on both sides','2 sides',1],lanes:['Travel lane removal needed','Lanes',.9],na:['No parking change (side-street greenway)','–',0],unk:['Unknown (no IDOT width data)','?',.5]};
+const PI={fits:['Fits, parking kept','Fits',0],diet:['Road diet (4 lanes to 3), parking kept','Road diet',.35],one:['Parking removed on one side','1 side',.6],diet1:['Road diet + parking removed on one side','Diet + 1 side',.75],both:['Parking removed on both sides','Both sides',1],lanes:['Travel lane removal needed','Lane removal',.9],na:['No parking change (side-street greenway)','None',0],unk:['Unknown (no IDOT width data)','Unknown',.5]};
+const piTerm=(s,i)=>{const k=parkImpact(s);return term('pi-'+k,PI[k][i])};
 function parkImpact(s){
   if(!(s.stress>=0.5)) return 'na';
   const d=s.idot; if(!d||!d.w||!d.l) return 'unk';
@@ -924,11 +1021,11 @@ function designRows(s){
     ['Width, curb to curb',d.w?d.w+' ft':'Not recorded'],
     ['Through travel lanes',d.l?fmt(d.l)+(d.ow===1?' (one-way)':''):'–'],
     ['Parking',unk?'Not recorded':pk===2?'Both sides':pk===1?'One side':'None'],
-    ['Daily traffic',d.aadt?fmt(d.aadt)+' vehicles'+(d.yr?` (${d.yr})`:''):'–'],
+    [term('aadt','Daily traffic'),d.aadt?fmt(d.aadt)+' vehicles'+(d.yr?` (${d.yr})`:''):'–'],
     ['Speed limit',d.sp?d.sp+' mph':'–'],
-    ['Road owner',OWNER(d.jur)],
-    ['Likely parking impact',PI[parkImpact(s)][0]],
-    ['Ease',easeChip(s)+` <span class="st-ext">difficulty ${difficulty(s)}/100</span>`],
+    [term('owner','Road owner'),OWNER(d.jur)],
+    [term('park','Likely parking impact'),piTerm(s,0)],
+    [term('ease','Ease'),easeChip(s)+` <span class="st-ext">difficulty ${difficulty(s)}/100</span>`],
   ];
 }
 function renderNVE(rows){
@@ -975,7 +1072,7 @@ function renderTable(){
   thead.querySelectorAll('th').forEach(th=>th.setAttribute('aria-sort',th.dataset.k===state.sortKey?(state.sortDir<0?'descending':'ascending'):'none'));
   const tb=document.querySelector('#segTable tbody');
   tb.innerHTML=rows.map(s=>{const t=segType(s),sc=scores.get(s.id);
-    return `<tr data-id="${s.id}" class="${s.id===state.sel?'sel':''} ${plan.ids.has(s.id)?'inplan':''}" tabindex="0"><td>${s._rank}</td><td><div class="st-name">${esc(s.st)} <span class="pill" style="background:${cv('--f-'+t)};color:${t==='G'||t==='S'||t==='BF'?'#14201a':'#fff'}">${{L:'PAINT',BF:'BUFF',S:'SHARED',G:'GRNWY',CF:'CONTRA',N:'NONE'}[t]}</span></div><div class="st-ext">${esc(s.f)} – ${esc(s.to)} · W${s.w} · ${STREETTYPE(s)}${s.src?' · <span class="rep">reported</span>':''}</div></td><td><span class="score"><i style="width:${Math.round(sc*0.3)}px"></i>${sc}</span></td><td>${easeChip(s)}</td><td title="${PI[parkImpact(s)][0]}">${PI[parkImpact(s)][1]}</td><td>${fmt(s.mi,2)}</td><td>${fmt(s.bi+s.pi)}</td><td>${fmt(s.ksi)}</td><td>${(s.lnk2??0)>=2?'<b>'+s.lnk2+'</b>':fmt(s.lnk2??0)}</td><td>${segCost(s)==null?'–':money(segCost(s))}</td></tr>`}).join('');
+    return `<tr data-id="${s.id}" class="${s.id===state.sel?'sel':''} ${plan.ids.has(s.id)?'inplan':''}" tabindex="0"><td>${s._rank}</td><td><div class="st-name">${esc(s.st)} <span class="pill" style="background:${cv('--f-'+t)};color:${t==='G'||t==='S'||t==='BF'?'#14201a':'#fff'}">${{L:'PAINT',BF:'BUFF',S:'SHARED',G:'GRNWY',CF:'CONTRA',N:'NONE'}[t]}</span></div><div class="st-ext">${esc(s.f)} – ${esc(s.to)} · W${s.w} · ${STREETTYPE(s)}${s.src?' · <span class="rep">reported</span>':''}</div></td><td><span class="score"><i style="width:${Math.round(sc*0.3)}px"></i>${sc}</span></td><td>${easeChip(s)}</td><td>${piTerm(s,1)}</td><td>${fmt(s.mi,2)}</td><td>${fmt(s.bi+s.pi)}</td><td>${fmt(s.ksi)}</td><td>${(s.lnk2??0)>=2?'<b>'+s.lnk2+'</b>':fmt(s.lnk2??0)}</td><td>${segCost(s)==null?'–':money(segCost(s))}</td></tr>`}).join('');
   tb.querySelectorAll('tr').forEach(tr=>{const go=()=>select(+tr.dataset.id,true);tr.addEventListener('click',go);tr.addEventListener('keydown',e=>{if(e.key==='Enter')go()})});
   renderPlan(); renderNVE(rows); if(typeof drawHighlights==='function'){drawHighlights();reorder()}
   document.getElementById('tblNote').textContent=`${rows.length} segment${rows.length===1?'':'s'}${state.ward==='all'?'':' in Ward '+state.ward} · ranks are across all ${NW} wards · click a row to find it on the map`;
@@ -1059,7 +1156,8 @@ function renderMapLegend(){
   const line=(c,lbl,dash,w=4)=>`<div class="lg-row"><svg width="26" height="10" aria-hidden="true"><line x1="2" y1="5" x2="24" y2="5" stroke="${c}" stroke-width="${w}" stroke-linecap="round" ${dash?'stroke-dasharray="4 4"':''}/></svg>${lbl}</div>`;
   const dot=(c,lbl,r=5,ring)=>`<div class="lg-row"><svg width="26" height="12" aria-hidden="true"><circle cx="13" cy="6" r="${r}" fill="${c}" ${ring?`stroke="${ring}" stroke-width="1.2"`:''}/></svg>${lbl}</div>`;
   let h='';
-  if(on('bike')) h+=`<div class="lg-h">Bike facilities</div>`+line(cv('--f-P'),'Protected lane',0,5)+line(cv('--f-CF'),'Contraflow',0,4)+line(cv('--f-G'),'Neighborhood greenway',0,3)+line(cv('--f-BF'),'Buffered lane',0,3.5)+line(cv('--f-L'),'Painted lane',0,3)+line(cv('--f-S'),'Shared-lane markings',1,2.5)+(on('gaps')?`<div class="lg-row"><svg width="26" height="10" aria-hidden="true"><line x1="2" y1="5" x2="24" y2="5" stroke="${cv('--f-N')}" stroke-width="3" stroke-dasharray="2 4"/></svg>No bike facility</div>`:'');
+  if(on('bike')) h+=`<div class="lg-h">Bike facilities</div>`+line(cv('--f-P'),term('protected','Protected lane'),0,5)+line(cv('--f-CF'),term('contraflow','Contraflow'),0,4)+line(cv('--f-G'),term('greenway','Neighborhood greenway'),0,3)+line(cv('--f-BF'),term('buffered','Buffered lane'),0,3.5)+line(cv('--f-L'),term('painted','Painted lane'),0,3)+line(cv('--f-S'),term('shared','Shared-lane markings'),1,2.5)+(on('gaps')?`<div class="lg-row"><svg width="26" height="10" aria-hidden="true"><line x1="2" y1="5" x2="24" y2="5" stroke="${cv('--f-N')}" stroke-width="3" stroke-dasharray="2 4"/></svg>${term('major','Major street')}, no bike facility</div>`:'');
+  if(on('trails')) h+=(on('bike')?'':`<div class="lg-h">Bike facilities</div>`)+line(cv('--f-T'),term('trail','Off-street trail'),0,3.4);
   if(hlTop5||budgetOn){h+=`<div class="lg-h">Priorities</div>`;
     if(hlTop5) h+=`<div class="lg-row"><span class="rank-badge inline"><span>1</span></span>Top 5 by current score</div>`;
     if(budgetOn) h+=line(cv('--plan'),'Fits the budget plan',0,9);}
@@ -1104,6 +1202,7 @@ document.getElementById('srcFactors').innerHTML=`<h3 style="margin:0">Scoring fa
 /* ---------------- layers panel ---------------- */
 const LAYERS=[
   {id:'bike',g:groups.bike,on:true,t:'Bike facilities',d:`CDOT bike routes (${BL}), plus ${NEWS} newer changes added from news reports. Click a segment for its numbers.`,key:()=>FAC_ORDER.map(k=>`<span><span class="sw" style="background:${cv('--f-'+k)}"></span>${FAC[k]}</span>`).join('')},
+  {id:'trails',g:groups.trails,on:true,t:'Off-street trails',d:'Lakefront, river and channel trails and other paths built for bikes, from OpenStreetMap. Part of the low-stress network; not ranked.',key:()=>`<span><span class="sw" style="background:${cv('--f-T')}"></span>Off-street trail</span>`},
   {id:'gaps',g:groups.gaps,on:false,t:'Major streets with no bike facility',d:'Arterial streets with no bike lane, greenway or markings (dotted). They are ranked in Priorities.',key:()=>`<span><span class="sw" style="background:repeating-linear-gradient(90deg,${cv('--f-N')} 0 3px,transparent 3px 7px)"></span>No bike facility</span>`},
   {id:'ksi',g:groups.ksi,on:false,t:'Killed or seriously injured',d:'Pedestrians and cyclists, 2021 to date. One mark per person.',key:()=>`<span><span class="dot" style="background:${cv('--k')}"></span>Killed</span><span><span class="dot" style="background:${cv('--a')}"></span>Seriously injured</span>`},
   {id:'inj',g:groups.inj,on:false,t:'All pedestrian and cyclist injuries',d:'Every reported injury, 2021 to date.',key:()=>`<span><span class="dot" style="background:${cv('--inj-b')}"></span>Cyclist</span><span><span class="dot" style="background:${cv('--inj-p')}"></span>Pedestrian</span>`},
@@ -1170,7 +1269,7 @@ const seg=(st,f)=>D.segs.find(s=>s.st===st&&s.f===f);
 const clark=seg('Clark St','W Winnemac Ave'), damen=seg('Damen Ave','W Belle Plaine Ave');
 const conn=D.meta.conn;
 const days=(new Date(D.meta.crash_max)-new Date('2021-01-01'))/864e5;
-const V={P:fmt(F.P,1)+' miles',CF:fmt(F.CF,1)+' miles',G:fmt(F.G,1)+' miles',L:fmt(F.L,1)+' miles',BF:fmt(F.BF,1)+' miles',S:fmt(F.S,1)+' miles',
+const V={T:fmt(F.T||0,1)+' miles',P:fmt(F.P,1)+' miles',CF:fmt(F.CF,1)+' miles',G:fmt(F.G,1)+' miles',L:fmt(F.L,1)+' miles',BF:fmt(F.BF,1)+' miles',S:fmt(F.S,1)+' miles',
   lsbig:fmt(conn[2][3],1)+' miles',ppieces:String(conn[0][2]),unserved:fmt(D.meta.unserved_mi.all,1)+' miles',plong:fmt(conn[0][3],1)+' miles',
   clarkmi:clark?fmt(clark.mi,1)+' miles':'about a mile',clarkinj:clark?String(clark.bi+clark.pi):'–',
   ksi:fmt(Wa('Killed or seriously injured')),ksi2:fmt(Wa('Killed or seriously injured')),killed:fmt(Wa('of which killed')),
@@ -1178,7 +1277,7 @@ const V={P:fmt(F.P,1)+' miles',CF:fmt(F.CF,1)+' miles',G:fmt(F.G,1)+' miles',L:f
 tour.querySelectorAll('[data-v]').forEach(e=>{if(V[e.dataset.v]!=null)e.textContent=V[e.dataset.v]});
 document.getElementById('tourDots').innerHTML=steps.map((s,i)=>`<button data-i="${i}" aria-label="Go to step ${i+1}"></button>`).join('');
 const dots=[...document.querySelectorAll('#tourDots button')];
-dots.forEach(b=>b.onclick=()=>steps[+b.dataset.i].scrollIntoView({behavior:RM?'auto':'smooth',block:'start'}));
+dots.forEach(b=>b.onclick=()=>steps[+b.dataset.i].scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'}));
 
 // helpers that drive the real controls, so the page ends up in a normal state
 const setLayer=(id,on)=>{const el=document.getElementById('ly-'+id);if(el&&el.checked!==on){el.checked=on;el.dispatchEvent(new Event('change'))}};
@@ -1224,14 +1323,14 @@ steps.forEach(s=>io.observe(s));
 let before=null;
 window.openTour=function(){
   before={layers:{...layerOn},top5:hlTop5,budget:budgetOn,ward:state.ward};
-  setWard('all');LAYERS.forEach(l=>setLayer(l.id,l.id==='bike'));
+  setWard('all');LAYERS.forEach(l=>setLayer(l.id,l.id==='bike'||l.id==='trails'));
   tour.hidden=false;document.body.classList.add('touring');cur=-1;sc.scrollTop=0;activate(0);setTimeout(()=>sc.focus({preventScroll:true}),50);
 };
 window.closeTour=function(restore){
   tour.hidden=true;document.body.classList.remove('touring');pulse.clearLayers();setEmph(null);state.sel=null;map.closePopup();
   try{localStorage.setItem('bn-tour-seen','1')}catch(e){}
   // land on the clean starting view: bike lanes only, Summary tab
-  LAYERS.forEach(l=>setLayer(l.id,l.id==='bike'));setChk('top5',false);setChk('budgetOn',false);showTab('t-sum');restyle();fitWard();
+  LAYERS.forEach(l=>setLayer(l.id,l.id==='bike'||l.id==='trails'));setChk('top5',false);setChk('budgetOn',false);showTab('t-sum');restyle();fitWard();
 };
 document.getElementById('tourSkip').onclick=()=>closeTour();
 document.getElementById('tourDone').onclick=()=>closeTour();
@@ -1245,5 +1344,27 @@ document.getElementById('howBtn').onclick=()=>openTour();
 document.getElementById('goTour').onclick=()=>openTour();
 document.getElementById('goPri').onclick=()=>showTab('t-pri');
 
+
+/* glossary tooltip: hover or focus on desktop, tap on touch screens */
+(()=>{
+  const tip=document.createElement('div'); tip.id='gloss'; tip.setAttribute('role','tooltip'); tip.hidden=true; document.body.appendChild(tip);
+  let cur=null, pinned=false;
+  const place=el=>{const r=el.getBoundingClientRect(), w=tip.offsetWidth, h=tip.offsetHeight, m=12;
+    let x=Math.min(Math.max(r.left+r.width/2-w/2,m),innerWidth-w-m), y=r.top-h-8; if(y<m) y=r.bottom+8;
+    tip.style.left=x+'px'; tip.style.top=y+'px'};
+  const show=el=>{const g=GLOSS[el.dataset.t]; if(!g) return; cur=el; tip.innerHTML=`<b>${g[0]}</b>${g[1]}`; tip.hidden=false; place(el); el.setAttribute('aria-describedby','gloss')};
+  const hide=()=>{if(cur)cur.removeAttribute('aria-describedby'); cur=null; pinned=false; tip.hidden=true};
+  const hoverable=matchMedia('(hover: hover)').matches;
+  document.addEventListener('mouseover',e=>{if(!hoverable||pinned)return; const el=e.target.closest&&e.target.closest('.term'); if(el)show(el); else if(cur)hide()});
+  document.addEventListener('focusin',e=>{const el=e.target.closest&&e.target.closest('.term'); if(el)show(el)});
+  document.addEventListener('focusout',e=>{if(e.target===cur&&!pinned)hide()});
+  // capture phase: map popups and the legend stop clicks from bubbling
+  document.addEventListener('click',e=>{const el=e.target.closest&&e.target.closest('.term');
+    if(el){e.preventDefault(); e.stopPropagation(); if(cur===el&&pinned){hide()}else{show(el);pinned=true}} else if(cur) hide()},true);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')hide()});
+  addEventListener('scroll',()=>{if(cur)hide()},true); addEventListener('resize',()=>{if(cur)hide()});
+})();
 })();
 </script>
+</body>
+</html>

@@ -10,5 +10,10 @@
  "manual_features": [
   "PRATT BLVD",
   "BERWYN AVE"
- ]
+ ],
+ "trails_dropped": {
+  "runs beside a street": 546,
+  "outside the wards": 54,
+  "short piece": 34
+ }
 }

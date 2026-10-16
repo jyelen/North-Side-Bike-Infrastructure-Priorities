@@ -1,16 +1,17 @@
 {
  "fetched": {
-  "wards": "2026-10-15",
-  "bike_routes": "2026-10-15",
-  "streets": "2026-10-15",
-  "zoning": "2026-10-15",
-  "crashes": "2026-10-15",
-  "people": "2026-10-15",
-  "businesses": "2026-10-15",
-  "l_stops": "2026-10-15",
-  "l_ridership": "2026-10-15",
-  "acs": "2026-10-15",
-  "idot": "2026-10-15"
+  "wards": "2026-10-16",
+  "bike_routes": "2026-10-16",
+  "streets": "2026-10-16",
+  "zoning": "2026-10-16",
+  "crashes": "2026-10-16",
+  "people": "2026-10-16",
+  "businesses": "2026-10-16",
+  "l_stops": "2026-10-16",
+  "l_ridership": "2026-10-16",
+  "acs": "2026-10-16",
+  "idot": "2026-10-16",
+  "trails": "2026-10-16"
  },
  "counts": {
   "wards": {
@@ -28,13 +29,13 @@
    "features": 5681
   },
   "crashes": {
-   "rows": 183631
+   "rows": 183727
   },
   "people": {
-   "rows": 31101
+   "rows": 31130
   },
   "businesses": {
-   "rows": 6846
+   "rows": 6861
   },
   "l_stops": {
    "rows": 302
@@ -52,11 +53,16 @@
   "idot": {
    "features": 7751,
    "service": "TrafficSafety/cis_LocationTool2026"
+  },
+  "trails": {
+   "ways": 827,
+   "server": "https://overpass-api.de/api/interpreter"
   }
  },
  "bike_routes_updated": "2025-12-16",
  "streets_source": "pr57-gg9e",
  "ridership_year": 2025,
  "acs_year": 2024,
- "idot_service": "TrafficSafety/cis_LocationTool2026"
+ "idot_service": "TrafficSafety/cis_LocationTool2026",
+ "trails_source": "OpenStreetMap"
 }
