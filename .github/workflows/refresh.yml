@@ -73,7 +73,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "$BRANCH"
           git add index.html data/build/bikenet_data.json data/build/refresh_report.md data/build/build_report.json \
-                  data/build/unserved_segments.geojson data/build/ward_layer_summary.csv data/build/raw_meta.json
+                  data/build/unserved_segments.geojson data/build/ward_layer_summary.csv data/build/raw_meta.json data/build/trails.geojson
           git commit -q -m "Data refresh $DAY"
           git push -f origin "$BRANCH"
           {

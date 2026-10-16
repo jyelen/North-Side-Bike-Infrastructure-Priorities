@@ -39,6 +39,7 @@ GitHub turns off scheduled runs after 60 days with no activity in the repository
 | Crashes and injured people | `85ca-t3if`, `u6pd-qa9d` | Each run (daily at the source) |
 | Business licenses | `uupf-x98q` (current active) | Each run |
 | Wards, zoning | `p293-wvbd`, `dj47-wfun` | Each run |
+| Off-street trails | OpenStreetMap via Overpass (cycleways and paths marked for bikes; sidepaths beside streets removed). Falls back to `data/static/trails.geojson` | Each run |
 | Street centerlines | `pr57-gg9e` (the data behind the Street Center Lines map). Falls back to `data/static/streets.geojson` | Each run |
 | L stations, ridership | `8pix-ypme`, `5neh-572f` (last full calendar year) | Each run |
 | Census (population, commuting, car ownership, poverty) | ACS 5-year table summary files, block groups, Cook County. Uses the newest release found | Yearly (December) |
