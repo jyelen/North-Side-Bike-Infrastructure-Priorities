@@ -453,7 +453,9 @@ def f_trails(M):
 );
 out geom tags;"""
     last = None
-    for url in OVERPASS:
+    for url in [u for u in OVERPASS for _ in range(2)]:   # two tries per server
+        if last:
+            time.sleep(20)
         try:
             r = S.post(url, data={'data': q}, timeout=240)
             if r.status_code == 200 and r.text.lstrip().startswith('{'):
