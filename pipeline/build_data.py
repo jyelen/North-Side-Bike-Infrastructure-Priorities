@@ -25,10 +25,12 @@ from config import BUILD, RAW, STATIC, WARDS, MANUAL_SOURCE_DATE
 from load import (SQMI, tr, inv, pt, derived_cf, load_wards, load_city_bikes, apply_manual,
                   roundtrip_lonlat, clipped_segments, components, load_streets, load_layers)
 from unserved import build_unserved
+from trails import build_trails
 
 T = WARDS
 TYPE = {'Protected Bike Lane': 'P', 'Buffered Bike Lane': 'BF', 'Bike Lane': 'L', 'Marked Shared Lane': 'S',
-        'Neighborhood Greenway': 'G', 'No bike facility': 'N'}
+        'Neighborhood Greenway': 'G', 'No bike facility': 'N', 'Off-Street Trail': 'T'}
+LOW_STRESS = ('Protected Bike Lane', 'Neighborhood Greenway', 'Off-Street Trail')
 
 
 def log(*a):
@@ -297,7 +299,7 @@ def segments_and_layers(bikes, wards, U6, segs, L, summ):
     OUT['wardsum'] = {str(w): {**{k: (None if pd.isna(v) else float(v)) for k, v in summ[str(w)].items()},
                                'fac': {k: round(v, 2) for k, v in fac[w].items()}} for w in T}
     OUT['wardsum']['all'] = {**{k: (None if pd.isna(v) else float(v)) for k, v in summ['All'].items()},
-                             'fac': {k: round(sum(fac[w].get(k, 0) for w in T), 2) for k in ['P', 'CF', 'G', 'BF', 'L', 'S']}}
+                             'fac': {k: round(sum(fac[w].get(k, 0) for w in T), 2) for k in ['P', 'CF', 'G', 'BF', 'L', 'S', 'T']}}
     OUT['meta'] = {'crash_max': str(CRASH.crash_date.max())[:10]}
     return OUT
 
@@ -447,7 +449,7 @@ def stress_and_equity(D, bikes, segs, L):
             col.append(g)
     ARTb = unary_union(art).buffer(35)
     COLb = unary_union(col).buffer(35)
-    LS = components(segs, lambda s: s['t'] in ('Protected Bike Lane', 'Neighborhood Greenway') or s['cf'])
+    LS = components(segs, lambda s: s['t'] in LOW_STRESS or s['cf'])
     lsg = [unary_union([x['g'] for x in cc]) for cc in LS]
     lst = STRtree(lsg)
     bgs = L['bgs']
@@ -576,6 +578,13 @@ def main():
     bikes = bikes + roundtrip_lonlat(json.loads(json.dumps(uns)))
     log('   ', len(bikes), 'routes incl.', len(uns), 'major-street pieces with no facility')
     segs = clipped_segments(bikes, U6)
+    trails, why = build_trails(RAW / 'trails.geojson', street_feats, U6)
+    report['trails_dropped'] = why
+    for tl in trails:
+        gi = tl['g'].intersection(U6)
+        if not gi.is_empty and gi.length >= 20:
+            segs.append(dict(i=None, g=gi, t='Off-Street Trail', cf=False, st=tl['name'], f='', to='', mi=gi.length / 5280))
+    log('   ', len(trails), 'off-street trails,', round(sum(tl['mi_in'] for tl in trails), 1), 'miles inside the wards; dropped:', why)
     log('2. layers + ward summary')
     L = load_layers(wards)
     summ = ward_summary(wards, L)
@@ -591,7 +600,7 @@ def main():
     log('8. headline numbers')
     defs = [('Protected lanes only', lambda s: s['t'] == 'Protected Bike Lane'),
             ('Protected + contraflow', lambda s: s['t'] == 'Protected Bike Lane' or s['cf']),
-            ('Protected + contraflow + greenways', lambda s: s['t'] in ('Protected Bike Lane', 'Neighborhood Greenway') or s['cf'])]
+            ('Protected + contraflow + greenways + trails', lambda s: s['t'] in LOW_STRESS or s['cf'])]
     conn = []
     for name, sel in defs:
         C = components(segs, sel)
@@ -607,6 +616,13 @@ def main():
                  'idot': f"IDOT road inventory (ROAD NETWORK layer, {rawmeta['idot_service'].split('/')[-1]}), downloaded {rawmeta['fetched']['idot']}",
                  'unserved_mi': un,
                  'acs_year': rawmeta['acs_year'], 'ridership_year': rawmeta['ridership_year'], 'bike_label': current_label}
+    D['trails'] = [{'n': tl['name'], 'mi': round(tl['mi_in'], 2), 'c': coords(ll(tl['g'], 4))} for tl in trails]
+    D['meta']['trails_mi'] = round(sum(tl['mi_in'] for tl in trails), 1)
+    D['meta']['trails_source'] = rawmeta.get('trails_source', 'OpenStreetMap')
+    json.dump({'type': 'FeatureCollection', 'features': [
+        {'type': 'Feature', 'properties': {'name': tl['name'], 'mi_in_wards': round(tl['mi_in'], 2), 'osm_ids': tl['osm_ids']},
+         'geometry': json.loads(json.dumps(__import__('shapely.geometry', fromlist=['mapping']).mapping(ll(tl['g']))))}
+        for tl in trails]}, open(BUILD / 'trails.geojson', 'w'))
     s_ = json.dumps(D, separators=(',', ':'))
     (BUILD / 'bikenet_data.json').write_text(s_)
     json.dump(report, open(BUILD / 'build_report.json', 'w'), indent=1)

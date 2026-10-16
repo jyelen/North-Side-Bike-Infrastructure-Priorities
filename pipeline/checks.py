@@ -55,6 +55,7 @@ def headline(D):
         'Protected lane miles (segments)': round(miles['P'], 1),
         'Painted/buffered/shared miles': round(miles['L'] + miles['BF'] + miles['S'], 1),
         'Major-street miles with no facility': D['meta']['unserved_mi']['all'],
+        'Off-street trail miles': D['meta'].get('trails_mi'),
         'People injured walking/biking (map)': len(D['crashes']),
         'Killed or seriously injured (map)': ksi,
         'Killed (map)': killed,
@@ -92,6 +93,10 @@ def main():
     matched = sum(1 for s in segs if s.get('idot')) / max(len(segs), 1)
     if matched < 0.85:
         fail(f'Only {matched:.0%} of segments matched an IDOT road record (normally all of them).')
+    if 'trails' in D and not D['trails']:
+        fail('No off-street trails found; the trail download is probably wrong.')
+    if 'saved copy' in str(D['meta'].get('trails_source', '')):
+        warn('Off-street trails came from the saved copy because the live OpenStreetMap download failed.')
     if not any(s['t'] == 'P' for s in segs):
         fail('No protected lanes found; the bike route file is probably wrong.')
 
