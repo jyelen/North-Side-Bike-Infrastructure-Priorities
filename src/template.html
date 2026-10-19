@@ -407,7 +407,7 @@ body.simple .tabs,body.simple aside>.pane,body.simple #wardChips,body.simple .br
           <h3 id="chH1">People are getting hurt</h3>
           <p class="ch-big"><b data-s="ksi"></b> <span>people killed or <span class="term" tabindex="0" data-t="ksi">seriously injured</span> walking or biking since January 2021</span></p>
           <p><b data-s="killed"></b> of them died. That is one person every <b data-s="every"></b>.</p>
-          <p data-s-if="major"><b data-s="kmajor"></b> of these crashes happened on <span class="term" tabindex="0" data-t="major">major streets</span>, which make up only <b data-s="mmiles"></b> of the streets here.</p>
+          <p data-s-if="major"><b data-s="kmajor"></b> of these crashes happened on <span class="term" tabindex="0" data-t="major">major streets</span> or where they cross other streets. Major streets are only <b data-s="mmiles"></b> of street miles here.</p>
           <div class="stories">
             <p class="stories-h">Behind the numbers</p>
             <ul>
@@ -1496,7 +1496,7 @@ document.getElementById('goPri').onclick=()=>showTab('t-pri');
   function setYears(y){
     years=y; chosen=plan(y); chosenIds=new Set(chosen.map(s=>s.id));
     const n=network(chosen);
-    Object.assign(S,{pmi:fmt(chosen.reduce((a,s)=>a+s.mi,0),1)+' miles',pn:fmt(chosen.length),pcost:money(chosen.reduce((a,s)=>a+cost(s),0)),
+    Object.assign(S,{pmi:fmt(chosen.reduce((a,s)=>a+s.mi,0),1)+' miles',pn:fmt(chosen.length),pcost:(v=>v>=1e6?'$'+(v/1e6).toFixed(1)+'M':money(v))(chosen.reduce((a,s)=>a+cost(s),0)),
       big1:fmt(n.largest,1)+' mi',pc1:fmt(n.pieces)});
     panel.querySelectorAll('.yrs button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.y===y)));
     put(); if(ch===3) style();
