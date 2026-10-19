@@ -17,7 +17,7 @@
   --map-bg:#e9ede9; --st1:#9aa59f; --st2:#b4bdb8; --st3:#c9d0cc; --st4:#dbe0dc; --river:#9cc2dd; --ward:#2b3a33;
   --f-P:#0b7a55; --f-CF:#7b3fc4; --f-G:#69b585; --f-BF:#df9a2e; --f-L:#d4443b; --f-S:#9a958e; --f-N:#3d4652; --f-T:#7a4e22;
   --k:#7a0d0d; --a:#e8590c; --inj-b:#c2410c; --inj-p:#7c3aed; --rail:#1f5fbf; --biz:#6b5b45;
-  --good:#0b7a55; --warn:#b45309; --crit:#b42318; --plan:#f2b705;
+  --good:#0b7a55; --warn:#b45309; --crit:#b42318; --plan:#f2b705; --s-paint:#e8742a;
   --font-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
   --font-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
@@ -27,14 +27,14 @@
   --map-bg:#141a17; --st1:#56625c; --st2:#46514b; --st3:#36403b; --st4:#29312d; --river:#2f5670; --ward:#d5ddd8;
   --f-P:#3cc994; --f-CF:#b28cf5; --f-G:#4f8f66; --f-BF:#f0b45a; --f-L:#f2675d; --f-S:#7d7973; --f-N:#c3cad1; --f-T:#b08158;
   --k:#ff8a8a; --a:#ffa94d; --inj-b:#fb923c; --inj-p:#b794f4; --rail:#7fb0ff; --biz:#c8b393;
-  --good:#3cc994; --warn:#f0b45a; --crit:#ff7a70; --plan:#ffd23f; color-scheme:dark}}
+  --good:#3cc994; --warn:#f0b45a; --crit:#ff7a70; --plan:#ffd23f; --s-paint:#f39a55; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#101513; --panel:#171e1b; --ink:#e6ece8; --muted:#9aa7a0; --line:#2b3531; --soft:#1e2622;
   --accent:#3cc994; --accent-ink:#0d1411; --focus:#7fb0ff;
   --map-bg:#141a17; --st1:#56625c; --st2:#46514b; --st3:#36403b; --st4:#29312d; --river:#2f5670; --ward:#d5ddd8;
   --f-P:#3cc994; --f-CF:#b28cf5; --f-G:#4f8f66; --f-BF:#f0b45a; --f-L:#f2675d; --f-S:#7d7973; --f-N:#c3cad1; --f-T:#b08158;
   --k:#ff8a8a; --a:#ffa94d; --inj-b:#fb923c; --inj-p:#b794f4; --rail:#7fb0ff; --biz:#c8b393;
-  --good:#3cc994; --warn:#f0b45a; --crit:#ff7a70; --plan:#ffd23f; color-scheme:dark}
+  --good:#3cc994; --warn:#f0b45a; --crit:#ff7a70; --plan:#ffd23f; --s-paint:#f39a55; color-scheme:dark}
 
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.5}
@@ -303,7 +303,8 @@ details.more>summary{cursor:pointer;font-weight:600}
   body{font-size:16px}
   header.top{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;padding:8px 12px;gap:8px 10px}
   .brand h1{font-size:21px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .howbtn{grid-column:2;grid-row:1}
+  .howbtn{display:none}
+  .modesw{grid-column:2;grid-row:1}
   .wards{grid-column:1/-1}
   .btn{font-size:14.5px;padding:7px 11px}
   .wards{flex-wrap:nowrap;overflow-x:auto;width:calc(100% + 24px);margin:0 -12px;padding:2px 12px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
@@ -327,6 +328,54 @@ details.more>summary{cursor:pointer;font-weight:600}
   #gloss{font-size:15px}
 }
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+/* simple view */
+.modesw{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--soft);margin-left:auto}
+.modesw button{border:0;background:none;border-radius:999px;padding:4px 12px;font:600 14px/1.2 var(--font-body);cursor:pointer;color:var(--muted)}
+.modesw button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.modesw+.howbtn{margin-left:0}
+.simple-panel{display:none}
+body.simple .simple-panel{display:flex;flex-direction:column;gap:18px;overflow:auto;padding:20px 20px 32px;min-height:0;flex:1}
+body.simple .tabs,body.simple aside>.pane,body.simple #wardChips,body.simple .brand .sub{display:none!important}
+.sp-kicker{margin:0;font:600 12px/1.3 var(--font-display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sp-title{margin:-10px 0 0;font:700 30px/1.05 var(--font-display);letter-spacing:.01em}
+.sp-lede{margin:-8px 0 0;color:var(--muted)}
+.ch{position:relative;border:1px solid var(--line);border-radius:10px;padding:16px 18px 16px 58px;display:grid;gap:8px;cursor:pointer;transition:border-color .2s,box-shadow .2s}
+.ch>*{margin:0}
+.ch.on{border-color:var(--ink);box-shadow:0 4px 18px rgb(0 0 0/.08)}
+.ch-num{position:absolute;left:16px;top:16px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font:700 16px/1 var(--font-display);background:var(--soft);color:var(--muted)}
+.ch.on .ch-num{background:var(--ink);color:var(--panel)}
+.ch h3{font:700 22px/1.1 var(--font-display);letter-spacing:.01em}
+.ch-big>b:first-child{display:block;font:700 40px/1 var(--font-display);letter-spacing:.01em}
+.ch-big span{color:var(--ink)}
+.ch[data-ch="1"] .ch-big>b:first-child{color:var(--k)}
+.ch[data-ch="2"] .ch-big>b:first-child{color:var(--f-P)}
+.ch[data-ch="3"] .ch-big>b:first-child{color:color-mix(in srgb,var(--plan) 70%,var(--ink))}
+.stories{border-top:1px solid var(--line);padding-top:8px}
+.stories-h{margin:0 0 4px;font:600 12px/1.3 var(--font-display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stories ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14px}
+.yrs{display:inline-flex;gap:6px;flex-wrap:wrap}
+.yrs button{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 14px;font:600 15px/1.2 var(--font-display);cursor:pointer}
+.yrs button[aria-pressed="true"]{background:var(--plan);border-color:var(--plan);color:#1d1a12}
+.growth{display:grid;gap:4px;padding:10px 12px;border-radius:8px;background:color-mix(in srgb,var(--plan) 14%,var(--panel))}
+.growth div{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.g-lab{color:var(--muted);font-size:14px}
+.g-val{font:600 18px/1.2 var(--font-display);white-space:nowrap}
+.sp-foot{display:flex;gap:8px;flex-wrap:wrap}
+@media (max-width: 900px){
+  body.simple .mapwrap{position:sticky;top:0;z-index:600;height:46vh;border-bottom:1px solid var(--line)}
+  body.simple .simple-panel{overflow:visible;padding:18px 14px 32px}
+}
+@media (max-width: 600px){
+  .modesw button{padding:6px 11px;font-size:14.5px}
+  body.simple header.top .howbtn{display:none}
+  .sp-title{font-size:27px}
+  .ch{padding:14px 14px 14px 52px}
+  .ch-num{left:12px;top:14px}
+  .ch-big>b:first-child{font-size:36px}
+  body.simple .map-legend .lg-body{display:flex;flex-wrap:wrap;gap:0 10px;padding:4px 8px!important;max-width:calc(100vw - 80px)}
+  body.simple .map-legend .lg-row{font-size:12.5px;line-height:1.5}
+  body.simple .map-legend svg{width:18px}
+}
 /* glossary terms */
 .term{text-decoration:underline dotted;text-decoration-thickness:1.5px;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,currentColor 55%,transparent);cursor:help}
 .term:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
@@ -340,12 +389,60 @@ details.more>summary{cursor:pointer;font-weight:600}
 <div class="app">
   <header class="top">
     <div class="brand"><h1>North Side Bike Network</h1><span class="sub" id="wardSub"></span></div>
+    <div class="modesw" role="group" aria-label="View">
+      <button type="button" data-mode="simple" aria-pressed="true">Simple</button><button type="button" data-mode="expert" aria-pressed="false">Expert</button>
+    </div>
     <button class="btn howbtn" id="howBtn">How it works</button>
     <div class="wards" role="group" aria-label="Choose ward" id="wardChips"></div>
   </header>
   <div class="main">
     <div class="mapwrap"><div id="map" aria-label="Map of bike facilities, crashes, and transit"></div><div class="map-note" id="mapNote" hidden></div></div>
     <aside>
+      <div class="simple-panel" id="simplePanel">
+        <p class="sp-kicker">Wards <span class="wlist"></span></p>
+        <h2 class="sp-title">A safer, connected North Side</h2>
+        <p class="sp-lede">Three things to know about walking and biking here. Each one changes the map.</p>
+        <section class="ch" data-ch="1" tabindex="0" aria-labelledby="chH1">
+          <p class="ch-num">1</p>
+          <h3 id="chH1">People are getting hurt</h3>
+          <p class="ch-big"><b data-s="ksi"></b> <span>people killed or <span class="term" tabindex="0" data-t="ksi">seriously injured</span> walking or biking since January 2021</span></p>
+          <p><b data-s="killed"></b> of them died. That is one person every <b data-s="every"></b>.</p>
+          <p data-s-if="major"><b data-s="kmajor"></b> of these crashes happened on <span class="term" tabindex="0" data-t="major">major streets</span>, which make up only <b data-s="mmiles"></b> of the streets here.</p>
+          <div class="stories">
+            <p class="stories-h">Behind the numbers</p>
+            <ul>
+              <li><b>Irving Park Rd, Aug. 2026.</b> A woman walking across the street was killed by a driver who fled. Irving Park has no bike facility anywhere in these wards. <a href="https://www.fox32chicago.com/news/deadly-crash-flee-arrest-8-8" target="_blank" rel="noopener">Fox 32</a></li>
+              <li><b>Estes Ave, Aug. 2025.</b> A man was struck and killed by a hit-and-run driver where the Greenview greenway crosses Estes. <a href="https://abc7chicago.com/post/chicago-hit-run-crash-kills-pedestrian-west-estes-avenue-rogers-park-cpd/17473560/" target="_blank" rel="noopener">ABC7</a></li>
+              <li><b>Damen Ave, Oct. 2023.</b> Donald Heggemann, 59, was killed while riding in a paint-only bike lane. <a href="https://chi.streetsblog.org/2023/10/24/man-59-killed-by-allegedly-drunk-driver-was-3rd-cyclist-killed-on-damen-north-of-diversey-in-14-years" target="_blank" rel="noopener">Streetsblog</a></li>
+            </ul>
+          </div>
+        </section>
+        <section class="ch" data-ch="2" tabindex="0" aria-labelledby="chH2">
+          <p class="ch-num">2</p>
+          <h3 id="chH2">We already have a start</h3>
+          <p class="ch-big"><b data-s="lsmi"></b> <span>of <span class="term" tabindex="0" data-t="lowstress">low-stress</span> routes: protected lanes, quiet side streets and trails</span></p>
+          <p>But they come in <b data-s="pieces"></b> separate pieces. The largest connected piece is <b data-s="biggest"></b> long, and <b data-s="small"></b> of the others are under a mile.</p>
+          <p>Another <b data-s="paint"></b> of bike lanes are paint only, with nothing between riders and traffic. And <b data-s="none"></b> of major streets have no bike route at all.</p>
+        </section>
+        <section class="ch" data-ch="3" tabindex="0" aria-labelledby="chH3">
+          <p class="ch-num">3</p>
+          <h3 id="chH3">Connecting the pieces</h3>
+          <p>Targeted upgrades can join the pieces into a real grid. Choose how many years of steady investment:</p>
+          <div class="yrs" role="group" aria-label="Years of investment">
+            <button type="button" data-y="1">1 year</button><button type="button" data-y="3" aria-pressed="true">3 years</button><button type="button" data-y="5">5 years</button>
+          </div>
+          <p class="ch-big"><b data-s="pmi"></b> <span>of upgrades on <b data-s="pn"></b> stretches of street, about <b data-s="pcost"></b></span></p>
+          <div class="growth" aria-live="polite">
+            <div><span class="g-lab">Largest connected network</span><span class="g-val"><b data-s="big0"></b> → <b data-s="big1"></b></span></div>
+            <div><span class="g-lab">Separate pieces</span><span class="g-val"><b data-s="pc0"></b> → <b data-s="pc1"></b></span></div>
+          </div>
+          <p class="note">Uses about <b data-s="yr"></b> a year: the wards' share of the city's bike budget plus $250K from each ward's <span class="term" tabindex="0" data-t="menu">menu money</span>. The stretches are the tool's top-ranked upgrades with its default settings. Costs are planning estimates.</p>
+        </section>
+        <div class="sp-foot">
+          <button class="btn primary" id="toExpert">Explore all the data</button>
+          <button class="btn" id="simpleTour">Take the guided tour</button>
+        </div>
+      </div>
       <div class="tabs" role="tablist">
         <button class="tab" role="tab" id="t-sum" aria-selected="true" aria-controls="p-sum">Summary</button>
         <button class="tab" role="tab" id="t-pri" aria-selected="false" aria-controls="p-pri">Priorities</button>
@@ -614,6 +711,10 @@ details.more>summary{cursor:pointer;font-weight:600}
 <script>
 (function(){
 const D=JSON.parse(document.getElementById('data').textContent);
+// view: simple (default) or expert; ?view=expert in the address opens the expert view
+let MODE0='simple';
+try{const q=new URLSearchParams(location.search).get('view'); if(q==='expert'||q==='simple') MODE0=q; else {const v=localStorage.getItem('bn-view'); if(v==='expert'||v==='simple') MODE0=v}}catch(e){}
+document.body.classList.toggle('simple',MODE0==='simple');
 const BL=D.meta.bike_label||'Dec 2025', RY=D.meta.ridership_year||2025, NEWS=D.segs.filter(s=>s.src).length;
 const WARDS=D.meta.wards||[33,40,46,47,48,49];
 const NW=({6:'six',7:'seven',8:'eight',9:'nine',10:'ten',11:'eleven',12:'twelve'})[WARDS.length]||String(WARDS.length);
@@ -633,6 +734,7 @@ const FAC={P:'Protected',CF:'Contraflow',G:'Neighborhood greenway',BF:'Buffered'
 const FAC_ORDER=['P','CF','G','BF','L','S'];
 const cv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const fmt=(v,d=0)=>v==null||isNaN(v)?'–':Number(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+function isSimple(){return document.body.classList.contains('simple')}
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 /* ---------------- glossary: definitions shown on hover, focus or tap ---------------- */
@@ -809,7 +911,9 @@ function restyle(){
   const Z=BGM[bzMetric]; bzLayers.forEach(p=>{const c=rampColor(p._b[bzMetric],Z.stops,dk,true);p.setStyle({fillColor:c||cv('--map-bg'),fillOpacity:c?.85:0,color:c?cv('--map-bg'):cv('--muted'),weight:c?0.6:0.8,dashArray:c?null:'2 3'})});
   groups.zoning.eachLayer(p=>{const c=ZC[p._z][dk?2:1];p.setStyle({fillColor:c,fillOpacity:p._z==='R'?0.18:0.38,color:c,opacity:.5})});
   groups.biz.eachLayer(m=>m.setStyle({fillColor:cv('--biz')}));
-  drawHalo(); if(typeof drawHighlights==='function')drawHighlights(); reorder(); renderLegends(); if(typeof renderMapLegend==='function')renderMapLegend();
+  drawHalo(); if(typeof drawHighlights==='function')drawHighlights(); reorder(); renderLegends();
+  if(isSimple()&&window.__simpleStyle) window.__simpleStyle();
+  if(typeof renderMapLegend==='function')renderMapLegend();
 }
 function drawHalo(){
   halo.clearLayers(); if(state.sel==null)return;
@@ -863,10 +967,10 @@ function select(id,fromTable,at){
   state.sel=id; restyle();
   const s=D.segs.find(x=>x.id===id); if(!s)return;
   const pl=segLayer[id];
-  if(!map.hasLayer(pl)){const el=document.getElementById('ly-gaps');if(el&&!el.checked){el.checked=true;el.dispatchEvent(new Event('change'))}}
+  if(!map.hasLayer(pl)&&!isSimple()){const el=document.getElementById('ly-gaps');if(el&&!el.checked){el.checked=true;el.dispatchEvent(new Event('change'))}}
   if(fromTable){ if(PHONE.matches) document.querySelector('.mapwrap').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
     map.fitBounds(pl.getBounds(),{padding:PHONE.matches?[30,30]:[60,60],maxZoom:16,animate:!PHONE.matches}); }
-  popup.setLatLng(at||pl.getCenter()).setContent(segHTML(s)).openOn(map);
+  popup.setLatLng(at||pl.getCenter()).setContent(isSimple()&&window.__simpleSegHTML?window.__simpleSegHTML(s):segHTML(s)).openOn(map);
   document.querySelectorAll('#segTable tbody tr').forEach(tr=>tr.classList.toggle('sel',+tr.dataset.id===id));
   if(!fromTable){const tr=document.querySelector(`#segTable tbody tr[data-id="${id}"]`); if(tr&&!document.getElementById('p-pri').hidden) tr.scrollIntoView({block:'nearest'})}
 }
@@ -978,16 +1082,17 @@ document.getElementById('resetW').onclick=()=>{FACTORS.forEach(f=>{weights[f.k]=
 showTotal();
 
 let scores=new Map(); let current=[];
-function computeScores(){
-  const cand=D.segs.filter(s=>{const t=segType(s);return t!=='P'&&types[t]});
-  scores=new Map();
-  const tw=FACTORS.reduce((a,f)=>a+weights[f.k],0)||1;
+function scoreSet(w,ty){
+  const cand=D.segs.filter(s=>{const t=segType(s);return t!=='P'&&ty[t]});
+  const sc=new Map();
+  const tw=FACTORS.reduce((a,f)=>a+w[f.k],0)||1;
   const pct={};
   FACTORS.forEach(f=>{const vals=cand.map(f.get).slice().sort((a,b)=>a-b);
     pct[f.k]=v=>{let lo=0,hi=vals.length;while(lo<hi){const m=(lo+hi)>>1;if(vals[m]<v)lo=m+1;else hi=m}let lo2=lo;while(lo2<vals.length&&vals[lo2]===v)lo2++;return vals.length>1?((lo+lo2-1)/2)/(vals.length-1):0.5}});
-  cand.forEach(s=>{let sc=0;FACTORS.forEach(f=>sc+=weights[f.k]*pct[f.k](f.get(s)));scores.set(s.id,Math.round(100*sc/tw))});
-  return cand;
+  cand.forEach(s=>{let v=0;FACTORS.forEach(f=>v+=w[f.k]*pct[f.k](f.get(s)));sc.set(s.id,Math.round(100*v/tw))});
+  return {cand,sc};
 }
+function computeScores(){const r=scoreSet(weights,types);scores=r.sc;return r.cand}
 const STREETTYPE=s=>s.art>=0.5?'Major arterial':s.stress>=0.5?'Secondary arterial':'Side street';
 /* ---------------- street design: parking impact + ease ---------------- */
 const DIMS={std:{lane:10,park:8,bike:7,n:'Standard: 10-ft travel lanes, 8-ft parking lanes, 7-ft protected lane with buffer'},min:{lane:10,park:7,bike:6,n:'Minimum: 10-ft travel lanes, 7-ft parking lanes, 6-ft protected lane with buffer'}};
@@ -1152,6 +1257,7 @@ let legendOpen=matchMedia('(min-width: 700px)').matches;
 try{const v=localStorage.getItem('bn-legend');if(v!=null)legendOpen=v==='1'}catch(e){}
 function renderMapLegend(){
   const d=document.querySelector('.map-legend'); if(!d)return;
+  if(isSimple()&&window.__simpleLegend){window.__simpleLegend(d);return}
   const on=k=>typeof layerOn!=='undefined'&&layerOn[k];
   const line=(c,lbl,dash,w=4)=>`<div class="lg-row"><svg width="26" height="10" aria-hidden="true"><line x1="2" y1="5" x2="24" y2="5" stroke="${c}" stroke-width="${w}" stroke-linecap="round" ${dash?'stroke-dasharray="4 4"':''}/></svg>${lbl}</div>`;
   const dot=(c,lbl,r=5,ring)=>`<div class="lg-row"><svg width="26" height="12" aria-hidden="true"><circle cx="13" cy="6" r="${r}" fill="${c}" ${ring?`stroke="${ring}" stroke-width="1.2"`:''}/></svg>${lbl}</div>`;
@@ -1331,18 +1437,158 @@ window.closeTour=function(restore){
   try{localStorage.setItem('bn-tour-seen','1')}catch(e){}
   // land on the clean starting view: bike lanes only, Summary tab
   LAYERS.forEach(l=>setLayer(l.id,l.id==='bike'||l.id==='trails'));setChk('top5',false);setChk('budgetOn',false);showTab('t-sum');restyle();fitWard();
+  if(isSimple()&&window.simpleApply) window.simpleApply();
 };
 document.getElementById('tourSkip').onclick=()=>closeTour();
 document.getElementById('tourDone').onclick=()=>closeTour();
 document.getElementById('tourRestart').onclick=()=>steps[0].scrollIntoView({behavior:RM?'auto':'smooth'});
 tour.addEventListener('keydown',e=>{if(e.key==='Escape')closeTour()});
 let seen=false;try{seen=localStorage.getItem('bn-tour-seen')==='1'}catch(e){}
-if(!seen||location.hash==='#tour') setTimeout(openTour,60);
+if((!seen&&!isSimple())||location.hash==='#tour') setTimeout(openTour,60);
 })();
 
 document.getElementById('howBtn').onclick=()=>openTour();
 document.getElementById('goTour').onclick=()=>openTour();
 document.getElementById('goPri').onclick=()=>showTab('t-pri');
+
+/* ---------------- simple view ---------------- */
+(()=>{
+  const panel=document.getElementById('simplePanel');
+  const Wa=k=>{const o=D.wardsum.all;for(const key in o){if(key.trim()===k)return o[key]}return null};
+  const comps=D.meta.lscomp||[];
+  const conn=D.meta.conn[2];
+  const F=D.wardsum.all.fac;
+  const days=(new Date(D.meta.crash_max)-new Date('2021-01-01'))/864e5;
+  const ksi=Wa('Killed or seriously injured');
+  const S={ksi:fmt(ksi),killed:fmt(Wa('of which killed')),every:fmt(days/ksi,0)+' days',
+    kmajor:D.meta.ksi_major_pct!=null?D.meta.ksi_major_pct+'%':null,mmiles:D.meta.major_miles_pct!=null?D.meta.major_miles_pct+'%':null,
+    lsmi:fmt(conn[1],0)+' miles',pieces:fmt(conn[2]),biggest:fmt(conn[3],1)+' miles',small:fmt(comps.filter((m,i)=>i>0&&m<1).length),
+    paint:fmt((F.L||0)+(F.BF||0)+(F.S||0),0)+' miles',none:fmt(D.meta.unserved_mi.all,0)+' miles',
+    yr:money(BUDGET_DEFAULT),big0:fmt(comps[0]||conn[3],1)+' mi',pc0:fmt(comps.length||conn[2])};
+  const put=()=>panel.querySelectorAll('[data-s]').forEach(e=>{if(S[e.dataset.s]!=null)e.textContent=S[e.dataset.s]});
+  if(S.kmajor==null) panel.querySelectorAll('[data-s-if="major"]').forEach(e=>e.hidden=true);
+
+  // ---- the plan for chapter 3: top-ranked upgrades with default settings, N years of the default budget
+  const DEFW={};FACTORS.forEach(f=>DEFW[f.k]=f.def);
+  const DEFT={N:true,L:true,BF:true,S:true,G:false,CF:false};
+  const tgt=s=>{const t=segType(s);const tg=s.stress>=0.5?'PC':'G';return (tg==='G'&&t==='G')?null:tg};
+  const cost=s=>{const tg=tgt(s);return tg?s.mi*COSTDEF[tg]:null};
+  let ranked=null;
+  function plan(years){
+    if(!ranked){const r=scoreSet(DEFW,DEFT);ranked=r.cand.slice().sort((a,b)=>r.sc.get(b.id)-r.sc.get(a.id))}
+    let left=years*BUDGET_DEFAULT; const list=[];
+    for(const s of ranked){const c=cost(s); if(c&&c<=left){list.push(s);left-=c}}
+    return list;
+  }
+  // how the chosen upgrades join the low-stress pieces
+  function network(list){
+    const par=new Map(); const f=x=>{while(par.get(x)!==x){par.set(x,par.get(par.get(x)));x=par.get(x)}return x};
+    const add=x=>{if(!par.has(x))par.set(x,x)}; const un=(a,b)=>{add(a);add(b);par.set(f(a),f(b))};
+    comps.forEach((m,i)=>add('c'+i));
+    const ids=new Set(list.map(s=>s.id));
+    list.forEach(s=>{add('s'+s.id);(s.lsc||[]).forEach(k=>un('s'+s.id,'c'+k));(s.adj||[]).forEach(a=>{if(ids.has(a))un('s'+s.id,'s'+a)})});
+    const mi=new Map();
+    comps.forEach((m,i)=>{const r=f('c'+i);mi.set(r,(mi.get(r)||0)+m)});
+    list.forEach(s=>{const r=f('s'+s.id);mi.set(r,(mi.get(r)||0)+s.mi)});
+    return {pieces:mi.size,largest:Math.max(0,...mi.values())};
+  }
+  let years=3, chosen=[], chosenIds=new Set();
+  function setYears(y){
+    years=y; chosen=plan(y); chosenIds=new Set(chosen.map(s=>s.id));
+    const n=network(chosen);
+    Object.assign(S,{pmi:fmt(chosen.reduce((a,s)=>a+s.mi,0),1)+' miles',pn:fmt(chosen.length),pcost:money(chosen.reduce((a,s)=>a+cost(s),0)),
+      big1:fmt(n.largest,1)+' mi',pc1:fmt(n.pieces)});
+    panel.querySelectorAll('.yrs button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.y===y)));
+    put(); if(ch===3) style();
+  }
+
+  // ---- map styling per chapter
+  const CAT={P:'safe',T:'safe',CF:'quiet',G:'quiet',BF:'paint',L:'paint',S:'paint',N:'none'};
+  const simHL=L.layerGroup();
+  let ch=1;
+  function style(){
+    const dim=ch===1, faded=ch===3;
+    const col=c=>c==='safe'?cv('--f-P'):c==='quiet'?cv('--f-G'):c==='paint'?cv('--s-paint'):cv('--f-N');
+    groups.bike.eachLayer(l=>{const c=CAT[l._t];const sel=l._s.id===state.sel;
+      l.setStyle({color:dim?cv('--muted'):col(c),opacity:dim?.35:(faded&&c==='paint'?.4:1),weight:(c==='safe'?4.5:c==='quiet'?3:2.6)+(sel?2:0),dashArray:null})});
+    groups.trails.eachLayer(l=>l.setStyle({color:dim?cv('--muted'):cv('--f-P'),opacity:dim?.35:1,weight:3.6}));
+    simHL.clearLayers();
+    if(ch===3) chosen.forEach(s=>L.polyline(s.c,{renderer:RV,color:cv('--plan'),opacity:.95,weight:7,lineCap:'round'})
+      .on('click',e=>{L.DomEvent.stopPropagation(e);select(s.id,false,e.latlng)})
+      .bindTooltip(()=>esc(s.st)+' · proposed upgrade',{sticky:true,direction:'top',opacity:1}).addTo(simHL));
+    if(map.hasLayer(simHL)) simHL.eachLayer(l=>l.bringToFront());
+    if(map.hasLayer(groups.ksi)) groups.ksi.eachLayer(l=>l.bringToFront&&l.bringToFront());
+  }
+  window.__simpleStyle=style;
+  window.__simpleLegend=d=>{
+    const line=(c,lbl,w=4,o=1)=>`<div class="lg-row"><svg width="26" height="10" aria-hidden="true"><line x1="2" y1="5" x2="24" y2="5" stroke="${c}" stroke-opacity="${o}" stroke-width="${w}" stroke-linecap="round"/></svg>${lbl}</div>`;
+    const dot=(c,lbl,r=5)=>`<div class="lg-row"><svg width="26" height="12" aria-hidden="true"><circle cx="13" cy="6" r="${r}" fill="${c}" stroke="${cv('--panel')}" stroke-width="1.2"/></svg>${lbl}</div>`;
+    let h='';
+    if(ch===1) h=dot(cv('--k'),'Killed')+dot(cv('--a'),'Seriously injured',4)+line(cv('--muted'),'Bike routes',3,.5);
+    else{ if(ch===3) h+=line(cv('--plan'),'Proposed upgrade',7);
+      h+=line(cv('--f-P'),term('protected','Protected lane')+' or '+term('trail','trail'),4.5)+line(cv('--f-G'),term('greenway','Quiet side street'),3)+line(cv('--s-paint'),'Paint only',2.6,ch===3?.4:1);}
+    d.innerHTML=`<div class="lg-body" style="padding-top:8px">${h}</div>`;
+  };
+  window.__simpleSegHTML=s=>{
+    const t=segType(s), c=CAT[t];
+    const now=c==='safe'?'Protected lane':c==='quiet'?(t==='CF'?'Contraflow lane on a quiet street':'Quiet side street (greenway)'):c==='paint'?'Paint only: '+FAC[t].toLowerCase():'No bike route';
+    const up=chosenIds.has(s.id)&&ch===3?tgt(s):null;
+    return `<div class="pop"><h4>${esc(s.st)}</h4><div class="ext">${esc(s.f)} – ${esc(s.to)} · Ward ${s.w}</div>`+dl([
+      ['Today',now],['Length',fmt(s.mi,2)+' mi'],
+      ['People hurt nearby since 2021',fmt(s.bi+s.pi)],['Killed or seriously injured',fmt(s.ksi)],
+      up?['Proposed',(up==='PC'?'Protected lane':'Neighborhood greenway')+', about '+money(cost(s))]:null])+
+      `<p style="margin:8px 0 0"><button class="btn" type="button" onclick="window.__toExpert(${s.id})">Full details</button></p></div>`;
+  };
+
+  function layersFor(c){
+    const want={bike:true,trails:true,ksi:c===1};
+    LAYERS.forEach(l=>{const on=!!want[l.id]; if(on&&!map.hasLayer(l.g))l.g.addTo(map); if(!on&&map.hasLayer(l.g))map.removeLayer(l.g)});
+    if(c===3){if(!map.hasLayer(simHL))simHL.addTo(map)} else if(map.hasLayer(simHL)) map.removeLayer(simHL);
+  }
+  function fitAll(){map.fitBounds(L.featureGroup(Object.values(wardPoly)).getBounds(),{padding:[16,16],animate:false})}
+  function activate(c,fit){
+    ch=c; panel.querySelectorAll('.ch').forEach(e=>e.classList.toggle('on',+e.dataset.ch===c));
+    layersFor(c); state.sel=null; map.closePopup(); restyle(); if(fit) fitAll();
+  }
+  window.simpleApply=()=>{if(state.ward!=='all'){const b=document.querySelector('#wardChips .chip[data-w="all"]');if(b)b.click()}
+    state.emph=null; if(map.hasLayer(hl)) map.removeLayer(hl); activate(ch,true)};
+
+  // chapter cards: click, keyboard, and scrolling the panel
+  panel.querySelectorAll('.ch').forEach(e=>{
+    e.addEventListener('click',ev=>{if(ev.target.closest('a,.term'))return; pick(+e.dataset.ch)});
+    e.addEventListener('keydown',ev=>{if((ev.key==='Enter'||ev.key===' ')&&ev.target===e){ev.preventDefault();pick(+e.dataset.ch)}});
+  });
+  // clicking a chapter picks it (and pauses scroll-tracking briefly); scrolling the panel also moves between chapters
+  let hold=0;
+  function pick(c){hold=Date.now()+1200; if(c!==ch) activate(c)}
+  const io=new IntersectionObserver(es=>{if(!isSimple()||Date.now()<hold)return;es.forEach(en=>{if(en.isIntersecting){const c=+en.target.dataset.ch;if(c!==ch)activate(c)}})},
+    {root:innerWidth>900?panel:null,rootMargin:innerWidth>900?'-15% 0px -65% 0px':'-55% 0px -35% 0px'});
+  panel.querySelectorAll('.ch').forEach(e=>io.observe(e));
+  panel.querySelectorAll('.yrs button').forEach(b=>b.addEventListener('click',()=>{setYears(+b.dataset.y); pick(3)}));
+
+  // switching views
+  const sw=document.querySelectorAll('.modesw button');
+  function setMode(m,keepUrl){
+    document.body.classList.toggle('simple',m==='simple');
+    sw.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));
+    try{localStorage.setItem('bn-view',m)}catch(e){}
+    if(!keepUrl){try{const u=new URL(location.href); if(m==='expert')u.searchParams.set('view','expert'); else u.searchParams.delete('view'); history.replaceState(null,'',u)}catch(e){}}
+    map.closePopup(); state.sel=null;
+    if(m==='simple'){ window.simpleApply(); }
+    else { if(map.hasLayer(simHL)) map.removeLayer(simHL); if(!map.hasLayer(hl)) hl.addTo(map);
+      LAYERS.forEach(l=>{if(layerOn[l.id]&&!map.hasLayer(l.g))l.g.addTo(map); if(!layerOn[l.id]&&map.hasLayer(l.g))map.removeLayer(l.g)});
+      restyle(); fitWard(); }
+    setTimeout(()=>map.invalidateSize(),0);
+  }
+  sw.forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+  document.getElementById('toExpert').onclick=()=>{setMode('expert');scrollTo({top:0})};
+  document.getElementById('simpleTour').onclick=()=>openTour();
+  window.__toExpert=id=>{setMode('expert');setTimeout(()=>select(id,true),50)};
+
+  setYears(3); put();
+  sw.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===(isSimple()?'simple':'expert'))));
+  if(isSimple()) setTimeout(()=>window.simpleApply(),0);
+})();
 
 
 /* glossary tooltip: hover or focus on desktop, tap on touch screens */

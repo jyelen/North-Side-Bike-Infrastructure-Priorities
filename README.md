@@ -2,6 +2,8 @@
 
 An interactive map and ranking tool for a connected protected bike network across Chicago Wards 33, 39, 40, 46, 47, 48, 49 and 50. The live page is `index.html`, served by GitHub Pages.
 
+The page opens in a **simple view**: three short chapters (safety, today's network, connecting the pieces) that each change the map. The **expert view** has the full analysis: summary numbers, priority rankings with adjustable weights, budget mode, map layers and sources. Link straight to it with `?view=expert`. The page remembers each visitor's last choice.
+
 ## How the data is refreshed
 
 `index.html` is built. Don't edit it by hand: change `src/template.html` or the pipeline, then rebuild.
