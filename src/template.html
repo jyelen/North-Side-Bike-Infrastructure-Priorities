@@ -333,6 +333,7 @@ details.more>summary{cursor:pointer;font-weight:600}
 .modesw button{border:0;background:none;border-radius:999px;padding:4px 12px;font:600 14px/1.2 var(--font-body);cursor:pointer;color:var(--muted)}
 .modesw button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
 .modesw+.howbtn{margin-left:0}
+.modesw.glow{position:relative;z-index:3001;box-shadow:0 0 0 3px var(--plan),0 0 0 7px color-mix(in srgb,var(--plan) 35%,transparent)}
 .simple-panel{display:none}
 body.simple .simple-panel{display:flex;flex-direction:column;gap:18px;overflow:auto;padding:20px 20px 32px;min-height:0;flex:1}
 body.simple .tabs,body.simple aside>.pane,body.simple #wardChips,body.simple .brand .sub{display:none!important}
@@ -404,10 +405,10 @@ body.simple .tabs,body.simple aside>.pane,body.simple #wardChips,body.simple .br
         <p class="sp-lede">Three things to know about walking and biking here. Each one changes the map.</p>
         <section class="ch" data-ch="1" tabindex="0" aria-labelledby="chH1">
           <p class="ch-num">1</p>
-          <h3 id="chH1">Where people get hurt</h3>
-          <p class="ch-big"><b data-s="sic"></b> <span>crashes caused <span class="term" tabindex="0" data-t="ksi">serious injuries</span> to people walking or biking since January 2021</span></p>
-          <p>In the same period, <b data-s="killed"></b> people walking or biking were killed.</p>
-          <p data-s-if="major"><b data-s="kmajor"></b> of the crashes that seriously injured or killed someone happened on <span class="term" tabindex="0" data-t="major">major streets</span> or where they cross other streets. Major streets are only <b data-s="mmiles"></b> of street miles here.</p>
+          <h3 id="chH1">People are getting hurt</h3>
+          <p class="ch-big"><b data-s="kc"></b> <span>crashes caused <span class="term" tabindex="0" data-t="ksi">serious injuries</span> or deaths among people walking or biking since January 2021</span></p>
+          <p><b data-s="sic"></b> caused serious injuries, and <b data-s="fc"></b> were fatal.</p>
+          <p data-s-if="major"><b data-s="kmajor"></b> of these crashes happened on <span class="term" tabindex="0" data-t="major">major streets</span> or where they cross other streets. Major streets are only <b data-s="mmiles"></b> of street miles here.</p>
           <div class="stories">
             <p class="stories-h">Behind the numbers</p>
             <ul>
@@ -650,8 +651,8 @@ body.simple .tabs,body.simple aside>.pane,body.simple #wardChips,body.simple .br
     </div></section>
     <section class="step" data-step="toll"><div class="card">
       <p class="eyebrow">The human toll · 2021 to <span class="crashThrough"></span></p>
-      <h2><span data-v="sic"></span> crashes with <span class="term" tabindex="0" data-t="ksi">serious injuries</span></h2>
-      <p>Since January 2021, <b data-v="sic2"></b> crashes in these <span class="nw"></span> wards seriously injured someone walking or biking, while <b data-v="killed"></b> people walking or biking were killed.</p>
+      <h2><span data-v="kc"></span> crashes with <span class="term" tabindex="0" data-t="ksi">serious injuries</span> or deaths</h2>
+      <p>Since January 2021, <b data-v="kc2"></b> crashes in these <span class="nw"></span> wards seriously injured or killed someone walking or biking: <b data-v="sic"></b> caused serious injuries, and <b data-v="fc"></b> were fatal.</p>
       <p><b data-v="pct30"></b> of the injuries happened on streets posted at 30 mph or more. A pedestrian hit at 31 mph has about a 50% chance of severe injury, double the risk at 23 mph.</p>
       <p class="legend-inline"><span><i class="dot" style="background:var(--k)"></i>Killed</span><span><i class="dot" style="background:var(--a)"></i>Seriously injured</span></p>
     </div></section>
@@ -696,12 +697,22 @@ body.simple .tabs,body.simple aside>.pane,body.simple #wardChips,body.simple .br
       <p>At a <b data-v="bamt"></b> budget, our working estimate of what the city and the <span class="nw"></span> wards might spend on bikeways in a year, it funds <b data-v="bn"></b> covering <b data-v="bmi"></b>, shown in gold.</p>
       <p class="small">Switch to “most score per dollar” to favor cheaper upgrades, or edit any cost to match a real bid. All costs and sources are in the Sources tab.</p>
     </div></section>
+    <section class="step" data-step="views"><div class="card">
+      <p class="eyebrow">Two ways to use this map</p>
+      <h2>Simple and Expert views</h2>
+      <p>Switch any time with the <b>Simple / Expert</b> buttons at the top of the page.</p>
+      <ul class="tl">
+        <li><i style="background:var(--plan)"></i><span><b>Simple view</b> tells the story in three short steps: where people are getting hurt, the network we already have, and how a few years of targeted upgrades could connect it. Each step changes the map.</span></li>
+        <li><i style="background:var(--ink)"></i><span><b>Expert view</b> has everything: ward-by-ward numbers, the full priority ranking with adjustable weights, Budget mode, extra map layers, and the sources behind each factor.</span></li>
+      </ul>
+      <p class="small">Sharing with staff? Add <b>?view=expert</b> to the page address to open the Expert view directly.</p>
+    </div></section>
     <section class="step" data-step="end"><div class="card big">
       <p class="eyebrow">Your turn</p>
       <h2>Explore the map</h2>
       <p>Pick a ward, click any street or crash for details, turn on more layers, and test your own priorities and budget.</p>
       <div class="btnrow"><button class="btn primary" id="tourDone">Explore the map</button><button class="btn" id="tourRestart">Back to the start</button></div>
-      <p class="small">You can replay this tour anytime with “How it works” at the top.</p>
+      <p class="small">Replay this tour anytime with “How it works” at the top, or “Take the guided tour” in the Simple view.</p>
     </div></section>
   </div>
 </div>
@@ -750,7 +761,7 @@ const GLOSS={
   major:['Major street','A through street that carries most traffic (an "arterial"), such as Western Ave or Lawrence Ave. The city classifies these as street types 2 and 3.'],
   stress:['Traffic stress','How uncomfortable a street is to bike on, driven mostly by car speed, traffic volume and number of lanes. Here it is estimated from street type: major streets score highest.'],
   roaddiet:['Road diet','Turning a four-lane street (two lanes each way) into two travel lanes plus a center turn lane. The freed-up width can hold bike lanes. Usually considered only where traffic is under about 20,000 vehicles a day.'],
-  ksi:['Serious injury','The police crash report lists an "incapacitating injury" for someone walking or biking: an injury that kept them from walking, driving or carrying on normally at the scene. Deaths are counted separately.'],
+  ksi:['Serious injury','The police crash report lists an "incapacitating injury" for someone walking or biking: an injury that kept them from walking, driving or carrying on normally at the scene. Crashes that killed someone are counted as fatal.'],
   ease:['Ease','A 0–100 estimate of how hard an upgrade would be: parking impact (40%), daily traffic (25%), road owner (25%) and speed limit (10%). Up to 33 is "Easier", up to 60 "Moderate", above that "Harder". The weights are a judgment call.'],
   score:['Priority score','Each segment is ranked against the others on every factor (as a percentile), then the ranks are weighted by the points you set. 100 means top on every factor.'],
   owner:['Road owner','Who controls the street. Changes to state routes need IDOT approval, and county roads need county approval. Most streets here are city streets.'],
@@ -987,7 +998,7 @@ function renderSummary(){
       `<b>${fmt(f.T||0,1)} miles</b> of ${term('trail','off-street trails')}, such as the lakefront and river trails.`,
       `<b>${fmt(unprot,1)} miles</b> of bike routes are paint or markings only, with nothing between riders and traffic.`,
       `<b>${fmt(D.meta.unserved_mi[w==='all'?'all':String(w)],1)} miles</b> of major streets have no bike facility at all.`,
-      `<b>${fmt(W('Serious-injury crashes'))} crashes</b> caused ${term('ksi','serious injuries')} to people walking or biking since 2021, while <b>${fmt(W('of which killed'))} people</b> were killed.`,
+      `<b>${fmt(W('KSI crashes'))} crashes</b> caused ${term('ksi','serious injuries')} or deaths among people walking or biking since 2021: ${fmt(W('Serious-injury crashes'))} caused serious injuries, and ${fmt(W('Fatal crashes'))} were fatal.`,
       `<b>${fmt(Math.round(W('Population')/1000)*1000)} residents</b>, <b>${fmt(W('L stations'))} L station${W('L stations')===1?'':'s'}</b> and <b>${fmt(W('Licensed businesses'))} licensed businesses</b>${w==='all'?` across the ${NW} wards`:''}.`
     ].map(x=>`<li>${x}</li>`).join(''); }
   document.getElementById('sumTitle').textContent=w==='all'?`All ${NW} wards`:'Ward '+w;
@@ -1001,14 +1012,13 @@ function renderSummary(){
     tile(fmt(f.L||0,1),'Painted lane','paint only')+
     tile(fmt(f.S||0,1),'Shared-lane markings','no separate space')+
     tile(fmt(f.T||0,1),'Off-street trail','paths away from streets');
-  const sic=W('Serious-injury crashes'), pop=W('Population');
-  const perCap=sic/pop*1e5, cityPer=C.sic!=null?C.sic/C.pop*1e5:null;
+  const kc=W('KSI crashes'), pop=W('Population');
+  const perCap=kc/pop*1e5, cityPer=C.kc!=null?C.kc/C.pop*1e5:null;
   document.getElementById('tilesSafe').innerHTML=
     tile(fmt(W('Pedestrians injured since 2021')),'Pedestrians injured')+
     tile(fmt(W('Cyclists injured since 2021')),'Cyclists injured')+
-    tile(fmt(sic),'Crashes with serious injuries')+
-    tile(fmt(W('of which killed')),'People killed')+
-    tile(fmt(perCap,0),'Serious-injury crashes per 100,000 residents',`citywide <b>${fmt(cityPer,0)}</b>`)+
+    tile(fmt(kc),'Crashes with serious injuries or deaths',`<b>${fmt(W('Serious-injury crashes'))}</b> serious · <b>${fmt(W('Fatal crashes'))}</b> fatal`)+
+    tile(fmt(perCap,0),'Of these crashes per 100,000 residents',`citywide <b>${fmt(cityPer,0)}</b>`)+
     tile(fmt(W('% of injuries where posted limit ≥30'),0)+'%','of injuries on streets posted 30 mph+','30 is the city default')+
     tile(fmt(W('L stations')),'L stations',`<b>${fmt(W('L entries last full year (millions)'),1)}M</b> entries in ${RY}`);
   document.getElementById('tilesCtx').innerHTML=
@@ -1379,7 +1389,7 @@ const days=(new Date(D.meta.crash_max)-new Date('2021-01-01'))/864e5;
 const V={T:fmt(F.T||0,1)+' miles',P:fmt(F.P,1)+' miles',CF:fmt(F.CF,1)+' miles',G:fmt(F.G,1)+' miles',L:fmt(F.L,1)+' miles',BF:fmt(F.BF,1)+' miles',S:fmt(F.S,1)+' miles',
   lsbig:fmt(conn[2][3],1)+' miles',ppieces:String(conn[0][2]),unserved:fmt(D.meta.unserved_mi.all,1)+' miles',plong:fmt(conn[0][3],1)+' miles',
   clarkmi:clark?fmt(clark.mi,1)+' miles':'about a mile',clarkinj:clark?String(clark.bi+clark.pi):'–',
-  sic:fmt(Wa('Serious-injury crashes')),sic2:fmt(Wa('Serious-injury crashes')),killed:fmt(Wa('of which killed')),pct30:fmt(Wa('% of injuries where posted limit ≥30'),0)+'%'};
+  kc:fmt(Wa('KSI crashes')),kc2:fmt(Wa('KSI crashes')),sic:fmt(Wa('Serious-injury crashes')),fc:fmt(Wa('Fatal crashes')),killed:fmt(Wa('of which killed')),pct30:fmt(Wa('% of injuries where posted limit ≥30'),0)+'%'};
 tour.querySelectorAll('[data-v]').forEach(e=>{if(V[e.dataset.v]!=null)e.textContent=V[e.dataset.v]});
 document.getElementById('tourDots').innerHTML=steps.map((s,i)=>`<button data-i="${i}" aria-label="Go to step ${i+1}"></button>`).join('');
 const dots=[...document.querySelectorAll('#tourDots button')];
@@ -1417,26 +1427,31 @@ const ACT={
   budget(){setEmph(null);setChk('top5',false);setChk('budgetOn',true);pulse.clearLayers();showTab('t-pri');
     tour.querySelector('[data-v="bamt"]').textContent=money(bud.amt);tour.querySelector('[data-v="bn"]').textContent=plan.list.length+' segments';tour.querySelector('[data-v="bmi"]').textContent=fmt(plan.miles,1)+' miles';
     go(plan.list.length?segBounds(plan.list):allBounds(),15)},
+  views(){setEmph(null);setChk('budgetOn',false);setChk('top5',false);setLayer('gaps',false);pulse.clearLayers();go(allBounds())},
   end(){setEmph(null);setChk('budgetOn',false);setLayer('ksi',false);setLayer('gaps',false);showTab('t-sum');pulse.clearLayers();go(allBounds())}
 };
 let cur=-1;
 function activate(i){if(i===cur)return;cur=i;dots.forEach((d,j)=>d.setAttribute('aria-current',j===i?'step':'false'));
   steps.forEach((s,j)=>s.classList.toggle('on',j===i));
   tour.classList.toggle('dim',steps[i].dataset.step==='intro'||steps[i].dataset.step==='end');
+  document.querySelector('.modesw').classList.toggle('glow',steps[i].dataset.step==='views');
   try{ACT[steps[i].dataset.step]()}catch(e){console.error(e)}}
 const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)activate(steps.indexOf(e.target))})},{root:sc,rootMargin:'-45% 0px -45% 0px',threshold:0});
 steps.forEach(s=>io.observe(s));
 let before=null;
 window.openTour=function(){
+  window.__tourWasSimple=isSimple(); document.body.classList.remove('simple'); if(window.__simpleLeave) window.__simpleLeave();
   before={layers:{...layerOn},top5:hlTop5,budget:budgetOn,ward:state.ward};
   setWard('all');LAYERS.forEach(l=>setLayer(l.id,l.id==='bike'||l.id==='trails'));
   tour.hidden=false;document.body.classList.add('touring');cur=-1;sc.scrollTop=0;activate(0);setTimeout(()=>sc.focus({preventScroll:true}),50);
 };
 window.closeTour=function(restore){
+  document.querySelector('.modesw').classList.remove('glow');
   tour.hidden=true;document.body.classList.remove('touring');pulse.clearLayers();setEmph(null);state.sel=null;map.closePopup();
   try{localStorage.setItem('bn-tour-seen','1')}catch(e){}
   // land on the clean starting view: bike lanes only, Summary tab
   LAYERS.forEach(l=>setLayer(l.id,l.id==='bike'||l.id==='trails'));setChk('top5',false);setChk('budgetOn',false);showTab('t-sum');restyle();fitWard();
+  if(window.__tourWasSimple) document.body.classList.add('simple');
   if(isSimple()&&window.simpleApply) window.simpleApply();
 };
 document.getElementById('tourSkip').onclick=()=>closeTour();
@@ -1444,7 +1459,7 @@ document.getElementById('tourDone').onclick=()=>closeTour();
 document.getElementById('tourRestart').onclick=()=>steps[0].scrollIntoView({behavior:RM?'auto':'smooth'});
 tour.addEventListener('keydown',e=>{if(e.key==='Escape')closeTour()});
 let seen=false;try{seen=localStorage.getItem('bn-tour-seen')==='1'}catch(e){}
-if((!seen&&!isSimple())||location.hash==='#tour') setTimeout(openTour,60);
+if(!seen||location.hash==='#tour') setTimeout(openTour,60);
 })();
 
 document.getElementById('howBtn').onclick=()=>openTour();
@@ -1460,7 +1475,7 @@ document.getElementById('goPri').onclick=()=>showTab('t-pri');
   const F=D.wardsum.all.fac;
   const days=(new Date(D.meta.crash_max)-new Date('2021-01-01'))/864e5;
   const ksi=Wa('Killed or seriously injured');
-  const S={sic:fmt(Wa('Serious-injury crashes')),killed:fmt(Wa('of which killed')),
+  const S={kc:fmt(Wa('KSI crashes')),sic:fmt(Wa('Serious-injury crashes')),fc:fmt(Wa('Fatal crashes')),
     kmajor:D.meta.ksi_major_pct!=null?D.meta.ksi_major_pct+'%':null,mmiles:D.meta.major_miles_pct!=null?D.meta.major_miles_pct+'%':null,
     lsmi:fmt(conn[1],0)+' miles',pieces:fmt(conn[2]),biggest:fmt(conn[3],1)+' miles',small:fmt(comps.filter((m,i)=>i>0&&m<1).length),
     paint:fmt((F.L||0)+(F.BF||0)+(F.S||0),0)+' miles',none:fmt(D.meta.unserved_mi.all,0)+' miles',
@@ -1550,6 +1565,7 @@ document.getElementById('goPri').onclick=()=>showTab('t-pri');
     ch=c; panel.querySelectorAll('.ch').forEach(e=>e.classList.toggle('on',+e.dataset.ch===c));
     layersFor(c); state.sel=null; map.closePopup(); restyle(); if(fit) fitAll();
   }
+  window.__simpleLeave=()=>{if(map.hasLayer(simHL))map.removeLayer(simHL); if(!map.hasLayer(hl))hl.addTo(map); restyle()};
   window.simpleApply=()=>{if(state.ward!=='all'){const b=document.querySelector('#wardChips .chip[data-w="all"]');if(b)b.click()}
     state.emph=null; if(map.hasLayer(hl)) map.removeLayer(hl); activate(ch,true)};
 

@@ -82,7 +82,11 @@ def ward_summary(wards, L):
         R['Pedestrians injured since 2021'] = (d.inj & (d.bp == 'ped')).sum()
         R['Cyclists injured since 2021'] = (d.inj & (d.bp == 'bike')).sum()
         R['Killed or seriously injured'] = d.ksi.sum()
-        R['Serious-injury crashes'] = d[d.ksi & ~d.fatal].crash_record_id.nunique()   # crashes where a person walking or biking was seriously (not fatally) injured
+        # crashes (not people) in which someone walking or biking was seriously injured or killed;
+        # a crash with any death counts as fatal, the rest as serious-injury crashes
+        R['KSI crashes'] = d[d.ksi].crash_record_id.nunique()
+        R['Fatal crashes'] = d[d.fatal].crash_record_id.nunique()
+        R['Serious-injury crashes'] = R['KSI crashes'] - R['Fatal crashes']
         R['  of which killed'] = d.fatal.sum()
         R['% of injuries where posted limit ≥30'] = 100 * (d[d.inj].posted_speed_limit >= 30).mean()
         ss = st[st.ward == w]
@@ -147,7 +151,7 @@ def city_comparison(wards, L):
             'bk': round(100 * city['bike'] / city['workers'], 1), 'wk': round(100 * city['walk'] / city['workers'], 1),
             'tr': round(100 * city['transit'] / city['workers'], 1),
             'ksi': int(p.ksi.sum()), 'killed': int(p.fatal.sum()),
-            'sic': int(p[p.ksi & ~p.fatal].crash_record_id.nunique())}
+            'kc': int(p[p.ksi].crash_record_id.nunique())}
 
 
 # --------------------------------------------------------------------------
