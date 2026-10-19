@@ -15,12 +15,12 @@ Built 2026-10-19. Sources fetched: acs 2026-10-19, bike_routes 2026-10-19, busin
 | Painted/buffered/shared miles | 47.1 | 47.1 |
 | Major-street miles with no facility | 64.1 | 64.1 |
 | Off-street trail miles | 13.5 | 13.5 |
-| People injured walking/biking (map) | 3832 | 3834 |
+| People injured walking/biking (map) | 3834 | 3834 |
 | Killed or seriously injured (map) | 550 | 550 |
 | Killed (map) | 33 | 33 |
-| Crash data through | 2026-10-16 | 2026-10-18 |
+| Crash data through | 2026-10-18 | 2026-10-18 |
 | Bike route file dated | 2025-12-16 | 2025-12-16 |
-| Licensed businesses | 5625 | 5634 |
+| Licensed businesses | 5634 | 5634 |
 | Census block groups | 358 | 358 |
 | L stations | 30 | 30 |
 | Census ACS year | 2024 | 2024 |
