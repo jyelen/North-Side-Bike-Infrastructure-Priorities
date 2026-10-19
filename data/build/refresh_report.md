@@ -15,7 +15,7 @@ Built 2026-10-19. Sources fetched: acs 2026-10-19, bike_routes 2026-10-19, busin
 | Painted/buffered/shared miles | 47.1 | 47.1 |
 | Major-street miles with no facility | 64.1 | 64.1 |
 | Off-street trail miles | 13.5 | 13.5 |
-| People injured walking/biking (map) | 3834 | 3834 |
+| People injured walking/biking (map) | 3834 | 3837 |
 | Killed or seriously injured (map) | 550 | 550 |
 | Killed (map) | 33 | 33 |
 | Crash data through | 2026-10-18 | 2026-10-18 |

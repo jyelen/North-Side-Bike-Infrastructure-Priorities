@@ -407,7 +407,7 @@ body.simple .tabs,body.simple aside>.pane,body.simple #wardChips,body.simple .br
           <p class="ch-num">1</p>
           <h3 id="chH1">People are getting hurt</h3>
           <p class="ch-big"><b data-s="kc"></b> <span>crashes caused <span class="term" tabindex="0" data-t="ksi">serious injuries</span> or deaths among people walking or biking since January 2021</span></p>
-          <p><b data-s="sic"></b> caused serious injuries, and <b data-s="fc"></b> were fatal.</p>
+          <p><b data-s="sic"></b> caused serious injuries, and <span data-s-html="fatal"></span>.</p>
           <p data-s-if="major"><b data-s="kmajor"></b> of these crashes happened on <span class="term" tabindex="0" data-t="major">major streets</span> or where they cross other streets. Major streets are only <b data-s="mmiles"></b> of street miles here.</p>
           <div class="stories">
             <p class="stories-h">Behind the numbers</p>
@@ -652,7 +652,7 @@ body.simple .tabs,body.simple aside>.pane,body.simple #wardChips,body.simple .br
     <section class="step" data-step="toll"><div class="card">
       <p class="eyebrow">The human toll · 2021 to <span class="crashThrough"></span></p>
       <h2><span data-v="kc"></span> crashes with <span class="term" tabindex="0" data-t="ksi">serious injuries</span> or deaths</h2>
-      <p>Since January 2021, <b data-v="kc2"></b> crashes in these <span class="nw"></span> wards seriously injured or killed someone walking or biking: <b data-v="sic"></b> caused serious injuries, and <b data-v="fc"></b> were fatal.</p>
+      <p>Since January 2021, <b data-v="kc2"></b> crashes in these <span class="nw"></span> wards seriously injured or killed someone walking or biking: <b data-v="sic"></b> caused serious injuries, and <span class="fatal-phrase"></span>.</p>
       <p><b data-v="pct30"></b> of the injuries happened on streets posted at 30 mph or more. A pedestrian hit at 31 mph has about a 50% chance of severe injury, double the risk at 23 mph.</p>
       <p class="legend-inline"><span><i class="dot" style="background:var(--k)"></i>Killed</span><span><i class="dot" style="background:var(--a)"></i>Seriously injured</span></p>
     </div></section>
@@ -746,6 +746,8 @@ const FAC_ORDER=['P','CF','G','BF','L','S'];
 const cv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const fmt=(v,d=0)=>v==null||isNaN(v)?'–':Number(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 function isSimple(){return document.body.classList.contains('simple')}
+// "30 were fatal" or, when some crashes killed more than one person, "30 were fatal, killing 32 people"
+function fatalPhrase(fc,killed){return `<b>${fmt(fc)}</b> ${fc===1?'was':'were'} fatal`+(killed&&killed!==fc?`, killing <b>${fmt(killed)}</b> people`:'')}
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 /* ---------------- glossary: definitions shown on hover, focus or tap ---------------- */
@@ -998,7 +1000,7 @@ function renderSummary(){
       `<b>${fmt(f.T||0,1)} miles</b> of ${term('trail','off-street trails')}, such as the lakefront and river trails.`,
       `<b>${fmt(unprot,1)} miles</b> of bike routes are paint or markings only, with nothing between riders and traffic.`,
       `<b>${fmt(D.meta.unserved_mi[w==='all'?'all':String(w)],1)} miles</b> of major streets have no bike facility at all.`,
-      `<b>${fmt(W('KSI crashes'))} crashes</b> caused ${term('ksi','serious injuries')} or deaths among people walking or biking since 2021: ${fmt(W('Serious-injury crashes'))} caused serious injuries, and ${fmt(W('Fatal crashes'))} were fatal.`,
+      `<b>${fmt(W('KSI crashes'))} crashes</b> caused ${term('ksi','serious injuries')} or deaths among people walking or biking since 2021: ${fmt(W('Serious-injury crashes'))} caused serious injuries, and ${fatalPhrase(W('Fatal crashes'),W('of which killed'))}.`,
       `<b>${fmt(Math.round(W('Population')/1000)*1000)} residents</b>, <b>${fmt(W('L stations'))} L station${W('L stations')===1?'':'s'}</b> and <b>${fmt(W('Licensed businesses'))} licensed businesses</b>${w==='all'?` across the ${NW} wards`:''}.`
     ].map(x=>`<li>${x}</li>`).join(''); }
   document.getElementById('sumTitle').textContent=w==='all'?`All ${NW} wards`:'Ward '+w;
@@ -1391,6 +1393,7 @@ const V={T:fmt(F.T||0,1)+' miles',P:fmt(F.P,1)+' miles',CF:fmt(F.CF,1)+' miles',
   clarkmi:clark?fmt(clark.mi,1)+' miles':'about a mile',clarkinj:clark?String(clark.bi+clark.pi):'–',
   kc:fmt(Wa('KSI crashes')),kc2:fmt(Wa('KSI crashes')),sic:fmt(Wa('Serious-injury crashes')),fc:fmt(Wa('Fatal crashes')),killed:fmt(Wa('of which killed')),pct30:fmt(Wa('% of injuries where posted limit ≥30'),0)+'%'};
 tour.querySelectorAll('[data-v]').forEach(e=>{if(V[e.dataset.v]!=null)e.textContent=V[e.dataset.v]});
+tour.querySelectorAll('.fatal-phrase').forEach(e=>e.innerHTML=fatalPhrase(Wa('Fatal crashes'),Wa('of which killed')));
 document.getElementById('tourDots').innerHTML=steps.map((s,i)=>`<button data-i="${i}" aria-label="Go to step ${i+1}"></button>`).join('');
 const dots=[...document.querySelectorAll('#tourDots button')];
 dots.forEach(b=>b.onclick=()=>steps[+b.dataset.i].scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'}));
@@ -1480,7 +1483,8 @@ document.getElementById('goPri').onclick=()=>showTab('t-pri');
     lsmi:fmt(conn[1],0)+' miles',pieces:fmt(conn[2]),biggest:fmt(conn[3],1)+' miles',small:fmt(comps.filter((m,i)=>i>0&&m<1).length),
     paint:fmt((F.L||0)+(F.BF||0)+(F.S||0),0)+' miles',none:fmt(D.meta.unserved_mi.all,0)+' miles',
     yr:money(BUDGET_DEFAULT),big0:fmt(comps[0]||conn[3],1)+' mi',pc0:fmt(comps.length||conn[2])};
-  const put=()=>panel.querySelectorAll('[data-s]').forEach(e=>{if(S[e.dataset.s]!=null)e.textContent=S[e.dataset.s]});
+  const put=()=>{panel.querySelectorAll('[data-s]').forEach(e=>{if(S[e.dataset.s]!=null)e.textContent=S[e.dataset.s]});
+    panel.querySelectorAll('[data-s-html="fatal"]').forEach(e=>e.innerHTML=fatalPhrase(Wa('Fatal crashes'),Wa('of which killed')))};
   if(S.kmajor==null) panel.querySelectorAll('[data-s-if="major"]').forEach(e=>e.hidden=true);
 
   // ---- the plan for chapter 3: top-ranked upgrades with default settings, N years of the default budget
