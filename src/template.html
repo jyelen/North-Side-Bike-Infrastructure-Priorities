@@ -1427,7 +1427,7 @@ const ACT={
   budget(){setEmph(null);setChk('top5',false);setChk('budgetOn',true);pulse.clearLayers();showTab('t-pri');
     tour.querySelector('[data-v="bamt"]').textContent=money(bud.amt);tour.querySelector('[data-v="bn"]').textContent=plan.list.length+' segments';tour.querySelector('[data-v="bmi"]').textContent=fmt(plan.miles,1)+' miles';
     go(plan.list.length?segBounds(plan.list):allBounds(),15)},
-  views(){setEmph(null);setChk('budgetOn',false);setChk('top5',false);setLayer('gaps',false);pulse.clearLayers();go(allBounds())},
+  views(){setEmph(null);setChk('budgetOn',false);setChk('top5',false);setLayer('gaps',false);setLayer('ksi',false);pulse.clearLayers();go(allBounds())},
   end(){setEmph(null);setChk('budgetOn',false);setLayer('ksi',false);setLayer('gaps',false);showTab('t-sum');pulse.clearLayers();go(allBounds())}
 };
 let cur=-1;
