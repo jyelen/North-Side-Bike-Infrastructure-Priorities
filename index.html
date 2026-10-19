@@ -2221,7 +2221,8 @@ document.getElementById('goPri').onclick=()=>showTab('t-pri');
   });
   // clicking a chapter picks it (and pauses scroll-tracking briefly); scrolling the panel also moves between chapters
   let hold=0;
-  function pick(c){hold=Date.now()+1200; if(c!==ch) activate(c)}
+  function pick(c){hold=Date.now()+1200; if(c!==ch) activate(c);
+    const el=panel.querySelector(`.ch[data-ch="${c}"]`); if(innerWidth>900&&el) panel.scrollTo({top:el.offsetTop-panel.offsetTop-16,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
   const io=new IntersectionObserver(es=>{if(!isSimple()||Date.now()<hold)return;es.forEach(en=>{if(en.isIntersecting){const c=+en.target.dataset.ch;if(c!==ch)activate(c)}})},
     {root:innerWidth>900?panel:null,rootMargin:innerWidth>900?'-15% 0px -65% 0px':'-55% 0px -35% 0px'});
   panel.querySelectorAll('.ch').forEach(e=>io.observe(e));
