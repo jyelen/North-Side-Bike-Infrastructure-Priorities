@@ -405,9 +405,9 @@ body.simple .tabs,body.simple aside>.pane,body.simple #wardChips,body.simple .br
         <section class="ch" data-ch="1" tabindex="0" aria-labelledby="chH1">
           <p class="ch-num">1</p>
           <h3 id="chH1">People are getting hurt</h3>
-          <p class="ch-big"><b data-s="ksi"></b> <span>people killed or <span class="term" tabindex="0" data-t="ksi">seriously injured</span> walking or biking since January 2021</span></p>
-          <p><b data-s="killed"></b> of them died. That is one person every <b data-s="every"></b>.</p>
-          <p data-s-if="major"><b data-s="kmajor"></b> of these crashes happened on <span class="term" tabindex="0" data-t="major">major streets</span> or where they cross other streets. Major streets are only <b data-s="mmiles"></b> of street miles here.</p>
+          <p class="ch-big"><b data-s="sic"></b> <span>crashes caused <span class="term" tabindex="0" data-t="ksi">serious injuries</span> to people walking or biking since January 2021</span></p>
+          <p>In the same period, <b data-s="killed"></b> people walking or biking were killed.</p>
+          <p data-s-if="major"><b data-s="kmajor"></b> of the crashes that seriously injured or killed someone happened on <span class="term" tabindex="0" data-t="major">major streets</span> or where they cross other streets. Major streets are only <b data-s="mmiles"></b> of street miles here.</p>
           <div class="stories">
             <p class="stories-h">Behind the numbers</p>
             <ul>
@@ -650,8 +650,8 @@ body.simple .tabs,body.simple aside>.pane,body.simple #wardChips,body.simple .br
     </div></section>
     <section class="step" data-step="toll"><div class="card">
       <p class="eyebrow">The human toll · 2021 to <span class="crashThrough"></span></p>
-      <h2><span data-v="ksi"></span> people <span class="term" tabindex="0" data-t="ksi">seriously injured or killed</span></h2>
-      <p>Since January 2021, <b data-v="ksi2"></b> people walking or biking in these <span class="nw"></span> wards were seriously injured or killed in traffic crashes. <b data-v="killed"></b> of them died. That is one person roughly every <b data-v="every"></b>.</p>
+      <h2><span data-v="sic"></span> crashes with <span class="term" tabindex="0" data-t="ksi">serious injuries</span></h2>
+      <p>Since January 2021, <b data-v="sic2"></b> crashes in these <span class="nw"></span> wards seriously injured someone walking or biking, while <b data-v="killed"></b> people walking or biking were killed.</p>
       <p><b data-v="pct30"></b> of the injuries happened on streets posted at 30 mph or more. A pedestrian hit at 31 mph has about a 50% chance of severe injury, double the risk at 23 mph.</p>
       <p class="legend-inline"><span><i class="dot" style="background:var(--k)"></i>Killed</span><span><i class="dot" style="background:var(--a)"></i>Seriously injured</span></p>
     </div></section>
@@ -750,7 +750,7 @@ const GLOSS={
   major:['Major street','A through street that carries most traffic (an "arterial"), such as Western Ave or Lawrence Ave. The city classifies these as street types 2 and 3.'],
   stress:['Traffic stress','How uncomfortable a street is to bike on, driven mostly by car speed, traffic volume and number of lanes. Here it is estimated from street type: major streets score highest.'],
   roaddiet:['Road diet','Turning a four-lane street (two lanes each way) into two travel lanes plus a center turn lane. The freed-up width can hold bike lanes. Usually considered only where traffic is under about 20,000 vehicles a day.'],
-  ksi:['Killed or seriously injured','People who died, or whose police crash report lists an "incapacitating injury": an injury that kept them from walking, driving or carrying on normally at the scene.'],
+  ksi:['Serious injury','The police crash report lists an "incapacitating injury" for someone walking or biking: an injury that kept them from walking, driving or carrying on normally at the scene. Deaths are counted separately.'],
   ease:['Ease','A 0–100 estimate of how hard an upgrade would be: parking impact (40%), daily traffic (25%), road owner (25%) and speed limit (10%). Up to 33 is "Easier", up to 60 "Moderate", above that "Harder". The weights are a judgment call.'],
   score:['Priority score','Each segment is ranked against the others on every factor (as a percentile), then the ranks are weighted by the points you set. 100 means top on every factor.'],
   owner:['Road owner','Who controls the street. Changes to state routes need IDOT approval, and county roads need county approval. Most streets here are city streets.'],
@@ -945,7 +945,7 @@ function segHTML(s){
   ];
   const data=[
     ['Cyclists injured within 100 ft',fmt(s.bi)],['Pedestrians injured within 100 ft',fmt(s.pi)],
-    ['Killed or seriously injured',fmt(s.ksi)+(s.k?` (${s.k} killed)`:'')],
+    ['Seriously injured',fmt(s.ksi-s.k)],['Killed',fmt(s.k)],
     ['Typical posted limit (crash reports)',s.sp?s.sp+' mph':'–'],
     ['Nearest L station',fmt(s.rail,2)+' mi'],
     ['Businesses within 300 ft',fmt(s.biz)],
@@ -987,7 +987,7 @@ function renderSummary(){
       `<b>${fmt(f.T||0,1)} miles</b> of ${term('trail','off-street trails')}, such as the lakefront and river trails.`,
       `<b>${fmt(unprot,1)} miles</b> of bike routes are paint or markings only, with nothing between riders and traffic.`,
       `<b>${fmt(D.meta.unserved_mi[w==='all'?'all':String(w)],1)} miles</b> of major streets have no bike facility at all.`,
-      `<b>${fmt(W('Killed or seriously injured'))} people</b> walking or biking were killed or seriously injured since 2021. <b>${fmt(W('of which killed'))} died.</b>`,
+      `<b>${fmt(W('Serious-injury crashes'))} crashes</b> caused ${term('ksi','serious injuries')} to people walking or biking since 2021, while <b>${fmt(W('of which killed'))} people</b> were killed.`,
       `<b>${fmt(Math.round(W('Population')/1000)*1000)} residents</b>, <b>${fmt(W('L stations'))} L station${W('L stations')===1?'':'s'}</b> and <b>${fmt(W('Licensed businesses'))} licensed businesses</b>${w==='all'?` across the ${NW} wards`:''}.`
     ].map(x=>`<li>${x}</li>`).join(''); }
   document.getElementById('sumTitle').textContent=w==='all'?`All ${NW} wards`:'Ward '+w;
@@ -1001,13 +1001,14 @@ function renderSummary(){
     tile(fmt(f.L||0,1),'Painted lane','paint only')+
     tile(fmt(f.S||0,1),'Shared-lane markings','no separate space')+
     tile(fmt(f.T||0,1),'Off-street trail','paths away from streets');
-  const ksi=W('Killed or seriously injured'), pop=W('Population');
-  const perCap=ksi/pop*1e5, cityPer=C.ksi/C.pop*1e5;
+  const sic=W('Serious-injury crashes'), pop=W('Population');
+  const perCap=sic/pop*1e5, cityPer=C.sic!=null?C.sic/C.pop*1e5:null;
   document.getElementById('tilesSafe').innerHTML=
     tile(fmt(W('Pedestrians injured since 2021')),'Pedestrians injured')+
     tile(fmt(W('Cyclists injured since 2021')),'Cyclists injured')+
-    tile(fmt(ksi),'Killed or seriously injured',`<b>${fmt(W('of which killed'))}</b> killed`)+
-    tile(fmt(perCap,0),'Killed or seriously injured per 100k residents',`citywide <b>${fmt(cityPer,0)}</b>`)+
+    tile(fmt(sic),'Crashes with serious injuries')+
+    tile(fmt(W('of which killed')),'People killed')+
+    tile(fmt(perCap,0),'Serious-injury crashes per 100,000 residents',`citywide <b>${fmt(cityPer,0)}</b>`)+
     tile(fmt(W('% of injuries where posted limit ≥30'),0)+'%','of injuries on streets posted 30 mph+','30 is the city default')+
     tile(fmt(W('L stations')),'L stations',`<b>${fmt(W('L entries last full year (millions)'),1)}M</b> entries in ${RY}`);
   document.getElementById('tilesCtx').innerHTML=
@@ -1055,7 +1056,7 @@ document.getElementById('aboutList').innerHTML=[
 /* ---------------- priorities ---------------- */
 // Factor groups and default points follow agency precedent (see Sources tab). Points sum to 100.
 const FACTORS=[
-  {k:'safety',g:'Safety',label:'Injury history',def:20,get:s=>(s.bi+s.pi+2*s.ksi)/Math.max(s.mi,0.25),how:'Pedestrians + cyclists injured within 100 ft, with killed/seriously injured counted 3×, per mile'},
+  {k:'safety',g:'Safety',label:'Injury history',def:20,get:s=>(s.bi+s.pi+2*s.ksi)/Math.max(s.mi,0.25),how:'Pedestrians + cyclists injured within 100 ft, with each serious injury and death counted 3×, per mile'},
   {k:'stress',g:'Safety',label:'Traffic stress (street type)',gl:'stress',def:15,get:s=>s.stress,how:'Share of the segment on a major arterial (1.0) or secondary arterial (0.75); side streets 0'},
   {k:'link',g:'Connectivity',label:'Connects the low-stress network',gl:'lowstress',def:25,get:s=>Math.min(s.lnk2??0,2),how:'Separate low-stress pieces (protected lanes, greenways, contraflow lanes, off-street trails) the segment touches; 2+ means it closes a gap'},
   {k:'zc',g:'Equity',label:'Households without a car',def:10,get:s=>s.zc??0,how:'Share of households with no vehicle, within ¼ mile'},
@@ -1159,12 +1160,12 @@ const COLS=[
   {k:'park',label:'Parking',v:s=>PI[parkImpact(s)][2]},
   {k:'mi',label:'Mi',v:s=>s.mi},
   {k:'inj',label:'Injured',v:s=>s.bi+s.pi},
-  {k:'ksi',label:'KSI',v:s=>s.ksi},
+  {k:'ksi',label:'Serious',v:s=>s.ksi-s.k},
   {k:'lnk',label:'Links',v:s=>s.lnk2??0},
   {k:'cost',label:'Est. cost',v:s=>segCost(s)??-1},
 ];
 const thead=document.querySelector('#segTable thead tr');
-thead.innerHTML=COLS.map(c=>`<th data-k="${c.k}" scope="col" title="${{rank:'Rank by score',st:'Street, current facility, street type and limits',mi:'Length in miles',inj:'Cyclists + pedestrians injured within 100 ft, 2021 to date',ksi:'Killed or seriously injured within 100 ft',lnk:'Separate low-stress pieces (protected, greenway, contraflow) this segment touches',ease:'How hard the fix is likely to be: parking impact, traffic, speed and road owner',park:'Likely parking impact of a protected lane, from IDOT street widths',cost:'Planning estimate to upgrade (see Budget plan); – if already at the target type',score:'Draft priority score, 0–100'}[c.k]}">${c.label}</th>`).join('');
+thead.innerHTML=COLS.map(c=>`<th data-k="${c.k}" scope="col" title="${{rank:'Rank by score',st:'Street, current facility, street type and limits',mi:'Length in miles',inj:'Cyclists + pedestrians injured within 100 ft, 2021 to date',ksi:'People seriously injured within 100 ft (deaths are listed in the details)',lnk:'Separate low-stress pieces (protected, greenway, contraflow) this segment touches',ease:'How hard the fix is likely to be: parking impact, traffic, speed and road owner',park:'Likely parking impact of a protected lane, from IDOT street widths',cost:'Planning estimate to upgrade (see Budget plan); – if already at the target type',score:'Draft priority score, 0–100'}[c.k]}">${c.label}</th>`).join('');
 thead.querySelectorAll('th').forEach(th=>th.addEventListener('click',()=>{const k=th.dataset.k; if(state.sortKey===k)state.sortDir*=-1; else {state.sortKey=k; state.sortDir=(k==='st'||k==='rail'||k==='rank')?1:-1} renderTable()}));
 function renderTable(){
   const cand=computeScores();
@@ -1177,14 +1178,14 @@ function renderTable(){
   thead.querySelectorAll('th').forEach(th=>th.setAttribute('aria-sort',th.dataset.k===state.sortKey?(state.sortDir<0?'descending':'ascending'):'none'));
   const tb=document.querySelector('#segTable tbody');
   tb.innerHTML=rows.map(s=>{const t=segType(s),sc=scores.get(s.id);
-    return `<tr data-id="${s.id}" class="${s.id===state.sel?'sel':''} ${plan.ids.has(s.id)?'inplan':''}" tabindex="0"><td>${s._rank}</td><td><div class="st-name">${esc(s.st)} <span class="pill" style="background:${cv('--f-'+t)};color:${t==='G'||t==='S'||t==='BF'?'#14201a':'#fff'}">${{L:'PAINT',BF:'BUFF',S:'SHARED',G:'GRNWY',CF:'CONTRA',N:'NONE'}[t]}</span></div><div class="st-ext">${esc(s.f)} – ${esc(s.to)} · W${s.w} · ${STREETTYPE(s)}${s.src?' · <span class="rep">reported</span>':''}</div></td><td><span class="score"><i style="width:${Math.round(sc*0.3)}px"></i>${sc}</span></td><td>${easeChip(s)}</td><td>${piTerm(s,1)}</td><td>${fmt(s.mi,2)}</td><td>${fmt(s.bi+s.pi)}</td><td>${fmt(s.ksi)}</td><td>${(s.lnk2??0)>=2?'<b>'+s.lnk2+'</b>':fmt(s.lnk2??0)}</td><td>${segCost(s)==null?'–':money(segCost(s))}</td></tr>`}).join('');
+    return `<tr data-id="${s.id}" class="${s.id===state.sel?'sel':''} ${plan.ids.has(s.id)?'inplan':''}" tabindex="0"><td>${s._rank}</td><td><div class="st-name">${esc(s.st)} <span class="pill" style="background:${cv('--f-'+t)};color:${t==='G'||t==='S'||t==='BF'?'#14201a':'#fff'}">${{L:'PAINT',BF:'BUFF',S:'SHARED',G:'GRNWY',CF:'CONTRA',N:'NONE'}[t]}</span></div><div class="st-ext">${esc(s.f)} – ${esc(s.to)} · W${s.w} · ${STREETTYPE(s)}${s.src?' · <span class="rep">reported</span>':''}</div></td><td><span class="score"><i style="width:${Math.round(sc*0.3)}px"></i>${sc}</span></td><td>${easeChip(s)}</td><td>${piTerm(s,1)}</td><td>${fmt(s.mi,2)}</td><td>${fmt(s.bi+s.pi)}</td><td>${fmt(s.ksi-s.k)}</td><td>${(s.lnk2??0)>=2?'<b>'+s.lnk2+'</b>':fmt(s.lnk2??0)}</td><td>${segCost(s)==null?'–':money(segCost(s))}</td></tr>`}).join('');
   tb.querySelectorAll('tr').forEach(tr=>{const go=()=>select(+tr.dataset.id,true);tr.addEventListener('click',go);tr.addEventListener('keydown',e=>{if(e.key==='Enter')go()})});
   renderPlan(); renderNVE(rows); if(typeof drawHighlights==='function'){drawHighlights();reorder()}
   document.getElementById('tblNote').textContent=`${rows.length} segment${rows.length===1?'':'s'}${state.ward==='all'?'':' in Ward '+state.ward} · ranks are across all ${NW} wards · click a row to find it on the map`;
 }
 document.getElementById('copyT').onclick=async()=>{
-  const hdr=['Rank','Street','From','To','Ward','Current','Street type','Miles','Cyclists injured','Pedestrians injured','Killed or seriously injured','Killed','Low-stress pieces touched','Households without car %','Below poverty %','Businesses within 300 ft','Residents per sq mi','Nearest L (mi)','Bike commute %','Score','Ease','Difficulty (0-100)','Likely parking impact','Width (ft)','Through lanes','Daily traffic','Speed limit','Road owner'];
-  const tsv=[hdr.join('\t')].concat(current.map(s=>[s._rank,s.st,s.f,s.to,s.w,FAC[segType(s)],STREETTYPE(s),s.mi,s.bi,s.pi,s.ksi,s.k,s.lnk2??'',s.zc??'',s.pov??'',s.biz,s.den,s.rail,s.bk??'',scores.get(s.id),EASE(difficulty(s))[0],difficulty(s),PI[parkImpact(s)][0],s.idot?.w??'',s.idot?.l??'',s.idot?.aadt??'',s.idot?.sp??'',OWNER(s.idot?.jur)].join('\t'))).join('\n');
+  const hdr=['Rank','Street','From','To','Ward','Current','Street type','Miles','Cyclists injured','Pedestrians injured','Seriously injured','Killed','Low-stress pieces touched','Households without car %','Below poverty %','Businesses within 300 ft','Residents per sq mi','Nearest L (mi)','Bike commute %','Score','Ease','Difficulty (0-100)','Likely parking impact','Width (ft)','Through lanes','Daily traffic','Speed limit','Road owner'];
+  const tsv=[hdr.join('\t')].concat(current.map(s=>[s._rank,s.st,s.f,s.to,s.w,FAC[segType(s)],STREETTYPE(s),s.mi,s.bi,s.pi,s.ksi-s.k,s.k,s.lnk2??'',s.zc??'',s.pov??'',s.biz,s.den,s.rail,s.bk??'',scores.get(s.id),EASE(difficulty(s))[0],difficulty(s),PI[parkImpact(s)][0],s.idot?.w??'',s.idot?.l??'',s.idot?.aadt??'',s.idot?.sp??'',OWNER(s.idot?.jur)].join('\t'))).join('\n');
   const msg=document.getElementById('copyMsg');
   try{await navigator.clipboard.writeText(tsv);msg.textContent='Copied '+current.length+' rows. Paste into a spreadsheet.'}
   catch(e){msg.textContent='Copy was blocked here. Select the table and copy it instead.'}
@@ -1310,7 +1311,7 @@ const LAYERS=[
   {id:'bike',g:groups.bike,on:true,t:'Bike facilities',d:`CDOT bike routes (${BL}), plus ${NEWS} newer changes added from news reports. Click a segment for its numbers.`,key:()=>FAC_ORDER.map(k=>`<span><span class="sw" style="background:${cv('--f-'+k)}"></span>${FAC[k]}</span>`).join('')},
   {id:'trails',g:groups.trails,on:true,t:'Off-street trails',d:'Lakefront, river and channel trails and other paths built for bikes, from OpenStreetMap. Part of the low-stress network; not ranked.',key:()=>`<span><span class="sw" style="background:${cv('--f-T')}"></span>Off-street trail</span>`},
   {id:'gaps',g:groups.gaps,on:false,t:'Major streets with no bike facility',d:'Arterial streets with no bike lane, greenway or markings (dotted). They are ranked in Priorities.',key:()=>`<span><span class="sw" style="background:repeating-linear-gradient(90deg,${cv('--f-N')} 0 3px,transparent 3px 7px)"></span>No bike facility</span>`},
-  {id:'ksi',g:groups.ksi,on:false,t:'Killed or seriously injured',d:'Pedestrians and cyclists, 2021 to date. One mark per person.',key:()=>`<span><span class="dot" style="background:${cv('--k')}"></span>Killed</span><span><span class="dot" style="background:${cv('--a')}"></span>Seriously injured</span>`},
+  {id:'ksi',g:groups.ksi,on:false,t:'Serious injuries and deaths',d:'Pedestrians and cyclists, 2021 to date. One mark per person.',key:()=>`<span><span class="dot" style="background:${cv('--k')}"></span>Killed</span><span><span class="dot" style="background:${cv('--a')}"></span>Seriously injured</span>`},
   {id:'inj',g:groups.inj,on:false,t:'All pedestrian and cyclist injuries',d:'Every reported injury, 2021 to date.',key:()=>`<span><span class="dot" style="background:${cv('--inj-b')}"></span>Cyclist</span><span><span class="dot" style="background:${cv('--inj-p')}"></span>Pedestrian</span>`},
   {id:'stations',g:groups.stations,on:false,t:'CTA L stations',d:'Badge color shows the line. Larger badges had over 1 million entries in '+RY+'.',key:()=>`<span style="display:inline-flex;align-items:center;gap:5px"><span class="cta-badge" style="background:#62361b;position:static">${TRAIN}</span>Station</span>`},
   {id:'bgs',g:groups.bgs,on:false,t:'Census shading',d:'Block groups, 2020–24 estimates.',extra:true},
@@ -1378,8 +1379,7 @@ const days=(new Date(D.meta.crash_max)-new Date('2021-01-01'))/864e5;
 const V={T:fmt(F.T||0,1)+' miles',P:fmt(F.P,1)+' miles',CF:fmt(F.CF,1)+' miles',G:fmt(F.G,1)+' miles',L:fmt(F.L,1)+' miles',BF:fmt(F.BF,1)+' miles',S:fmt(F.S,1)+' miles',
   lsbig:fmt(conn[2][3],1)+' miles',ppieces:String(conn[0][2]),unserved:fmt(D.meta.unserved_mi.all,1)+' miles',plong:fmt(conn[0][3],1)+' miles',
   clarkmi:clark?fmt(clark.mi,1)+' miles':'about a mile',clarkinj:clark?String(clark.bi+clark.pi):'–',
-  ksi:fmt(Wa('Killed or seriously injured')),ksi2:fmt(Wa('Killed or seriously injured')),killed:fmt(Wa('of which killed')),
-  every:fmt(days/Wa('Killed or seriously injured'),0)+' days',pct30:fmt(Wa('% of injuries where posted limit ≥30'),0)+'%'};
+  sic:fmt(Wa('Serious-injury crashes')),sic2:fmt(Wa('Serious-injury crashes')),killed:fmt(Wa('of which killed')),pct30:fmt(Wa('% of injuries where posted limit ≥30'),0)+'%'};
 tour.querySelectorAll('[data-v]').forEach(e=>{if(V[e.dataset.v]!=null)e.textContent=V[e.dataset.v]});
 document.getElementById('tourDots').innerHTML=steps.map((s,i)=>`<button data-i="${i}" aria-label="Go to step ${i+1}"></button>`).join('');
 const dots=[...document.querySelectorAll('#tourDots button')];
@@ -1460,7 +1460,7 @@ document.getElementById('goPri').onclick=()=>showTab('t-pri');
   const F=D.wardsum.all.fac;
   const days=(new Date(D.meta.crash_max)-new Date('2021-01-01'))/864e5;
   const ksi=Wa('Killed or seriously injured');
-  const S={ksi:fmt(ksi),killed:fmt(Wa('of which killed')),every:fmt(days/ksi,0)+' days',
+  const S={sic:fmt(Wa('Serious-injury crashes')),killed:fmt(Wa('of which killed')),
     kmajor:D.meta.ksi_major_pct!=null?D.meta.ksi_major_pct+'%':null,mmiles:D.meta.major_miles_pct!=null?D.meta.major_miles_pct+'%':null,
     lsmi:fmt(conn[1],0)+' miles',pieces:fmt(conn[2]),biggest:fmt(conn[3],1)+' miles',small:fmt(comps.filter((m,i)=>i>0&&m<1).length),
     paint:fmt((F.L||0)+(F.BF||0)+(F.S||0),0)+' miles',none:fmt(D.meta.unserved_mi.all,0)+' miles',
@@ -1535,7 +1535,7 @@ document.getElementById('goPri').onclick=()=>showTab('t-pri');
     const up=chosenIds.has(s.id)&&ch===3?tgt(s):null;
     return `<div class="pop"><h4>${esc(s.st)}</h4><div class="ext">${esc(s.f)} – ${esc(s.to)} · Ward ${s.w}</div>`+dl([
       ['Today',now],['Length',fmt(s.mi,2)+' mi'],
-      ['People hurt nearby since 2021',fmt(s.bi+s.pi)],['Killed or seriously injured',fmt(s.ksi)],
+      ['People hurt nearby since 2021',fmt(s.bi+s.pi)],['Seriously injured',fmt(s.ksi-s.k)],['Killed',fmt(s.k)],
       up?['Proposed',(up==='PC'?'Protected lane':'Neighborhood greenway')+', about '+money(cost(s))]:null])+
       `<p style="margin:8px 0 0"><button class="btn" type="button" onclick="window.__toExpert(${s.id})">Full details</button></p></div>`;
   };

@@ -82,6 +82,7 @@ def ward_summary(wards, L):
         R['Pedestrians injured since 2021'] = (d.inj & (d.bp == 'ped')).sum()
         R['Cyclists injured since 2021'] = (d.inj & (d.bp == 'bike')).sum()
         R['Killed or seriously injured'] = d.ksi.sum()
+        R['Serious-injury crashes'] = d[d.ksi & ~d.fatal].crash_record_id.nunique()   # crashes where a person walking or biking was seriously (not fatally) injured
         R['  of which killed'] = d.fatal.sum()
         R['% of injuries where posted limit ≥30'] = 100 * (d[d.inj].posted_speed_limit >= 30).mean()
         ss = st[st.ward == w]
@@ -145,7 +146,8 @@ def city_comparison(wards, L):
     return {'area': round(area, 1), 'pop': int(round(city['pop'])), 'den': int(round(city['pop'] / area)),
             'bk': round(100 * city['bike'] / city['workers'], 1), 'wk': round(100 * city['walk'] / city['workers'], 1),
             'tr': round(100 * city['transit'] / city['workers'], 1),
-            'ksi': int(p.ksi.sum()), 'killed': int(p.fatal.sum())}
+            'ksi': int(p.ksi.sum()), 'killed': int(p.fatal.sum()),
+            'sic': int(p[p.ksi & ~p.fatal].crash_record_id.nunique())}
 
 
 # --------------------------------------------------------------------------
@@ -496,7 +498,8 @@ def stress_and_equity(D, bikes, segs, L, U6=None):
         allst = unary_union([transform(tr, shape(f['geometry'])) for f in sf
                              if f['geometry'] and f['properties'].get('class') in ('1', '2', '3', '4')])
         mb = major.buffer(60)
-        ksi = [c for c in D['crashes'] if c[3] in ('K', 'A')]
+        # one point per crash (people in the same crash share a place and time)
+        ksi = list({(c[0], c[1], c[4]): c for c in D['crashes'] if c[3] in ('K', 'A')}.values())
         inside = [pt(c[1], c[0]) for c in ksi]
         inside = [p_ for p_ in inside if U6.contains(p_)]
         on_major = sum(1 for p_ in inside if mb.contains(p_))
