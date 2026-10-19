@@ -12,7 +12,7 @@ name: Refresh data
 
 on:
   schedule:
-    - cron: '17 11 * * 1'   # Mondays 11:17 UTC (6:17 am Chicago in summer, 5:17 am in winter)
+    - cron: '23 11 * * 1'   # Mondays 11:23 UTC (6:23 am Chicago in summer, 5:23 am in winter)
   workflow_dispatch:
   push:
     branches: [pipeline-test]

@@ -82,6 +82,7 @@ def ward_summary(wards, L):
         R['Pedestrians injured since 2021'] = (d.inj & (d.bp == 'ped')).sum()
         R['Cyclists injured since 2021'] = (d.inj & (d.bp == 'bike')).sum()
         R['Killed or seriously injured'] = d.ksi.sum()
+        R['Serious-injury crashes'] = d[d.ksi & ~d.fatal].crash_record_id.nunique()   # crashes where a person walking or biking was seriously (not fatally) injured
         R['  of which killed'] = d.fatal.sum()
         R['% of injuries where posted limit ≥30'] = 100 * (d[d.inj].posted_speed_limit >= 30).mean()
         ss = st[st.ward == w]
@@ -145,7 +146,8 @@ def city_comparison(wards, L):
     return {'area': round(area, 1), 'pop': int(round(city['pop'])), 'den': int(round(city['pop'] / area)),
             'bk': round(100 * city['bike'] / city['workers'], 1), 'wk': round(100 * city['walk'] / city['workers'], 1),
             'tr': round(100 * city['transit'] / city['workers'], 1),
-            'ksi': int(p.ksi.sum()), 'killed': int(p.fatal.sum())}
+            'ksi': int(p.ksi.sum()), 'killed': int(p.fatal.sum()),
+            'sic': int(p[p.ksi & ~p.fatal].crash_record_id.nunique())}
 
 
 # --------------------------------------------------------------------------
@@ -434,7 +436,7 @@ def history_and_detail(D, bikes, U6, L, current_label):
 # --------------------------------------------------------------------------
 # 6. traffic stress, low-stress links, equity
 # --------------------------------------------------------------------------
-def stress_and_equity(D, bikes, segs, L):
+def stress_and_equity(D, bikes, segs, L, U6=None):
     eq = L['eq']
     sf = load_streets()
     art, col = [], []
@@ -468,7 +470,9 @@ def stress_and_equity(D, bikes, segs, L):
             s['lnk2'] = None
         else:
             tb = g.buffer(40)
-            s['lnk2'] = len({k for k in lst.query(tb) if lsg[k].intersects(tb)})
+            hit = sorted({int(k) for k in lst.query(tb) if lsg[k].intersects(tb)})
+            s['lnk2'] = len(hit)
+            s['lsc'] = hit          # which low-stress pieces it touches (for the simple view's network math)
         q = g.buffer(1320)
         A = collections.defaultdict(float)
         for k in bgtree.query(q):
@@ -479,6 +483,28 @@ def stress_and_equity(D, bikes, segs, L):
                 A[kk] += f * v
         s['zc'] = round(100 * A['zc'] / A['hh'], 1) if A['hh'] else None
         s['pov'] = round(100 * A['pp'] / A['pu'], 1) if A['pu'] else None
+    # low-stress pieces (largest first) and which candidate segments touch each other,
+    # so the page can work out how upgrades would join the pieces
+    D['meta']['lscomp'] = [round(sum(x['mi'] for x in cc), 3) for cc in LS]
+    cand = [s for s in D['segs'] if s.get('lnk2') is not None]
+    cg = [bikes[s['id']]['g'] for s in cand]
+    ctree = STRtree(cg)
+    for i, s in enumerate(cand):
+        tb = cg[i].buffer(40)
+        s['adj'] = sorted(int(cand[k]['id']) for k in ctree.query(tb) if k != i and cg[k].intersects(tb))
+    # where serious crashes happen: major streets vs their share of street miles
+    if U6 is not None:
+        major = unary_union([g for g in art + col])
+        allst = unary_union([transform(tr, shape(f['geometry'])) for f in sf
+                             if f['geometry'] and f['properties'].get('class') in ('1', '2', '3', '4')])
+        mb = major.buffer(60)
+        # one point per crash (people in the same crash share a place and time)
+        ksi = list({(c[0], c[1], c[4]): c for c in D['crashes'] if c[3] in ('K', 'A')}.values())
+        inside = [pt(c[1], c[0]) for c in ksi]
+        inside = [p_ for p_ in inside if U6.contains(p_)]
+        on_major = sum(1 for p_ in inside if mb.contains(p_))
+        D['meta']['ksi_major_pct'] = round(100 * on_major / len(inside)) if inside else None
+        D['meta']['major_miles_pct'] = round(100 * major.intersection(U6).length / allst.intersection(U6).length)
     for o in D['bgs']:
         if o['id'] in eq.index:
             r = eq.loc[o['id']]
@@ -594,7 +620,7 @@ def main():
     log('5. history + detail')
     history_and_detail(D, bikes, U6, L, current_label)
     log('6. stress + equity')
-    stress_and_equity(D, bikes, segs, L)
+    stress_and_equity(D, bikes, segs, L, U6)
     log('7. IDOT')
     idot(D, bikes)
     log('8. headline numbers')
@@ -611,11 +637,13 @@ def main():
         if s['t'] == 'N':
             un[str(s['w'])] = round(un[str(s['w'])] + s['mi'], 2)
     un['all'] = round(sum(s['mi'] for s in D['segs'] if s['t'] == 'N'), 1)
+    keep = {k: D['meta'][k] for k in ('lscomp', 'ksi_major_pct', 'major_miles_pct') if k in D['meta']}
     D['meta'] = {'wards': T, 'crash_max': D['meta']['crash_max'], 'bike_rows': rawmeta['bike_routes_updated'][:10],
                  'city': city_comparison(wards, L), 'conn': conn, 'manual': MANUAL_SOURCE_DATE,
                  'idot': f"IDOT road inventory (ROAD NETWORK layer, {rawmeta['idot_service'].split('/')[-1]}), downloaded {rawmeta['fetched']['idot']}",
                  'unserved_mi': un,
                  'acs_year': rawmeta['acs_year'], 'ridership_year': rawmeta['ridership_year'], 'bike_label': current_label}
+    D['meta'].update(keep)
     D['trails'] = [{'n': tl['name'], 'mi': round(tl['mi_in'], 2), 'c': coords(ll(tl['g'], 4))} for tl in trails]
     D['meta']['trails_mi'] = round(sum(tl['mi_in'] for tl in trails), 1)
     D['meta']['trails_source'] = rawmeta.get('trails_source', 'OpenStreetMap')

@@ -1,17 +1,17 @@
 {
  "fetched": {
-  "wards": "2026-10-16",
-  "bike_routes": "2026-10-16",
-  "streets": "2026-10-16",
-  "zoning": "2026-10-16",
-  "crashes": "2026-10-16",
-  "people": "2026-10-16",
-  "businesses": "2026-10-16",
-  "l_stops": "2026-10-16",
-  "l_ridership": "2026-10-16",
-  "acs": "2026-10-16",
-  "idot": "2026-10-16",
-  "trails": "2026-10-16"
+  "wards": "2026-10-19",
+  "bike_routes": "2026-10-19",
+  "streets": "2026-10-19",
+  "zoning": "2026-10-19",
+  "crashes": "2026-10-19",
+  "people": "2026-10-19",
+  "businesses": "2026-10-19",
+  "l_stops": "2026-10-19",
+  "l_ridership": "2026-10-19",
+  "acs": "2026-10-19",
+  "idot": "2026-10-19",
+  "trails": "2026-10-19"
  },
  "counts": {
   "wards": {
@@ -29,13 +29,13 @@
    "features": 5681
   },
   "crashes": {
-   "rows": 183727
+   "rows": 183909
   },
   "people": {
-   "rows": 31130
+   "rows": 31184
   },
   "businesses": {
-   "rows": 6861
+   "rows": 6901
   },
   "l_stops": {
    "rows": 302
