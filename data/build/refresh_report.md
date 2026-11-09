@@ -1,6 +1,6 @@
 # Data refresh report
 
-Built 2026-10-19. Sources fetched: acs 2026-10-19, bike_routes 2026-10-19, businesses 2026-10-19, crashes 2026-10-19, idot 2026-10-19, l_ridership 2026-10-19, l_stops 2026-10-19, people 2026-10-19, streets 2026-10-19, trails 2026-10-19, wards 2026-10-19, zoning 2026-10-19
+Built 2026-11-09. Sources fetched: acs 2026-11-09, bike_routes 2026-11-09, businesses 2026-11-09, crashes 2026-11-09, idot 2026-11-09, l_ridership 2026-11-09, l_stops 2026-11-09, people 2026-11-09, streets 2026-11-09, trails 2026-11-09, wards 2026-11-09, zoning 2026-11-09
 
 ## Result
 
@@ -15,12 +15,12 @@ Built 2026-10-19. Sources fetched: acs 2026-10-19, bike_routes 2026-10-19, busin
 | Painted/buffered/shared miles | 47.1 | 47.1 |
 | Major-street miles with no facility | 64.1 | 64.1 |
 | Off-street trail miles | 13.5 | 13.5 |
-| People injured walking/biking (map) | 3834 | 3837 |
-| Killed or seriously injured (map) | 550 | 550 |
-| Killed (map) | 33 | 33 |
-| Crash data through | 2026-10-18 | 2026-10-18 |
+| People injured walking/biking (map) | 3837 | 3882 |
+| Killed or seriously injured (map) | 550 | 553 |
+| Killed (map) | 33 | 34 |
+| Crash data through | 2026-10-18 | 2026-11-09 |
 | Bike route file dated | 2025-12-16 | 2025-12-16 |
-| Licensed businesses | 5634 | 5634 |
+| Licensed businesses | 5634 | 5703 |
 | Census block groups | 358 | 358 |
 | L stations | 30 | 30 |
 | Census ACS year | 2024 | 2024 |
